@@ -4,7 +4,7 @@
         <b-navbar-nav class="navbar-menu mx-auto" style="margin-left:0 !important">
           <button class="caret"><b-icon-caret-left-fill></b-icon-caret-left-fill></button>
           <a class="date"> 
-            septembre - octobre 2021
+            octobre 2021
           </a>
           <button class="caret"><b-icon-caret-right-fill></b-icon-caret-right-fill></button>
         </b-navbar-nav>
@@ -26,34 +26,83 @@
               </a>
             </template>
             <!--<b-dropdown-item href="/profile"><font-awesome-icon :icon="shoppingCog" /> Profile</b-dropdown-item>-->
-            <b-dropdown-item class="">
-              <font-awesome-icon class=""/><span
+            <b-dropdown-item @click="showPref()">
+              <font-awesome-icon/><span
                 >Mes paramètres</span
               ></b-dropdown-item
             >
-            <b-dropdown-item class=""
-              ><font-awesome-icon class=""/><span
+            <b-dropdown-item 
+              ><font-awesome-icon /><span
                 >Voir tous les groupes</span
               ></b-dropdown-item
             >
-            <b-dropdown-item class=""
-              ><font-awesome-icon class=""/><span
+            <b-dropdown-item
+              ><font-awesome-icon /><span
                 >Se déconnecter</span
               ></b-dropdown-item
             >
           </b-nav-item-dropdown>
         </b-navbar-nav>
     </b-navbar>
+    <b-modal 
+      ref="pref"
+      hide-footer
+      hide-header
+      :centered="true"
+      body-class="preference"
+      
+    >
+      <b-row>
+        <b-col cols="10" class="title">
+          Mes préférences
+        </b-col>
+        <b-col cols="2" class="zoneClose">
+          <button @click="hidePref()" class="close">x</button>
+        </b-col>
+      </b-row>
+      <b-row>
+        <b-col cols="12" class="sectionPref">
+          Mode de transport
+        </b-col>
+      </b-row>
+      <b-row>
+        <b-col cols="12" class="sectionPref">
+          Notifications
+        </b-col>
+      </b-row>
+      <b-row>
+        <b-col cols="12" class="sectionPref">
+          Avance minimum
+        </b-col>
+      </b-row>
+      <b-row>
+        <b-col cols="12">
+          
+        </b-col>
+      </b-row>
+      <b-row>
+        <b-col cols="12" class="sectionPref">
+          Domicile
+        </b-col>
+      </b-row>
+    </b-modal>
     <router-view />
     <footer>
       © The Council - Tous droits réservés 2021 / Mise à jour 2021-09-10
     </footer>
   </div>
 </template>
+
 <script>
 export default {
-  data() {
-    
+  data() {},
+  methods:{
+    showPref(){
+      this.$refs["pref"].show();
+    },
+    hidePref() {
+      this.$refs["pref"].hide();
+    },
   },
 }
 </script>
@@ -95,6 +144,8 @@ footer {
 }
 .date{
   font-weight: bold;
+  white-space: nowrap;
+  width: 232px;
 }
 .date:hover{
   text-decoration: none;
@@ -158,5 +209,35 @@ nav ul li{
 nav{
   height: 56px !important;
   line-height: 56px !important;
+}
+.zoneClose {
+  vertical-align: middle;
+  margin-top: 5px;
+}
+.close {
+  vertical-align: middle;
+  font-size: 30px !important;
+  color: #ffffff;
+  border: none;
+  background: transparent;
+  text-align: center;
+}
+.preference{
+  background: #da8300;
+  border-radius: 11px;
+  color: #ffffff;
+}
+.title{
+  font-size: 25px;
+  color: #ffffff;
+  font-weight: bold;
+}
+.modal .modal-content{
+  padding:0 !important;
+  border-radius: 15px;
+}
+.sectionPref{
+  font-size: 13px;
+  font-weight: bold;
 }
 </style>
