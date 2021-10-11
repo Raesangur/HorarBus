@@ -132,11 +132,7 @@ nav {
   background: transparent;
   text-align: center;
 }
-.preference {
-  background: #da8300;
-  border-radius: 11px;
-  color: #ffffff;
-}
+
 .title {
   font-size: 25px;
   color: #ffffff;

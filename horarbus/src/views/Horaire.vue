@@ -74,6 +74,7 @@
         hide-footer
         hide-header
         body-class="modal-calendar"
+        dialog-class="modal-left"
       >
         <b-row>
           <b-col cols="10" class="title"> {{ value }} </b-col>
@@ -100,12 +101,7 @@
             </b-row>
             <b-row>
               <b-col>
-                <b-button
-                  class="today"
-                  @click="setToday"
-                >
-                  Set Today
-                </b-button>
+                <b-button class="today" @click="setToday"> Set Today </b-button>
               </b-col>
             </b-row>
           </b-col>
@@ -216,7 +212,7 @@ export default {
     updateTime() {
       setInterval(() => this.cal.updateTimes(), 60 * 1000);
     },
-    
+
     getEventColor(event) {
       return event.color;
     },
@@ -279,7 +275,6 @@ export default {
       let val = now.toISOString().split("T");
       this.value = val[0];
       this.today = month + year;
-      
     },
   },
 };
@@ -442,13 +437,13 @@ nav {
   background: transparent;
   text-align: center;
 }
-.preference {
-  background: #da8300;
+/deep/.preference {
+  background: #222222;
   border-radius: 11px;
   color: #ffffff;
 }
 /deep/.modal-calendar {
-  background: #2b2b2b;
+  background: #222222;
   border-radius: 11px;
   color: #ffffff;
 }
@@ -484,19 +479,21 @@ nav {
   font-size: 18px;
   font-weight: bolder;
   background: transparent;
+  border: 1px solid #ffffff;
 }
 .today:hover {
   border-radius: 5px;
   width: 100%;
   color: #000000;
   background: #ffffff;
+  border: none;
 }
-/deep/.btn-outline-primary{
+/deep/.btn-outline-primary {
   color: #ffffff !important;
   border-color: none !important;
   background: #007bff;
 }
-/deep/.btn-outline-primary:hover{
+/deep/.btn-outline-primary:hover {
   color: #ffffff !important;
   border-color: none !important;
   background: #007bff;
@@ -507,7 +504,7 @@ nav {
   border-color: none !important;
   background: #343a40;
 }
-/deep/.btn-outline-dark:hover{
+/deep/.btn-outline-dark:hover {
   color: #ffffff !important;
   border-color: none !important;
   background: #0062cc;
@@ -521,9 +518,26 @@ nav {
   border-color: none !important;
   background: #0062cc;
 }
-/deep/.btn-light{
+/deep/.btn-light {
   color: #ffffff !important;
   border-color: none !important;
   background: #007bff !important;
+}
+/deep/.theme--dark.v-calendar-daily{
+  background-color: #222222 !important;
+}
+/deep/.modal-left{
+  margin-left: 0px;
+}
+/deep/.b-calendar-grid{
+  background: none;
+  border: none;
+}
+/deep/.form-control{
+  color: #ffffff;
+}
+/deep/.b-calendar .b-calendar-nav .btn{
+  margin: 0 1px;
+  padding: 0;
 }
 </style>
