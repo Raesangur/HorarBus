@@ -4,7 +4,7 @@ import App from "./App.vue";
 import { router } from "./plugins/router";
 import store from "./store";
 //import Keycloak from "keycloak-js";
-import vuetify from '@/plugins/vuetify'
+import vuetify from "@/plugins/vuetify";
 import { BootstrapVue, IconsPlugin } from "bootstrap-vue";
 
 import "bootstrap/dist/css/bootstrap.css";
@@ -31,11 +31,11 @@ Vue.config.devtools = true;
 /////////////////without keycloak
 
 new Vue({
-    router,
-    store,
-    i18n,
-    vuetify,
-    render: (h) => h(App),
+  router,
+  store,
+  i18n,
+  vuetify,
+  render: (h) => h(App),
 }).$mount("#app");
 
 // keycloak
