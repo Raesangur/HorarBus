@@ -1,7 +1,21 @@
 # HorarBus
-projet UdeS de S3 
 
-# Installation de Quarkus
+Projet UdeS de S3<br>
+The Council
+
+## Composé de
+
+### [Proxy](./proxy)
+
+### [Frontend](./proxy/web)
+
+### [Backend](./server)
+
+### [Keycloack](./keycloack)
+
+### [Postgres](./postgres)
+
+<!-- # Installation de Quarkus
 
 ### Pré-requis:
 
@@ -15,4 +29,4 @@ Avoir le docker de fait (voir README.md) et actif.
 - Cocher `Import project from external model` et `Gradle`
 - IntelliJ devrait installer et builder le projet.
 - Quand la configuration d'excécution `exemple.main` apparaît, appuyer sur ►
-- Si tout est beau, la console d'IntelliJ devrait afficher QUARKUS en ascii.
+- Si tout est beau, la console d'IntelliJ devrait afficher QUARKUS en ascii. -->
