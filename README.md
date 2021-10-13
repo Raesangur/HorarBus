@@ -22,8 +22,19 @@ Projet UdeS de S3<br>The Council
     - server/main/resources/application.properties : \[**quarkus.oidc.auth-server-url**\] http://**localhost**/auth/... -> http://**192.168.0.1**/auth/...
     - server/main/resources/application.properties : \[**quarkus.datasource.jdbc.url**\] jdbc:postgresql://**localhost**/postgres -> jdbc:postgresql://**192.168.0.1**/postgres
     - server/main/resources/applicaiton.properties : \[**quarkus.http.host**\] **localhost** -> **192.168.0.1**
+- Démarrer Docker `docker-compose up -d`
 - Démarrer Quarkus (backend) via IntelliJ<br>
-- Démarrer Docker `$ docker-compose up -d`
+
+## Mise en route NodeJS
+
+Si Node est installé sur le poste de développement, exécuter les commandes suivantes au root du projet.<br>
+Il faut préalablement avoir changé les adresses IP du serveur.
+
+```bash
+docker-compose up -d
+npm i
+npm start
+```
 
 ### Sur son poste de développement
 
