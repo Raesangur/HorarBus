@@ -1,32 +1,34 @@
 # HorarBus
 
-Projet UdeS de S3<br>
-The Council
+Projet UdeS de S3<br>The Council
 
 ## Composé de
 
-### [Proxy](./proxy)
+### [Frontend](./web)
 
-### [Frontend](./proxy/web)
+### [Keycloak](./keycloak)
 
 ### [Backend](./server)
 
-### [Keycloack](./keycloack)
-
 ### [Postgres](./postgres)
 
-<!-- # Installation de Quarkus
+## Mise en route
 
-### Pré-requis:
+- Paramétrer l'adresse du serveur<br>_Supposons 192.168.0.1 l'adresse du serveur local_
+  - Keycloak:
+    - keycloak/utils/**backend**.json : \[**rootUrl**\] http://**localhost** -> http://**192.168.0.1**
+    - keycloak/utils/**frontend**.json : \[**rootUrl**\] http://**localhost** -> http://**192.168.0.1**
+  - Backend:
+    - server/main/resources/application.properties : \[**quarkus.oidc.auth-server-url**\] http://**localhost**/auth/... -> http://**192.168.0.1**/auth/...
+    - server/main/resources/applicaiton.properties : \[**quarkus.datasource.jdbc.url**\] jdbc:postgresql://**localhost**/postgres -> jdbc:postgresql://**192.168.0.1**/postgres
+- Démarrer Quarkus (backend) via IntelliJ<br>
+- Démarrer Docker `$ docker-compose up -d`
 
-Avoir le docker de fait (voir README.md) et actif.
+### Sur son poste de développement
 
-### IntelliJ
+Visiter [localhost](http:/localhost)
 
-- Copier le projet de la site de session sur son ordinateur.
-- Dans IntelliJ, `File > New > Project from Existing Sources`
-- Sélectionner le dossier du projet.
-- Cocher `Import project from external model` et `Gradle`
-- IntelliJ devrait installer et builder le projet.
-- Quand la configuration d'excécution `exemple.main` apparaît, appuyer sur ►
-- Si tout est beau, la console d'IntelliJ devrait afficher QUARKUS en ascii. -->
+### Sur son cellulaire
+
+Ouvrir l'application.<br>
+Saisir l'adresse IP du poste de développement
