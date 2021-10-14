@@ -13,7 +13,7 @@
 		<p id="backend_answer">Reponse du backend:</p>
 
 		<script>
-			fetch("http://localhost:8888/hello")
+			fetch("/api/hello/")
 				.then((answer) => answer.text("utf8"))
 				.then((textAnswer) => (document.getElementById("backend_answer").innerText += " " + textAnswer));
 		</script>
