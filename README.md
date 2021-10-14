@@ -32,7 +32,15 @@ SERVER_URL=VOTRE_ADRESSE_IP (ex: 192.168.0.1)
 
 ```
 SERVER_URL=LA_MEME_ADRESSE_IP (ex: 192.168.0.1)
+GOOGLE_API_KEY=LA_CLE_GOOGLE
 ```
+
+Changer l'IP dans les settings de Keycloak:
+
+- ./keycloak/utils/frontend.json : rootUrl -> http://**192.168.0.1** (ex)
+- ./keycloak/utils/frontend.json : rootUrl -> http://**192.168.0.1** (ex)
+
+Ensuite
 
 - Démarrer Docker `docker-compose up -d`
 - Démarrer Quarkus (backend) via IntelliJ<br>
