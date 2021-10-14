@@ -17,5 +17,8 @@
 	"bugs": {
 		"url": "https://github.com/Raesangur/HorarBus/issues"
 	},
-	"homepage": "https://github.com/Raesangur/HorarBus#readme"
+	"homepage": "https://github.com/Raesangur/HorarBus#readme",
+	"devDependencies": {
+		"concurrently": "^6.3.0"
+	}
 }
