@@ -12,6 +12,18 @@ Projet UdeS de S3<br>The Council
 
 ### [Postgres](./postgres)
 
+## Mise en route interface
+
+Effectuer les commandes suivantes ([NodeJS](https://nodejs.org/en/) doit être installé sur le poste):
+
+```bash
+cd web
+npm i
+npm run serve
+```
+
+Si la mise en route NodeJs faite via le root du projet est effectuée, pas besoin de la dernière commande.
+
 ## Mise en route
 
 Obtenir l'adresse IP de son serveur local (machine de développement).<br>

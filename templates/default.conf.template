@@ -22,6 +22,10 @@ server {
         root /usr/share/nginx/web;
     }
 
+    location /dev {
+        rewrite /dev http://${SERVER_URL}:8080;
+    }
+
     location /auth {
         proxy_pass http://keycloak:8080;
     }
