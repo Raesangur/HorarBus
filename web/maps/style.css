@@ -47,4 +47,5 @@ main {
 
 #apiKey {
     top: 60vh;
+    visibility: hidden;
 }

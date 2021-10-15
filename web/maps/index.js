@@ -3,21 +3,39 @@ let initialized;
 let map;
 let mapElement = document.getElementById('map');
 
+let mapsUrl = 'http://www.localhost:8888/maps'
+
 var directionsService;
 var directionsRenderer;
 
+async function init() {
+    console.log("Fetching API key");
+    let data = await fetch(mapsUrl + '/api');
+
+    let key = document.getElementById('apiKey');
+    key.value = await data.text('UTF-8');
+
+    enterApiKey();
+}
 
 function initMap() {
   directionsService = new google.maps.DirectionsService();
   directionsRenderer = new google.maps.DirectionsRenderer();
-  let mapOptions = {
-      zoom: 10,
-      center: {lat: 45.3743085028, lng: -71.9232596403}
-    };
-  map = new google.maps.Map(mapElement, mapOptions);
-  directionsRenderer.setMap(map);
 
-  initialized = "true";
+  defaultLatPromise = fetchMapsSettings(mapsUrl + '/defaultLat');
+  defaultLngPromise = fetchMapsSettings(mapsUrl + '/defaultLng');
+  defaultZoomPromise = fetchMapsSettings(mapsUrl + '/defaultZoom');
+  Promise.all([defaultLatPromise, defaultLngPromise, defaultZoomPromise])
+    .then(([defaultLat, defaultLng, defaultZoom]) => {
+      let mapOptions = {
+        zoom: parseFloat(defaultZoom),
+        center: {lat: parseFloat(defaultLat), lng: parseFloat(defaultLng)}
+      };
+      map = new google.maps.Map(mapElement, mapOptions);
+      directionsRenderer.setMap(map);
+
+      initialized = "true";
+    });
 }
 
 function submitGoogleMaps() {
@@ -28,6 +46,21 @@ function submitGoogleMaps() {
     console.log(dest);
 
     calcRoute(orig, dest, mode);
+}
+
+function fetchMapsSettings(url) {
+  return new Promise(async (resolve, reject) => {
+    let data;
+    try {
+      data = await fetch(url);
+      data = data.text('UTF-8');
+      console.log("Fetched " + data + "from: " + url);
+    } catch(error) {
+      console.error("Error fetching from " + url + ": " + error);
+      reject();
+    }
+    resolve(data);
+  })
 }
 
 function extractPlaceId(placeString) {

@@ -7,7 +7,7 @@
     <link rel="stylesheet" type="text/css" href="./style.css" />
 </head>
 
-<body>
+<body onload='init()'>
     <main>
         <div id="directions">
             <div id="directionsHeader" class="directionsEntry">
@@ -20,21 +20,9 @@
                 <option value = "WALKING"> À pied </option>
                 <option value = "TRANSMIT"> Par autobus </option>
             </input>
-            <input type="submit" id="directionSearch" class="directionsEntry" value="Search" onclick="submitGoogleMaps()"></input>
-            <script>
-                async function fetchAsync () {
-                    let url = 'http://localhost:8888/maps/api'
-                    console.log("Fetching API key");
-                    let data = await fetch(url);
-
-                    let key = document.getElementById('apiKey');
-                    key.value = await data.text('UTF-8');
-
-                    enterApiKey();
-                }
-            </script>
+            <input type="submit" id="directionSearch" class="directionsEntry" value="Search" onclick="submitGoogleMaps()" hidden='true'></input>
             <ul id="directionSteps"></ul>
-            <input type="text" id="apiKey" class="directionsEntryImportant" oninput="fetchAsync()"></input>
+            <input type="text" id="apiKey" class="directionsEntryImportant" oninput="enterApiKey()"></input>
         </div>
         <div id="map"></div>
     </main>
@@ -42,5 +30,4 @@
     <!-- Async script executes immediately and must be after any DOM elements used in callback. -->
     <script src="./index.js"></script>
 </body>
-
 </html>

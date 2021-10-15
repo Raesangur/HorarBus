@@ -1,0 +1,24 @@
+{
+	"name": "horarbus",
+	"version": "1.0.0",
+	"description": "Projet UdeS de S3",
+	"main": "index.js",
+	"scripts": {
+		"start": "concurrently \"npm run startServer\" \"npm run startWeb\"",
+		"startServer": "cd server && .\\gradlew quarkusDev",
+		"startWeb": "cd web && echo \"TODO\""
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/Raesangur/HorarBus.git"
+	},
+	"author": "",
+	"license": "ISC",
+	"bugs": {
+		"url": "https://github.com/Raesangur/HorarBus/issues"
+	},
+	"homepage": "https://github.com/Raesangur/HorarBus#readme",
+	"devDependencies": {
+		"concurrently": "^6.3.0"
+	}
+}
