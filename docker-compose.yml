@@ -6,6 +6,7 @@ services:
     volumes:
       - ./templates:/etc/nginx/templates
       - ./web/dist:/usr/share/nginx/web/
+      - ./web:/usr/share/nginx/web/dev/
     ports:
       - 80:80
     environment:
