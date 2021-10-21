@@ -3,8 +3,8 @@ ENV NPM_CONFIG_LOGLEVEL info
 
 USER root
 
-COPY ./web/ /app/web/
-WORKDIR /app/
+COPY ./web /app/web
+WORKDIR /app/web
 RUN npm install
 
 COPY ./docker/node/entrypoint.sh /app/entrypoint.sh
