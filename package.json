@@ -8,10 +8,10 @@
 		"start:server": "cd server && java -jar build/quarkus-app/quarkus-run.jar",
 		"build": "npm run build:server && npm run build:web",
 		"build:server": "cd server && .\\gradlew build",
-		"build:web": "cd web && npm run build",
+		"build:web": "cd app/web && npm run build",
 		"dev": "concurrently \"npm run dev:server\" \"npm run dev:web\"",
 		"dev:server": "cd server && .\\gradlew quarkusDev",
-		"dev:web": "cd web && npm run serve",
+		"dev:web": "cd app/web && npm run serve",
 		"docker": "cd docker && docker-compose down && docker-compose build && docker-compose up -d --remove-orphans && cd .."
 	},
 	"repository": {
