@@ -1,5 +1,8 @@
 package com.horarbus;
 
+import com.horarbus.config.Config;
+import com.horarbus.config.ConfigException;
+
 import java.nio.file.Files;
 import java.nio.charset.StandardCharsets;
 import java.io.*;
@@ -13,9 +16,14 @@ public class MapsResource {
 
     @GET
     @Produces(MediaType.TEXT_HTML)
-    @Path("/api")
+    @Path("/key")
     public String get_api_key() {
-        return "-- INSERT API KEY HERE --";
+        try {
+            return Config.getConfig("googleApiKey");
+        } catch (ConfigException e) {
+            e.printStackTrace();
+            return "undefined";
+        }
     }
 
     @GET
