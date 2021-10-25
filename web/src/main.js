@@ -31,11 +31,11 @@ Vue.config.devtools = true;
 /////////////////without keycloak
 
 new Vue({
-  router,
-  store,
-  i18n,
-  vuetify,
-  render: (h) => h(App),
+	router,
+	store,
+	i18n,
+	vuetify,
+	render: (h) => h(App),
 }).$mount("#app");
 
 // keycloak

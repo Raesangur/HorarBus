@@ -1,34 +1,22 @@
 import axios from "axios";
 
-if (process.env.NODE_ENV === "development") {
-}
+axios.interceptors.request.use(
+	(config) => {
+		if (process.env.NODE_ENV === "development") {
+			if (config.url.startsWith("/api")) {
+				config.url = `http://${window.location.hostname}${config.url}`;
+			}
+		}
 
-console.log(backUrl);
+		const token = "bearer " + localStorage.getItem("vue-token");
+		if (token) {
+			config.headers["Authorization"] = token;
+		}
+		return config;
+	},
+	(error) => {
+		return Promise.reject(error);
+	}
+);
 
-export default {
-  default() {
-    const instance = axios.create({
-      baseURL: backUrl,
-      /*headers: {
-              Accept: "application/json",
-              "Content-Type": "application/json",
-            },*/
-    });
-
-    instance.interceptors.request.use(
-      (config) => {
-        const token = "bearer " + localStorage.getItem("vue-token");
-        if (token) {
-          config.headers["Authorization"] = token;
-        }
-        //console.log(config)
-        return config;
-      },
-      (error) => {
-        return Promise.reject(error);
-      }
-    );
-
-    return instance;
-  },
-};
+export { axios };
