@@ -1,0 +1,180 @@
+.fc .fc-axis span {
+    position: relative;
+    top: -10px;
+}
+
+.fc .fc-axis,
+.fc .fc-body>tr>td,
+.fc .fc-row,
+.fc .fc-row th,
+.fc .fc-time-grid .fc-slats .fc-minor td {
+    border: none;
+}
+
+.fc .fc-content .locale {
+    margin: 5px 0;
+}
+
+.fc .fc-day-grid .fc-event .fc-content span {
+    display: inline-block;
+}
+
+.fc .fc-day-grid .fc-event .fc-content {
+    white-space: unset;
+}
+
+.fc .fc-content .info .teachers {
+    font-size: smaller;
+}
+
+.fc .fc-day-header .day-month .day {
+    font-size: 28px;
+    margin-bottom: -6px;
+    margin-right: 4px;
+}
+
+.fc .fc-day-header .day-month .month {
+    font-weight: normal;
+}
+
+.fc .fc-day-header .day-month {
+    display: inline-flex;
+    align-items: baseline;
+}
+
+.fc .fc-event .content {
+    padding: 2px;
+}
+
+.fc .fc-event .content {
+    padding: 2px;
+}
+
+.fc .fc-event {
+    cursor: help;
+}
+
+.fc .fc-event.event-alternate {
+    opacity: 0.75
+}
+
+.fc .fc-event.ellipsis::after {
+    bottom: -4px;
+    content: '...';
+    font-weight: bolder;
+    position: absolute;
+    right: 4px;
+    text-align: right;
+}
+
+.fc .fc-event.focus.ellipsis::after {
+    content: '';
+}
+
+.fc .fc-head-container .fc-axis {
+    border-right: none;
+    cursor: pointer;
+    text-align: center;
+}
+
+.fc .fc-head-container {
+    border-bottom: double lightgray;
+    border-left: none;
+    border-right: none;
+    border-top: none;
+}
+
+.fc .fc-header-toolbar h2 {
+    cursor: pointer;
+    font-size: 2em;
+}
+
+.fc .fc-header-toolbar {
+    margin: 0 20px !important;
+}
+
+.fc .fc-list-item .locale {
+    font-weight: bold;
+    padding-left: 0;
+    padding-right: 0;
+    text-align: right;
+    width: 60px;
+    white-space: nowrap;
+}
+
+.fc .fc-list-item-time {
+    text-align: right;
+    width: 1px;
+}
+
+.fc .fc-list-item-time div {
+    font-weight: bold;
+}
+
+.fc .fc-list-item-title a {
+    font-size: larger;
+}
+
+.fc .fc-list-item-title p {
+    font-weight: 300;
+}
+
+.fc .fc-slats tr:first-child span {
+    display: none;
+}
+
+.fc .fc-time-grid .fc-now-indicator-line {
+    border-top-width: 2px;
+}
+
+.fc .fc-title {
+    font-weight: bold;
+}
+
+.fc .fc-title {
+    padding-right: 5px;
+}
+
+.fc .fc-title::first-letter {
+    text-transform: capitalize;
+}
+
+.fc .fc-toolbar.fc-header-toolbar button {
+    margin-top: 5px;
+}
+
+.fc .fc-v-event {
+    margin: 1px;
+    padding: 2px;
+}
+
+.fc td.fc-today {
+    background: #eeee;
+}
+
+.fc .fc-past {
+    color: black;
+}
+
+.fc .fc-today {
+    color: purple;
+}
+
+.fc .fc-list-heading-main {
+    font-size: 30px;
+    text-transform: uppercase;
+}
+
+.fc .fc-list-heading-alt {
+    font-weight: 300;
+}
+
+.fc tr td {
+    border-left-color: #eeee;
+    border-right-color: #eeee;
+    border-top-color: lightgray;
+}
+
+.fc tr {
+    border: none;
+}
