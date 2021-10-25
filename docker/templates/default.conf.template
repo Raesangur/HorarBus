@@ -2,8 +2,6 @@ server {
     listen 80;
 
     charset UTF-8;
-
-    error_page 404 /notFound.html;
     include /etc/nginx/mime.types;
 
     access_log off;
@@ -20,10 +18,6 @@ server {
 
     root /usr/share/nginx/web;
     index index.html;
-
-    location / {
-        root /usr/share/nginx/web;
-    }
 
     location /auth {
         proxy_pass http://keycloak:8080;
