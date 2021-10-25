@@ -9,13 +9,13 @@
 					<a class="date" v-if="$refs.calendar" @click="showChoseDate()">
 						{{ this.$refs.calendar.title }}
 					</a>
-					<a class="date" v-else @click="showChoseDate()"> {{ today }}oidnaoidanoidpandanpwd </a>
+					<a class="date" v-else @click="showChoseDate()"> {{ today }} </a>
 					<button class="caret" @click="next()">
 						<b-icon-caret-right-fill></b-icon-caret-right-fill>
 					</button>
 				</b-navbar-nav>
 				<b-navbar-nav class="navbar-menu mx-auto">
-					<div class="nom" style="cursor: default">HorarBus?</div>
+					<div class="nom" style="cursor: default">HorarBus</div>
 				</b-navbar-nav>
 				<b-navbar-nav class="navbar-menu mx-auto" style="margin-right: 0 !important">
 					<b-nav-item-dropdown right class="drop" no-caret>

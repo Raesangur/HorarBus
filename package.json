@@ -4,14 +4,9 @@
 	"description": "Projet UdeS de S3",
 	"main": "index.js",
 	"scripts": {
-		"start": "npm run start:server",
 		"start:server": "cd server && java -jar build/quarkus-app/quarkus-run.jar",
-		"build": "npm run build:server && npm run build:web",
 		"build:server": "cd server && .\\gradlew build",
-		"build:web": "cd app/web && npm run build",
-		"dev": "concurrently \"npm run dev:server\" \"npm run dev:web\"",
 		"dev:server": "cd server && .\\gradlew quarkusDev",
-		"dev:web": "cd app/web && npm run serve",
 		"docker": "cd docker && docker-compose down && docker-compose build && docker-compose up -d --remove-orphans && cd .."
 	},
 	"repository": {
@@ -23,8 +18,5 @@
 	"bugs": {
 		"url": "https://github.com/Raesangur/HorarBus/issues"
 	},
-	"homepage": "https://github.com/Raesangur/HorarBus#readme",
-	"devDependencies": {
-		"concurrently": "^6.3.0"
-	}
+	"homepage": "https://github.com/Raesangur/HorarBus#readme"
 }
