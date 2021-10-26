@@ -1,4 +1,4 @@
-# horarbus
+# web
 
 ## Project setup
 ```
