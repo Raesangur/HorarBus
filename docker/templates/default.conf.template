@@ -21,6 +21,7 @@ server {
 
     location /auth {
         proxy_pass http://keycloak:8080;
+        add_header 'Access-Control-Allow-Origin' '*' always;
     }
 
     location ~ /api/(?<route>.+) {
