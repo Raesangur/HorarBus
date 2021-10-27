@@ -4,7 +4,8 @@
 	"description": "Projet UdeS de S3",
 	"main": "index.js",
 	"scripts": {
-		"docker": "cd docker && docker-compose down && docker-compose up -d",
+		"docker": "npm run set:env && cd docker && docker-compose down && docker-compose up -d",
+		"set:env": "bash set_env.sh",
 		"start": "npm run docker && npm run start:server",
 		"start:server": "cd server && java -jar build/quarkus-app/quarkus-run.jar",
 		"build": "npm run build:web && npm run build:server",
