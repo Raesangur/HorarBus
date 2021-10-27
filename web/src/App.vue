@@ -12,6 +12,7 @@ export default {
 	data: () => ({}),
 	mounted() {
 		axios.get("/api/hello").then((response) => console.log(response));
+		axios.get("/auth").then((response) => console.log(response));
 	},
 };
 </script>
