@@ -159,7 +159,7 @@
         @click:event="showEvent"
         :type="type"
         class="calendar"
-        v-if="largeur >= 768"
+       
       >
         <template v-slot:day-body="{ date, week }">
           <div
@@ -737,8 +737,7 @@ nav {
     cursor: pointer;
   }
   .calendar {
-    height: calc(100%-56px);
-    position: unset;
+    display: none;
   }
   .toggle {
     border: none;
