@@ -1,7 +1,7 @@
 {
 	"clientId": "frontend",
 	"name": "Authorisation de connection à une page web",
-	"rootUrl": "http://localhost",
+	"rootUrl": "http://192.168.0.100",
 	"adminUrl": "",
 	"baseUrl": "/",
 	"surrogateAuthRequired": false,
