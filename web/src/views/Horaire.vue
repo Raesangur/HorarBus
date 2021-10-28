@@ -171,50 +171,57 @@
       </v-calendar>
       <div class="agenda" v-else>
         <table style="background:#ffffff">
-        <tbody v-for="(day, index) in days" :key="index">
-          <tr>
-            <td class="day">
-              {{
-                day
-              }}
-            </td>
-          </tr>
-          <tr v-for="(event,i) in events" :key="i">
-            <td class="tdEvent">
-              <b-row class="tdEvent">
-                <b-col cols="3" style="text-align:right;padding:12px 0px">
-                  {{event.heure}}
-                  
-                  <br>
-                  
-                  <div class="local">
-                    {{event.local}}
+          <tbody v-for="(day, index) in days" :key="index">
+            <tr>
+              <td class="day">
+                {{
+                  day
+                }}
+              </td>
+            </tr>
+            <tr v-for="(event,i) in events" :key="i">
+              <td class="tdEvent">
+                <b-row class="tdEvent">
+                  <b-col cols="3" style="text-align:right;padding:12px 0px">
+                    {{event.heure}}
                     
-                  </div>
-                </b-col>
-                <b-col cols="1" >
-                  <span class="dot" style="background-color:blueviolet"></span>
-                </b-col>
-                <b-col cols="8" style="text-align:left">
-                  
-                  <a style="font-size: larger;">
-                    <!-- Projet -->
-                    {{event.name}}
-                  </a>
-                  <p style="margin-top: 15px; margin-bottom:0">
-                    {{event.description1}}
-                    <!-- Conception d'un système informatique distribué -->
                     <br>
-                    <br>
-                    {{event.description2}}
-                    <!-- Port du masque de procédure obligatoire -->
-                  </p>
-                </b-col>
-              </b-row>
-            </td>
-          </tr>
-        </tbody>
-      </table>
+                    
+                    <div class="local">
+                      {{event.local}}
+                      
+                    </div>
+                  </b-col>
+                  <b-col cols="1" >
+                    <span class="dot" style="background-color:blueviolet"></span>
+                  </b-col>
+                  <b-col cols="8" style="text-align:left">
+                    
+                    <a style="font-size: larger;">
+                      Projet 
+                      {{event.name}}
+                    </a>
+                    <p style="margin-top: 15px; margin-bottom:0">
+                      {{event.description1}}
+                      Conception d'un système informatique distribué 
+                      <br>
+                      <br>
+                      {{event.description2}}
+                      Port du masque de procédure obligatoire 
+                    </p>
+                  </b-col>
+                </b-row>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div v-if="largeur < 768">
+        <Fullcalendar 
+           :options="calendarOptions"
+           :events="events"
+           v-model="value"
+        />
       </div>
     </b-col>
   </b-row>
@@ -222,11 +229,28 @@
 
 <script>
 import { mapState } from "vuex";
+
+require('@fullcalendar/list/main.css')
+import Fullcalendar from '@fullcalendar/vue'
+import InteractionPlugin from '@fullcalendar/interaction'
+import ListPlugin from '@fullcalendar/list'
+import allLocales from '@fullcalendar/core/locales-all';
+
 export default {
+  components:{
+    Fullcalendar,
+  },
   data: () => ({
     today: new Date(),
     value: new Date(),
     type: "week",
+    calendarOptions: {
+        plugins: [ InteractionPlugin,ListPlugin],
+        initialView: 'listWeek',
+        locales: allLocales,
+        locale: 'fr',
+        headerToolbar:"false",
+      },
     ready: false,
     largeur: 0,
     darkMode: true,
@@ -241,12 +265,12 @@ export default {
     ],
     events: [
       {
-        start: "2021-10-27 14:00",
-        end: "2021-10-27 16:00",
+        start: "2021-10-28 14:00",
+        end: "2021-10-28 16:00",
         name: "Projet,Conception d'un système informatique distribué,Port du masque de Procédure obligatoire".split(",")[0],
         description1: "Projet,Conception d'un système informatique distribué,Port du masque de Procédure obligatoire".split(",")[1],
         description2: "Projet,Conception d'un système informatique distribué,Port du masque de Procédure obligatoire".split(",")[2],
-        heure: "2021-10-27 14:00".split(" ")[1]+" - "+"2021-10-27 16:00".split(" ")[1],
+        heure: "2021-10-28 14:00".split(" ")[1]+" - "+"2021-10-28 16:00".split(" ")[1],
         local: "C1-5006",
       },
       {
@@ -277,11 +301,10 @@ export default {
 
   mounted() {
     this.resize();
-    this.getToday();
-    this.$refs.calendar.checkChange();
-    this.ready = true;
+    this.ready = true; 
     this.scrollToTime();
     this.updateTime();
+    this.$refs.calendar.checkChange();
   },
 
   computed: {
@@ -301,11 +324,6 @@ export default {
     },
     resize() {
       this.largeur = window.innerWidth;
-      if (this.largeur >= 768) {
-        this.type = "week";
-      } else {
-        this.type = "custom-weekly";
-      }
     },
     showPref() {
       this.$refs["pref"].show();
@@ -319,17 +337,17 @@ export default {
     hideChoseDate() {
       this.$refs["chooseDate"].hide();
     },
-    getCurrentTime() {
-      return this.cal
-        ? this.cal.times.now.hour * 60 + this.cal.times.now.minute
-        : 0;
-    },
-    scrollToTime() {
-      const time = this.getCurrentTime();
-      const first = Math.max(0, time - (time % 30) - 30);
+    getCurrentTime () {
+        return this.cal ? this.cal.times.now.hour * 60 + this.cal.times.now.minute : 0
+      },
+    scrollToTime () {
+        const time = this.getCurrentTime()
+        console.log(time)
+        const first = Math.max(0, time - (time % 30) - 30)
+        console.log(first)
+        this.cal.scrollToTime(first)
+      },
 
-      this.cal.scrollToTime(first);
-    },
     updateTime() {
       setInterval(() => this.cal.updateTimes(), 60 * 1000);
     },
@@ -338,16 +356,23 @@ export default {
       return event.color;
     },
     next() {
-      this.$refs.calendar.next();
+      let actual = new Date(this.value);
+      //this.value.setDate(actual.getDate() + 7);
+      console.log(actual);
+      if(this.$refs.calendar){
+        this.$refs.calendar.next();
+      }
     },
     prev() {
-      this.$refs.calendar.prev();
+      if(this.$refs.calendar){
+        this.$refs.calendar.prev();
+      }
     },
     showEvent() {},
     setToday() {
       const now = new Date();
-      let val = now.toISOString().split("T");
-      this.value = val[0];
+      let val = now.toISOString();
+      this.value = val;
     },
     getToday() {
       let now = new Date();
@@ -393,8 +418,7 @@ export default {
           break;
       }
       let year = now.getFullYear();
-      let val = now.toISOString().split("T");
-      this.value = val[0];
+      //let val = now.toISOString().split("T");
       this.today = month + year;
     },
     logout() {
@@ -693,8 +717,8 @@ nav {
 /deep/.pl-1{
   text-align: left;
 }
-/deep/.v-calendar{
-  margin: 0;
+/deep/.v-calendar .v-event-timed-container{
+  margin-right: 0 !important;
 }
 @media (max-width: 992px) {
   /deep/.modal {
