@@ -3,14 +3,12 @@ let initialized;
 let map;
 let mapElement = document.getElementById('map');
 
-let mapsUrl = 'http://www.localhost:8888/maps'
-
 var directionsService;
 var directionsRenderer;
 
 async function init() {
     console.log("Fetching API key");
-    let data = await fetch(mapsUrl + '/api');
+    let data = await fetch('/api/maps/key');
 
     let key = document.getElementById('apiKey');
     key.value = await data.text('UTF-8');
@@ -22,9 +20,9 @@ function initMap() {
   directionsService = new google.maps.DirectionsService();
   directionsRenderer = new google.maps.DirectionsRenderer();
 
-  defaultLatPromise = fetchMapsSettings(mapsUrl + '/defaultLat');
-  defaultLngPromise = fetchMapsSettings(mapsUrl + '/defaultLng');
-  defaultZoomPromise = fetchMapsSettings(mapsUrl + '/defaultZoom');
+  defaultLatPromise = fetchMapsSettings('/api/maps/defaultLat');
+  defaultLngPromise = fetchMapsSettings('/api/maps/defaultLng');
+  defaultZoomPromise = fetchMapsSettings('/api/maps/defaultZoom');
   Promise.all([defaultLatPromise, defaultLngPromise, defaultZoomPromise])
     .then(([defaultLat, defaultLng, defaultZoom]) => {
       let mapOptions = {

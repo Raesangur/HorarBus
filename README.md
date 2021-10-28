@@ -14,45 +14,97 @@ Projet UdeS de S3<br>The Council
 
 ## Mise en route
 
-Obtenir l'adresse IP de son serveur local (machine de développement).<br>
-Saisir les valeurs suivantes pour les fichiers appropriés:
+<details>
+<summary><b>Prérequis</b></summary><br>
 
-./.env
+Installer les logiciels suivants:
 
+- [Docker](https://www.docker.com/)
+- [NodeJS](https://nodejs.org/en/)
+
+Effectuer les commandes suivantes à la source du projet:
+
+```bash
+npm install
+cd web
+npm install -g @vue/cli
+npm install
+cd ..
 ```
+
+</details>
+
+<details>
+<summary><b>Configuration</b></summary><br>
+
+Il faut spécifier comment écouter les requêtes entrantes pour que le projet fonctionne sur les cellulaires. Ajouter ou modifier les fichiers suivants:
+
+<ul>
+
+<li>
+<details>
+<summary>./docker/<b>.env</b></summary>
+<pre>
 KEYCLOAK_USER=admin
 KEYCLOAK_PASSWORD=admin
+
 POSTGRES_USER=postgres
 POSTGRES_PASSWORD=postgres
 POSTGRES_DATABASE=postgres
-SERVER_URL=VOTRE_ADRESSE_IP (ex: 192.168.0.1)
-```
 
-./server/.env
+SERVER_URL=VOTRE_ADRESSE_IP (ex: 192.168.0.1)</pre>
 
-```
-SERVER_URL=LA_MEME_ADRESSE_IP (ex: 192.168.0.1)
-```
+</details>
+</li>
 
-- Démarrer Docker `docker-compose up -d`
-- Démarrer Quarkus (backend) via IntelliJ<br>
+<li>
+<details>
+<summary>./keycloak/utils/<b>backend.json</b></summary>
+Changer <code>rootUrl</code> pour <code>http://VOTRE_ADRESSE_IP</code>
+</details>
+</li>
 
-## Mise en route NodeJS
+<li>
+<details>
+<summary>./keycloak/utils/<b>frontend.json</b></summary>
+Changer <code>rootUrl</code> pour <code>http://VOTRE_ADRESSE_IP</code>
+</details>
+</li>
 
-Si Node est installé sur le poste de développement, exécuter les commandes suivantes au root du projet.<br>
-Il faut préalablement avoir changé les adresses IP du serveur.
+<li>
+<details>
+<summary>./server/<b>.env</b></summary>
+<pre>
+SERVER_URL=VOTRE_ADRESSE_IP</pre>
+</details>
+</li>
 
-```bash
-docker-compose up -d
-npm i
-npm start
-```
+<li>
+<details>
+<summary>./server/src/main/resources/<b>config.properties</b></summary>
+<pre>googleApiKey=DEMANDER_LA_CLEF_A_PASCAL</pre>
+</details>
+</li>
 
-### Sur son poste de développement
+</ul>
+</details>
 
-Visiter [localhost](http:/localhost)
+<details>
+<summary><b>Commandes disponibles</b></summary><br>
 
-### Sur son cellulaire
+Pour le développement ([localhost:8080](http://localhost:8080)): `npm run dev`
 
-Ouvrir l'application.<br>
-Saisir l'adresse IP du poste de développement.
+Pour compiler les projets: `npm run build`
+
+Pour démarrer la version compilée ([localhost](http://localhost)): `npm run start`
+
+</details>
+
+<details>
+<summary><b>Accéder à l'api</b></summary><br>
+
+Pour appeler l'api via le projet, naviger vers `/api/...` où `...` est la route souhaitée.
+
+Utiliser axios provenant de `services/api.js` dans le frontend pour faciliter le développement.
+
+</details>
