@@ -4,7 +4,10 @@
 	"description": "Projet UdeS de S3",
 	"main": "index.js",
 	"scripts": {
+		"predocker": "npm run set:env && npm run set:keycloak",
 		"docker": "cd docker && docker-compose down && docker-compose up -d",
+		"set:env": "bash scripts/set_env.sh",
+		"set:keycloak": "node scripts/set_keycloak.js",
 		"start": "npm run docker && npm run start:server",
 		"start:server": "cd server && java -jar build/quarkus-app/quarkus-run.jar",
 		"build": "npm run build:web && npm run build:server",
@@ -25,6 +28,7 @@
 	},
 	"homepage": "https://github.com/Raesangur/HorarBus#readme",
 	"devDependencies": {
-		"concurrently": "^6.3.0"
+		"concurrently": "^6.3.0",
+		"dotenv": "^10.0.0"
 	}
 }

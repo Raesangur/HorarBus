@@ -14,8 +14,9 @@ Projet UdeS de S3<br>The Council
 
 ## Mise en route
 
-<details>
-<summary><b>Prérequis</b></summary><br>
+<hr>
+
+### Prérequis
 
 Installer les logiciels suivants:
 
@@ -32,18 +33,17 @@ npm install
 cd ..
 ```
 
-</details>
+<hr>
 
-<details>
-<summary><b>Configuration</b></summary><br>
+### Configuration
 
 Il faut spécifier comment écouter les requêtes entrantes pour que le projet fonctionne sur les cellulaires. Ajouter ou modifier les fichiers suivants:
 
 <ul>
 
 <li>
-<details>
-<summary>./docker/<b>.env</b></summary>
+./<b>.env</b>
+
 <pre>
 KEYCLOAK_USER=admin
 KEYCLOAK_PASSWORD=admin
@@ -54,43 +54,19 @@ POSTGRES_DATABASE=postgres
 
 SERVER_URL=VOTRE_ADRESSE_IP (ex: 192.168.0.1)</pre>
 
-</details>
 </li>
 
 <li>
-<details>
-<summary>./keycloak/utils/<b>backend.json</b></summary>
-Changer <code>rootUrl</code> pour <code>http://VOTRE_ADRESSE_IP</code>
-</details>
-</li>
+./server/src/main/resources/<b>config.properties</b>
 
-<li>
-<details>
-<summary>./keycloak/utils/<b>frontend.json</b></summary>
-Changer <code>rootUrl</code> pour <code>http://VOTRE_ADRESSE_IP</code>
-</details>
-</li>
-
-<li>
-<details>
-<summary>./server/<b>.env</b></summary>
-<pre>
-SERVER_URL=VOTRE_ADRESSE_IP</pre>
-</details>
-</li>
-
-<li>
-<details>
-<summary>./server/src/main/resources/<b>config.properties</b></summary>
 <pre>googleApiKey=DEMANDER_LA_CLEF_A_PASCAL</pre>
-</details>
 </li>
 
 </ul>
-</details>
 
-<details>
-<summary><b>Commandes disponibles</b></summary><br>
+<hr>
+
+### Commandes disponibles
 
 Pour le développement ([localhost:8080](http://localhost:8080)): `npm run dev`
 
@@ -98,13 +74,12 @@ Pour compiler les projets: `npm run build`
 
 Pour démarrer la version compilée ([localhost](http://localhost)): `npm run start`
 
-</details>
+<hr>
 
-<details>
-<summary><b>Accéder à l'api</b></summary><br>
+### Accéder à l'api
 
 Pour appeler l'api via le projet, naviger vers `/api/...` où `...` est la route souhaitée.
 
 Utiliser axios provenant de `services/api.js` dans le frontend pour faciliter le développement.
 
-</details>
+<hr>
