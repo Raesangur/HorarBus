@@ -169,7 +169,7 @@
           ></div>
         </template>
       </v-calendar>
-      <div class="agenda" v-else>
+      <!-- <div class="agenda" v-else>
         <table style="background:#ffffff">
           <tbody v-for="(day, index) in days" :key="index">
             <tr>
@@ -215,7 +215,7 @@
             </tr>
           </tbody>
         </table>
-      </div>
+      </div> -->
       <div v-if="largeur < 768">
         <Fullcalendar 
            :options="calendarOptions"
@@ -249,7 +249,7 @@ export default {
         initialView: 'listWeek',
         locales: allLocales,
         locale: 'fr',
-        headerToolbar:"false",
+        //headerToolbar:"false",
       },
     ready: false,
     largeur: 0,
@@ -301,10 +301,11 @@ export default {
 
   mounted() {
     this.resize();
-    this.ready = true; 
-    this.scrollToTime();
-    this.updateTime();
     this.$refs.calendar.checkChange();
+		this.ready = true;
+		this.scrollToTime();
+		this.updateTime();
+		this.getToday();
   },
 
   computed: {
@@ -780,5 +781,9 @@ nav {
     height: 10px;
     border-radius: 5px;
   }
+  /deep/.fc{
+    height: 100vh;
+  }
+
 }
 </style>
