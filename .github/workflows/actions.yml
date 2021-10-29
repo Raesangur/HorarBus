@@ -10,7 +10,7 @@ jobs:
                   node-version: "16"
                   cache: "npm"
             - run: npm install
-              working_directory: ./web
+              working-directory: ./web
 
         # Backend-Actions:
         #   runs-on: ubuntu-latest
