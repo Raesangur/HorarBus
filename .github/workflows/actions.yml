@@ -27,10 +27,15 @@ jobs:
               with:
                   java-version: "17"
                   distribution: "adopt"
+                  cache: gradle
             - uses: gradle/wrapper-validation-action@e6e38bacfdf1a337459f332974bb2327a31aaf4b
             - name: Test
               run: echo "test"
               working-directory: ./server
             - name: Build
-              run: ./gradlew build
+              run: chmod +x ./gradlew build
               working-directory: ./server
+            - name: Cleanup cache
+              run: |
+                  rm -f ~/.gradle/caches/modules-2/modules-2.lock
+                  rm -f ~/.gradle/caches/modules-2/gc.properties
