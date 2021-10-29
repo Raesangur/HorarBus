@@ -32,8 +32,11 @@ jobs:
             - name: Test
               run: echo "test"
               working-directory: ./server
+            - name: Set permissions
+              run: chmod +x ./gradlew
+              working-directory: ./server
             - name: Build
-              run: chmod +x ./gradlew build
+              run: ./gradlew build
               working-directory: ./server
             - name: Cleanup cache
               run: |
