@@ -9,8 +9,8 @@ jobs:
               with:
                   node-version: "16"
                   cache: "npm"
-            - run: cd web
             - run: npm install
+              working_directory: ./web
 
         # Backend-Actions:
         #   runs-on: ubuntu-latest
