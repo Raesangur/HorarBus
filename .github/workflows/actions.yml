@@ -9,6 +9,7 @@ jobs:
               with:
                   node-version: "16"
                   cache: "npm"
+            - run: cd web
             - run: npm install
 
         # Backend-Actions:
