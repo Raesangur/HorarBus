@@ -15,7 +15,20 @@ jobs:
               working-directory: ./web
             - run: npm run test
               working-directory: ./web
+            - run: npm run build
+              working-directory: ./web
 
-        # Backend-Actions:
-        #   runs-on: ubuntu-latest
-        #   steps:
+        Backend-Actions:
+            runs-on: ubuntu-latest
+            steps:
+                - uses: actions/checkout@v2
+                - name: Setup JDK
+                  uses: actions/setup-java@v2
+                  with:
+                      java-version: "17"
+                      distribution: "adopt"
+                - uses: gradle/wrapper-validation-action@e6e38bacfdf1a337459f332974bb2327a31aaf4b
+                - name: Test
+                  run: echo "test"
+                - name: Build
+                  run: ./gradlew build
