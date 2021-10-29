@@ -29,11 +29,11 @@ jobs:
                   distribution: "adopt"
                   cache: gradle
             - uses: gradle/wrapper-validation-action@e6e38bacfdf1a337459f332974bb2327a31aaf4b
-            - name: Test
-              run: echo "test"
-              working-directory: ./server
             - name: Set permissions
               run: chmod +x ./gradlew
+              working-directory: ./server
+            - name: Tests
+              run: ./gradlew test
               working-directory: ./server
             - name: Build
               run: ./gradlew build
