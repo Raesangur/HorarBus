@@ -11,6 +11,10 @@ jobs:
                   cache: "npm"
             - run: npm install
               working-directory: ./web
+            - run: npm run lint
+              working-directory: ./web
+            - run: npm run test
+              working-directory: ./web
 
         # Backend-Actions:
         #   runs-on: ubuntu-latest
