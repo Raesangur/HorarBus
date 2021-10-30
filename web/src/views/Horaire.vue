@@ -159,7 +159,6 @@
         @click:event="showEvent"
         :type="type"
         class="calendar"
-       
       >
         <template v-slot:day-body="{ date, week }">
           <div
@@ -169,7 +168,7 @@
           ></div>
         </template>
       </v-calendar>
-      <!-- <div class="agenda" v-else>
+      <!-- <div class="agenda" v-if="largeur < 768">
         <table style="background:#ffffff">
           <tbody v-for="(day, index) in days" :key="index">
             <tr>
@@ -217,27 +216,27 @@
         </table>
       </div> -->
       <div v-if="largeur < 768">
-        <Fullcalendar 
-           :options="calendarOptions"
-           :events="events"
-           v-model="value"
+        <Fullcalendar
+          ref="fullCalendar"
+          :options="calendarOptions"
+          @eventRender="renderEvent(this)"
+          :events="events"
         />
       </div>
     </b-col>
   </b-row>
 </template>
-
 <script>
 import { mapState } from "vuex";
-
-require('@fullcalendar/list/main.css')
-import Fullcalendar from '@fullcalendar/vue'
-import InteractionPlugin from '@fullcalendar/interaction'
-import ListPlugin from '@fullcalendar/list'
-import allLocales from '@fullcalendar/core/locales-all';
+import EventModal from "../components/EventModal";
+require("@fullcalendar/list/main.css");
+import Fullcalendar from "@fullcalendar/vue";
+import InteractionPlugin from "@fullcalendar/interaction";
+import ListPlugin from "@fullcalendar/list";
+import allLocales from "@fullcalendar/core/locales-all";
 
 export default {
-  components:{
+  components: {
     Fullcalendar,
   },
   data: () => ({
@@ -245,12 +244,52 @@ export default {
     value: new Date(),
     type: "week",
     calendarOptions: {
-        plugins: [ InteractionPlugin,ListPlugin],
-        initialView: 'listWeek',
-        locales: allLocales,
-        locale: 'fr',
-        //headerToolbar:"false",
-      },
+      plugins: [InteractionPlugin, ListPlugin],
+      initialView: "listWeek",
+      locales: allLocales,
+      //eventClick: this.handleEventClick(),
+      //eventRender: this.renderEvent(),
+      locale: "fr",
+      headerToolbar: false,
+      events: [
+        {
+          start: "2021-10-28 14:00",
+          end: "2021-10-28 16:00",
+          title:
+            "Projet,Conception d'un système informatique distribué,Port du masque de Procédure obligatoire".split(
+              ","
+            )[0],
+          description1:
+            "Projet,Conception d'un système informatique distribué,Port du masque de Procédure obligatoire".split(
+              ","
+            )[1],
+          description2:
+            "Projet,Conception d'un système informatique distribué,Port du masque de Procédure obligatoire".split(
+              ","
+            )[2],
+          heure:
+            "2021-10-28 14:00".split(" ")[1] +
+            " - " +
+            "2021-10-28 16:00".split(" ")[1],
+          local: "C1-5006",
+        },
+        {
+          name: `Thomas' Birthday`,
+          start: "2021-10-11",
+        },
+        {
+          name: "Mash Potatoes",
+          start: "2021-10-14 12:30",
+          end: "2021-10-14 15:30",
+        },
+        {
+          name: "poutine",
+          start: "2021-10-13 12:30",
+          end: "2021-10-13 15:30",
+        },
+      ],
+      eventColor: "#1867c0",
+    },
     ready: false,
     largeur: 0,
     darkMode: true,
@@ -265,12 +304,23 @@ export default {
     ],
     events: [
       {
-        start: "2021-10-28 14:00",
-        end: "2021-10-28 16:00",
-        name: "Projet,Conception d'un système informatique distribué,Port du masque de Procédure obligatoire".split(",")[0],
-        description1: "Projet,Conception d'un système informatique distribué,Port du masque de Procédure obligatoire".split(",")[1],
-        description2: "Projet,Conception d'un système informatique distribué,Port du masque de Procédure obligatoire".split(",")[2],
-        heure: "2021-10-28 14:00".split(" ")[1]+" - "+"2021-10-28 16:00".split(" ")[1],
+        start: "2021-10-29 14:00",
+        end: "2021-10-29 16:00",
+        name: "Projet,Conception d'un système informatique distribué,Port du masque de Procédure obligatoire".split(
+          ","
+        )[0],
+        description1:
+          "Projet,Conception d'un système informatique distribué,Port du masque de Procédure obligatoire".split(
+            ","
+          )[1],
+        description2:
+          "Projet,Conception d'un système informatique distribué,Port du masque de Procédure obligatoire".split(
+            ","
+          )[2],
+        heure:
+          "2021-10-28 14:00".split(" ")[1] +
+          " - " +
+          "2021-10-28 16:00".split(" ")[1],
         local: "C1-5006",
       },
       {
@@ -302,12 +352,18 @@ export default {
   mounted() {
     this.resize();
     this.$refs.calendar.checkChange();
-		this.ready = true;
-		this.scrollToTime();
-		this.updateTime();
-		this.getToday();
+    this.ready = true;
+    this.scrollToTime();
+    this.updateTime();
+    this.getToday();
   },
-
+  watch:{
+    value(){
+      let calendarApi = this.$refs.fullCalendar.getApi();
+      calendarApi.gotoDate( this.value );
+    },
+    
+  },
   computed: {
     cal() {
       return this.ready ? this.$refs.calendar : null;
@@ -322,6 +378,13 @@ export default {
   methods: {
     onResize() {
       this.resize();
+    },
+    handleEventClick(arg) {
+      console.log("test");
+      this.$modal.show(EventModal, {
+        text: "This is from the component",
+        event: arg.event,
+      });
     },
     resize() {
       this.largeur = window.innerWidth;
@@ -338,34 +401,79 @@ export default {
     hideChoseDate() {
       this.$refs["chooseDate"].hide();
     },
-    getCurrentTime () {
-        return this.cal ? this.cal.times.now.hour * 60 + this.cal.times.now.minute : 0
-      },
-    scrollToTime () {
-        const time = this.getCurrentTime()
-        console.log(time)
-        const first = Math.max(0, time - (time % 30) - 30)
-        console.log(first)
-        this.cal.scrollToTime(first)
-      },
-
+    getCurrentTime() {
+      return this.cal
+        ? this.cal.times.now.hour * 60 + this.cal.times.now.minute
+        : 0;
+    },
+    scrollToTime() {
+      const time = this.getCurrentTime();
+      const first = Math.max(0, time - (time % 30) - 30);
+      this.cal.scrollToTime(first);
+    },
     updateTime() {
       setInterval(() => this.cal.updateTimes(), 60 * 1000);
     },
+    // eventRender(info){
 
+    //             //create our component instance
+    //             const event = new EventClass({
+    //                 propsData: {
+    //                     event: info.event
+    //                 }
+    //             })
+
+    //             event.$on('edit', this.edit)
+
+    //             event.$on('delete', this.delete)
+
+    //             event.$mount();
+
+    //             //assign created component to our eventObj with uuid as key (to destroy in future)
+    //             this.eventsObj[event._uid] = event;
+
+    //             //set data-vue="{id}"
+    //             //append our compiled component to .fc-event
+    //             info.el.setAttribute('data-vue-id', event._uid);
+    //             info.el.appendChild(event.$el)
+
+    //         },
+    renderEvent(arg) {
+      //let span = "<br>"+arg.event.local
+      let p = document.createElement("p");
+      let text = document.createTextNode(
+        arg.event.description1 + "<br><br>" + arg.event.description2
+      );
+      p.appendChild(text);
+      p.setAttribute("style", "margin-top: 15px; margin-bottom:0");
+
+      let div = document.createElement("div");
+      let local = document.createTextNode(arg.event.local);
+      div.appendChild(local);
+      div.setAttribute("class", "local");
+
+      console.log(arg.el);
+      arg.el.appendChild(p);
+      arg.el.appendChild(div);
+    },
     getEventColor(event) {
       return event.color;
     },
     next() {
-      let actual = new Date(this.value);
-      //this.value.setDate(actual.getDate() + 7);
-      console.log(actual);
-      if(this.$refs.calendar){
+      if (this.$refs.fullCalendar) {
+        let calendarApi = this.$refs.fullCalendar.getApi();
+        calendarApi.next();
+      }
+      if (this.$refs.calendar) {
         this.$refs.calendar.next();
       }
     },
     prev() {
-      if(this.$refs.calendar){
+      if (this.$refs.fullCalendar) {
+        let calendarApi = this.$refs.fullCalendar.getApi();
+        calendarApi.prev();
+      }
+      if (this.$refs.calendar) {
         this.$refs.calendar.prev();
       }
     },
@@ -715,10 +823,10 @@ nav {
   margin-left: 0px !important;
   position: unset;
 }
-/deep/.pl-1{
+/deep/.pl-1 {
   text-align: left;
 }
-/deep/.v-calendar .v-event-timed-container{
+/deep/.v-calendar .v-event-timed-container {
   margin-right: 0 !important;
 }
 @media (max-width: 992px) {
@@ -750,39 +858,97 @@ nav {
     left: 50%;
     transform: translateX(-50%);
   }
-  .agenda{
+  .agenda {
     min-height: 100vh !important;
     background: #222222;
   }
-  .day{
+  .day {
     text-align: left;
     padding: 8px 14px;
     font-size: 30px;
     text-transform: uppercase;
     font-weight: bolder;
-    background: #EEEEEE;
-    color:#000000;
+    background: #eeeeee;
+    color: #000000;
   }
-  .tdEvent{
+  .tdEvent {
     padding: 0px !important;
     min-height: 133px;
     margin: 0px !important;
   }
-  .local{
+  .local {
     font-weight: bold;
     text-align: right;
     text-transform: uppercase;
-
   }
-  .dot{
+  .dot {
     display: inline-block;
     width: 10px;
     height: 10px;
     border-radius: 5px;
   }
-  /deep/.fc{
-    height: 100vh;
+  /deep/.fc {
+    min-height: calc(100vh - 100px);
+    cursor: unset !important;
   }
-
+  /deep/.fc-list-empty-cushion {
+    font-size: 20px;
+  }
+  /deep/.fc-event:hover {
+    cursor: unset;
+  }
+  /deep/.fc-event {
+    min-height: 133px;
+    width: 100%;
+    font-size: 14px;
+    background: #ffffff;
+    border-top: 1px solid rgba(0, 0, 0, 0.2);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.2);
+    color: #000000;
+    cursor: unset !important;
+  }
+  /deep/.fc-list-event-graphic {
+    width: 7%;
+  }
+  /deep/.fc-event:hover td {
+    background: transparent;
+    color: #000000;
+  }
+  /deep/.fc-list-day-cushion {
+    text-align: left;
+    padding: 8px 14px;
+    background: #eeeeee;
+    color: #000000;
+    text-transform: none;
+  }
+  /deep/.fc-list-day-cushion a {
+    color: #000000;
+    
+  }
+  /deep/.fc-list-day-cushion a:hover {
+    text-decoration: unset;
+    font-weight: unset !important;
+  }
+  /deep/.fc-list-day-text {
+    font-size: 30px;
+    text-transform: uppercase;
+  }
+  /deep/.fc tr td {
+    min-height: 133px !important;
+  }
+  /deep/.fc-event > td {
+    border: 0;
+  }
+  /deep/.fc-list-event-time {
+    width: 33%;
+  }
+  /deep/.fc-list-event-title {
+    width: 50%;
+    
+  }
+  /deep/.fc-list-event-title a {
+    font-size: 16px;
+    
+  }
 }
 </style>
