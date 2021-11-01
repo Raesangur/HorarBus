@@ -253,8 +253,8 @@ export default {
       headerToolbar: false,
       events: [
         {
-          start: "2021-10-28 14:00",
-          end: "2021-10-28 16:00",
+          start: "2021-11-01 14:00",
+          end: "2021-11-01 16:00",
           title:
             "Projet,Conception d'un système informatique distribué,Port du masque de Procédure obligatoire".split(
               ","
@@ -268,9 +268,9 @@ export default {
               ","
             )[2],
           heure:
-            "2021-10-28 14:00".split(" ")[1] +
+            "2021-11-01 14:00".split(" ")[1] +
             " - " +
-            "2021-10-28 16:00".split(" ")[1],
+            "2021-11-01 16:00".split(" ")[1],
           local: "C1-5006",
         },
         {
@@ -304,8 +304,8 @@ export default {
     ],
     events: [
       {
-        start: "2021-10-29 14:00",
-        end: "2021-10-29 16:00",
+        start: "2021-11-01 14:00",
+        end: "2021-11-01 16:00",
         name: "Projet,Conception d'un système informatique distribué,Port du masque de Procédure obligatoire".split(
           ","
         )[0],
@@ -318,9 +318,9 @@ export default {
             ","
           )[2],
         heure:
-          "2021-10-28 14:00".split(" ")[1] +
+          "2021-11-01 14:00".split(" ")[1] +
           " - " +
-          "2021-10-28 16:00".split(" ")[1],
+          "2021-11-01 16:00".split(" ")[1],
         local: "C1-5006",
       },
       {
