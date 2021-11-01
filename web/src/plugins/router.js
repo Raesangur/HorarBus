@@ -1,5 +1,6 @@
 import Vue from "vue";
 import Router from "vue-router";
+import { applyMiddleware } from "../services/middleware";
 import Horaire from "../views/Horaire.vue";
 
 Vue.use(Router);
@@ -16,14 +17,13 @@ const router = new Router({
   ],
 });
 
-if (process.env.NODE_ENV === "development") {
-  router.beforeEach((to, from, next) => {
-    if (to.fullPath.startsWith("/api")) {
-      window.location.href = `http://${window.location.hostname}${to.fullPath}`;
-    } else {
-      next();
-    }
-  });
-}
+router.beforeEach((to, from, next) => {
+  const { routeHasChanged, route } = applyMiddleware(to.fullPath);
+  if (routeHasChanged) {
+    window.location.href = route;
+  } else {
+    next();
+  }
+});
 
 export { router };
