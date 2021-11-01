@@ -219,8 +219,9 @@
         <Fullcalendar
           ref="fullCalendar"
           :options="calendarOptions"
-          @eventRender="renderEvent(this)"
+          :eventRender="renderEvent"
           :events="events"
+          @
         />
       </div>
     </b-col>
@@ -356,6 +357,7 @@ export default {
     this.scrollToTime();
     this.updateTime();
     this.getToday();
+    
   },
   watch:{
     value(){
@@ -438,8 +440,8 @@ export default {
     //             info.el.appendChild(event.$el)
 
     //         },
-    renderEvent(arg) {
-      //let span = "<br>"+arg.event.local
+    renderEvent(event, element) {
+      console.log("test")
       let p = document.createElement("p");
       let text = document.createTextNode(
         arg.event.description1 + "<br><br>" + arg.event.description2
@@ -453,6 +455,7 @@ export default {
       div.setAttribute("class", "local");
 
       console.log(arg.el);
+      element.find('.fc-title').append("<br/>" + event.description); 
       arg.el.appendChild(p);
       arg.el.appendChild(div);
     },
