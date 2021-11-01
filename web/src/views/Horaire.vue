@@ -219,9 +219,8 @@
         <Fullcalendar
           ref="fullCalendar"
           :options="calendarOptions"
-          :eventRender="renderEvent"
           :events="events"
-          @
+          @load="eventRender"
         />
       </div>
     </b-col>
@@ -249,7 +248,23 @@ export default {
       initialView: "listWeek",
       locales: allLocales,
       //eventClick: this.handleEventClick(),
-      //eventRender: this.renderEvent(),
+      eventDidMount: function (arg) {
+        console.log(arg);
+        let p = document.createElement("p");
+        p.innerHTML = arg.event.extendedProps.description1 + "<br><br>" + arg.event.extendedProps.description2
+        p.setAttribute("style", "margin-top: 15px; margin-bottom:0");
+        console.log(p)
+        let div = document.createElement("div");
+        div.textContent = arg.event.extendedProps.local;
+        div.setAttribute("class", "local");
+        console.log(div);
+        if (arg.event.extendedProps.description1 && arg.event.extendedProps.description2) {
+          arg.el.cells[2].appendChild(p);
+        }
+        if (arg.event.extendedProps.local) {
+          arg.el.cells[0].appendChild(div);
+        }
+      },
       locale: "fr",
       headerToolbar: false,
       events: [
@@ -268,11 +283,24 @@ export default {
             "Projet,Conception d'un système informatique distribué,Port du masque de Procédure obligatoire".split(
               ","
             )[2],
-          heure:
-            "2021-11-01 14:00".split(" ")[1] +
-            " - " +
-            "2021-11-01 16:00".split(" ")[1],
           local: "C1-5006",
+        },
+        {
+          start: "2021-11-02 12:00",
+          end: "2021-11-02 14:00",
+          title:
+            "Projet,Conception d'un système informatique distribué,Port du masque de Procédure obligatoire".split(
+              ","
+            )[0],
+          description1:
+            "Projet,Conception d'un système informatique distribué,Port du masque de Procédure obligatoire".split(
+              ","
+            )[1],
+          description2:
+            "Projet,Conception d'un système informatique distribué,Port du masque de Procédure obligatoire".split(
+              ","
+            )[2],
+          local: "C1-5014",
         },
         {
           name: `Thomas' Birthday`,
@@ -357,14 +385,12 @@ export default {
     this.scrollToTime();
     this.updateTime();
     this.getToday();
-    
   },
-  watch:{
-    value(){
+  watch: {
+    value() {
       let calendarApi = this.$refs.fullCalendar.getApi();
-      calendarApi.gotoDate( this.value );
+      calendarApi.gotoDate(this.value);
     },
-    
   },
   computed: {
     cal() {
@@ -416,48 +442,25 @@ export default {
     updateTime() {
       setInterval(() => this.cal.updateTimes(), 60 * 1000);
     },
-    // eventRender(info){
-
-    //             //create our component instance
-    //             const event = new EventClass({
-    //                 propsData: {
-    //                     event: info.event
-    //                 }
-    //             })
-
-    //             event.$on('edit', this.edit)
-
-    //             event.$on('delete', this.delete)
-
-    //             event.$mount();
-
-    //             //assign created component to our eventObj with uuid as key (to destroy in future)
-    //             this.eventsObj[event._uid] = event;
-
-    //             //set data-vue="{id}"
-    //             //append our compiled component to .fc-event
-    //             info.el.setAttribute('data-vue-id', event._uid);
-    //             info.el.appendChild(event.$el)
-
-    //         },
-    renderEvent(event, element) {
-      console.log("test")
+    eventRender(event) {
+      console.log("test");
       let p = document.createElement("p");
       let text = document.createTextNode(
-        arg.event.description1 + "<br><br>" + arg.event.description2
+        event.description1 + "<br><br>" + event.description2
       );
       p.appendChild(text);
       p.setAttribute("style", "margin-top: 15px; margin-bottom:0");
 
       let div = document.createElement("div");
-      let local = document.createTextNode(arg.event.local);
+      let local = document.createTextNode(event.local);
       div.appendChild(local);
       div.setAttribute("class", "local");
-
-      console.log(arg.el);
-      element.find('.fc-title').append("<br/>" + event.description); 
-      arg.el.appendChild(p);
-      arg.el.appendChild(div);
+      if (event.description1 && event.description2) {
+        event.element.find(".fc-list-event-title").after(p);
+      }
+      if (event.local) {
+        event.element.find(".fc-list-event-time").after(div);
+      }
     },
     getEventColor(event) {
       return event.color;
@@ -879,10 +882,10 @@ nav {
     min-height: 133px;
     margin: 0px !important;
   }
-  .local {
-    font-weight: bold;
-    text-align: right;
-    text-transform: uppercase;
+  /deep/.local {
+    font-weight: bold !important;
+    text-align: right !important;
+    text-transform: uppercase !important;
   }
   .dot {
     display: inline-block;
@@ -926,7 +929,6 @@ nav {
   }
   /deep/.fc-list-day-cushion a {
     color: #000000;
-    
   }
   /deep/.fc-list-day-cushion a:hover {
     text-decoration: unset;
@@ -943,15 +945,13 @@ nav {
     border: 0;
   }
   /deep/.fc-list-event-time {
-    width: 33%;
+    width: 15%;
   }
   /deep/.fc-list-event-title {
-    width: 50%;
-    
+    width: 70%;
   }
   /deep/.fc-list-event-title a {
     font-size: 16px;
-    
   }
 }
 </style>
