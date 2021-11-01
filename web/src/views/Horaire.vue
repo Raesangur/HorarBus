@@ -160,6 +160,15 @@
         :type="type"
         class="calendar"
       >
+        <template v-slot:event="{ event }">
+          <div class="event">
+              {{ event.heure }}
+              <br>
+              <a style="font-weight: 700;">{{ event.name }}</a>
+              <br>
+              {{ event.local }}
+          </div>
+        </template>
         <template v-slot:day-body="{ date, week }">
           <div
             class="v-current-time"
@@ -483,7 +492,9 @@ export default {
         this.$refs.calendar.prev();
       }
     },
-    showEvent() {},
+    showEvent() {
+      console.log("demande de show")
+    },
     setToday() {
       const now = new Date();
       let val = now.toISOString();
@@ -550,6 +561,9 @@ export default {
 </script>
 
 <style scoped>
+/deep/.v-calendar .v-event-timed:hover{
+  opacity: 0.95;
+}
 .my-event {
   white-space: nowrap;
   border-radius: 2px;
@@ -567,6 +581,10 @@ export default {
 }
 /deep/.v-calendar-daily__scroll-area {
   overflow: unset;
+}
+.event{
+  font-weight: 300;
+  text-align: left;
 }
 .my-event.with-time {
   position: absolute;
@@ -662,6 +680,7 @@ export default {
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
+  
 }
 
 #nav {
