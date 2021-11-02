@@ -93,7 +93,10 @@ footer {
   color: #2c3e50;
   background-color: #ffffff;
 }
-
+.dark{
+  background-color: #222222 !important;
+  color: #ffffff !important;;
+}
 #nav {
   padding: 30px;
 }

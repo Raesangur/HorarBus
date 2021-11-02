@@ -177,54 +177,7 @@
           ></div>
         </template>
       </v-calendar>
-      <!-- <div class="agenda" v-if="largeur < 768">
-        <table style="background:#ffffff">
-          <tbody v-for="(day, index) in days" :key="index">
-            <tr>
-              <td class="day">
-                {{
-                  day
-                }}
-              </td>
-            </tr>
-            <tr v-for="(event,i) in events" :key="i">
-              <td class="tdEvent">
-                <b-row class="tdEvent">
-                  <b-col cols="3" style="text-align:right;padding:12px 0px">
-                    {{event.heure}}
-                    
-                    <br>
-                    
-                    <div class="local">
-                      {{event.local}}
-                      
-                    </div>
-                  </b-col>
-                  <b-col cols="1" >
-                    <span class="dot" style="background-color:blueviolet"></span>
-                  </b-col>
-                  <b-col cols="8" style="text-align:left">
-                    
-                    <a style="font-size: larger;">
-                      Projet 
-                      {{event.name}}
-                    </a>
-                    <p style="margin-top: 15px; margin-bottom:0">
-                      {{event.description1}}
-                      Conception d'un système informatique distribué 
-                      <br>
-                      <br>
-                      {{event.description2}}
-                      Port du masque de procédure obligatoire 
-                    </p>
-                  </b-col>
-                </b-row>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div> -->
-      <div v-if="largeur < 768">
+      <div class="calendar-mobile">
         <Fullcalendar
           ref="fullCalendar"
           :options="calendarOptions"
@@ -235,8 +188,8 @@
     </b-col>
   </b-row>
 </template>
+
 <script>
-import { mapState } from "vuex";
 import EventModal from "../components/EventModal";
 require("@fullcalendar/list/main.css");
 import Fullcalendar from "@fullcalendar/vue";
@@ -258,15 +211,12 @@ export default {
       locales: allLocales,
       //eventClick: this.handleEventClick(),
       eventDidMount: function (arg) {
-        console.log(arg);
         let p = document.createElement("p");
         p.innerHTML = arg.event.extendedProps.description1 + "<br><br>" + arg.event.extendedProps.description2
-        p.setAttribute("style", "margin-top: 15px; margin-bottom:0");
-        console.log(p)
+        p.setAttribute("style", "margin-top: 15px; margin-bottom:15px");
         let div = document.createElement("div");
         div.textContent = arg.event.extendedProps.local;
         div.setAttribute("class", "local");
-        console.log(div);
         if (arg.event.extendedProps.description1 && arg.event.extendedProps.description2) {
           arg.el.cells[2].appendChild(p);
         }
@@ -311,26 +261,12 @@ export default {
             )[2],
           local: "C1-5014",
         },
-        {
-          name: `Thomas' Birthday`,
-          start: "2021-10-11",
-        },
-        {
-          name: "Mash Potatoes",
-          start: "2021-10-14 12:30",
-          end: "2021-10-14 15:30",
-        },
-        {
-          name: "poutine",
-          start: "2021-10-13 12:30",
-          end: "2021-10-13 15:30",
-        },
       ],
       eventColor: "#1867c0",
     },
     ready: false,
     largeur: 0,
-    darkMode: true,
+    darkMode: false,
     colors: [
       "blue",
       "indigo",
@@ -361,20 +297,6 @@ export default {
           "2021-11-01 16:00".split(" ")[1],
         local: "C1-5006",
       },
-      {
-        name: `Thomas' Birthday`,
-        start: "2021-10-11",
-      },
-      {
-        name: "Mash Potatoes",
-        start: "2021-10-14 12:30",
-        end: "2021-10-14 15:30",
-      },
-      {
-        name: "poutine",
-        start: "2021-10-13 12:30",
-        end: "2021-10-13 15:30",
-      },
     ],
     days: [
       "Dimanche",
@@ -394,13 +316,37 @@ export default {
     this.scrollToTime();
     this.updateTime();
     this.getToday();
+    this.darkMode = true;
   },
   watch: {
     value() {
       let calendarApi = this.$refs.fullCalendar.getApi();
       calendarApi.gotoDate(this.value);
     },
+    darkMode(){
+      if(this.darkMode == true){
+        for(let i=0;i< document.getElementsByClassName("fc-list-day-cushion").length;i++){
+          document.getElementsByClassName("fc-list-day-cushion")[i].classList.add("fc-list-day-dark");
+        }
+        for(let i=0;i< document.getElementsByClassName("fc-event").length;i++){
+          document.getElementsByClassName("fc-event")[i].classList.add("fc-event-dark");
+        }
+        document.getElementById("app").classList.add("dark")
+        document.getElementsByTagName("footer")[0].style.color = "#ffffff";
+      }else{
+        for(let i=0;i< document.getElementsByClassName("fc-list-day-cushion").length;i++){
+          document.getElementsByClassName("fc-list-day-cushion")[i].classList.remove("fc-list-day-dark");
+        }
+        for(let i=0;i< document.getElementsByClassName("fc-event").length;i++){
+          document.getElementsByClassName("fc-event")[i].classList.remove("fc-event-dark");
+        }
+        document.getElementById("app").classList.remove("dark")
+        document.getElementsByTagName("footer")[0].style.color = "#000000";
+      }
+      
+    },
   },
+  
   computed: {
     cal() {
       return this.ready ? this.$refs.calendar : null;
@@ -408,16 +354,12 @@ export default {
     nowY() {
       return this.cal ? this.cal.timeToY(this.cal.times.now) + "px" : "-10px";
     },
-    ...mapState({
-      dateSelect: (state) => state.index.dateSelect,
-    }),
   },
   methods: {
     onResize() {
       this.resize();
     },
     handleEventClick(arg) {
-      console.log("test");
       this.$modal.show(EventModal, {
         text: "This is from the component",
         event: arg.event,
@@ -452,13 +394,12 @@ export default {
       setInterval(() => this.cal.updateTimes(), 60 * 1000);
     },
     eventRender(event) {
-      console.log("test");
       let p = document.createElement("p");
       let text = document.createTextNode(
         event.description1 + "<br><br>" + event.description2
       );
       p.appendChild(text);
-      p.setAttribute("style", "margin-top: 15px; margin-bottom:0");
+      p.setAttribute("style", "margin-top: 15px; margin-bottom: 15px");
 
       let div = document.createElement("div");
       let local = document.createTextNode(event.local);
@@ -814,6 +755,10 @@ nav {
 }
 /deep/.theme--dark.v-calendar-daily {
   background-color: #222222 !important;
+  border: 0;
+}
+/deep/.theme--light.v-calendar-daily{
+  border: 0;
 }
 /deep/.modal-left {
   margin-left: 0px;
@@ -854,12 +799,18 @@ nav {
 /deep/.v-calendar .v-event-timed-container {
   margin-right: 0 !important;
 }
+.calendar-mobile{
+  display: none;
+}
 @media (max-width: 992px) {
   /deep/.modal {
     width: 100%;
   }
 }
 @media (max-width: 768px) {
+  .calendar-mobile{
+    display: unset;
+  }
   .sideItem {
     font-size: 20px;
     font-weight: bold;
@@ -913,7 +864,7 @@ nav {
     border-radius: 5px;
   }
   /deep/.fc {
-    min-height: calc(100vh - 100px);
+    min-height: calc(100vh - 97px);
     cursor: unset !important;
   }
   /deep/.fc-list-empty-cushion {
@@ -932,6 +883,20 @@ nav {
     color: #000000;
     cursor: unset !important;
   }
+  /deep/.fc-event-dark {
+    min-height: 133px;
+    width: 100%;
+    font-size: 14px;
+    background: #222222;
+    border-top: 1px solid rgba(255, 255, 255, 0.2);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    color: #ffffff;
+    cursor: unset !important;
+  }
+  /deep/.fc-event-dark:hover td {
+    background: transparent;
+    color: #ffffff !important;
+  }
   /deep/.fc-list-event-graphic {
     width: 7%;
   }
@@ -945,6 +910,13 @@ nav {
     background: #eeeeee;
     color: #000000;
     text-transform: none;
+  }
+  /deep/.fc-list-day-dark {
+    background: #2c2c2c;
+    color: #ffffff !important;
+  }
+  /deep/.fc-list-day-dark a {
+    color: #ffffff !important;
   }
   /deep/.fc-list-day-cushion a {
     color: #000000;
@@ -972,5 +944,9 @@ nav {
   /deep/.fc-list-event-title a {
     font-size: 16px;
   }
+  /deep/.fc-theme-standard .fc-list{
+    border: 0 !important;
+  }
+  
 }
 </style>
