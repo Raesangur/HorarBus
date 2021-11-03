@@ -1,21 +1,21 @@
 package com.horarbus;
 
-import biweekly.*;
-import biweekly.component.*;
+import biweekly.Biweekly;
+import biweekly.ICalendar;
+import biweekly.component.VEvent;
 import biweekly.io.json.JCalWriter;
-import biweekly.property.*;
+import biweekly.property.Location;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
-import java.io.File;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.net.URL;
+import java.sql.*;
 import java.util.Properties;
 import java.util.Scanner;
 
-import java.sql.*;
 
 
 @Path("/calendar")
@@ -72,6 +72,21 @@ private String url = "https://www.gel.usherbrooke.ca/horarius/icalendar?key=67a8
 
     @GET
     @Produces(MediaType.TEXT_HTML)
+    @Path("/auth")
+    public String get_authorization(@HeaderParam("Authorization") String auth) {
+        return "";
+//        OkHttpClient client = new OkHttpClient().newBuilder()
+//                .build();
+//        Request request = new Request.Builder()
+//                .url("http://10.238.71.75:8888/calendar/auth")
+//                .method("GET", null)
+//                .addHeader("Authorization", "Bearer eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICIwQjhvYUVzRWM5UGE2SVpkWHEwazF3TU0tRXAyMzJ5V1pIOWpDZGFKQmRrIn0.eyJleHAiOjE2MzU4ODM0MDYsImlhdCI6MTYzNTg4MzEwNiwiYXV0aF90aW1lIjoxNjM1ODc4MzA3LCJqdGkiOiI1NzVhNTA3NC00NmUzLTRmNjEtOWY3Mi02ZDNhNjI5MjYwYTciLCJpc3MiOiJodHRwOi8vbG9jYWxob3N0L2F1dGgvcmVhbG1zL3VzYWdlciIsInN1YiI6ImM2ZjljYWNkLTI3MDMtNGExZS1iODdiLWNjNWQ1NjFhMzE1OSIsInR5cCI6IkJlYXJlciIsImF6cCI6ImZyb250ZW5kIiwibm9uY2UiOiIyMTM2MTk4MS1jODhkLTQ5NTYtODdhZS1iNjM3YmQ0M2VkYmMiLCJzZXNzaW9uX3N0YXRlIjoiNTRlMDU3MTEtYzM2Ni00ODJhLWJkNjgtYjdhOTY3MDE3Y2FkIiwiYWNyIjoiMCIsImFsbG93ZWQtb3JpZ2lucyI6WyIqIl0sInJlYWxtX2FjY2VzcyI6eyJyb2xlcyI6WyJkZWZhdWx0LXJvbGVzLW1hc3RlciIsInN0dWRlbnQiXX0sInNjb3BlIjoib3BlbmlkIHByb2ZpbGUgZW1haWwiLCJzaWQiOiI1NGUwNTcxMS1jMzY2LTQ4MmEtYmQ2OC1iN2E5NjcwMTdjYWQiLCJlbWFpbF92ZXJpZmllZCI6ZmFsc2UsIm5hbWUiOiJQYXNjYWwtRW1tYW51ZWwgTGFjaGFuY2UiLCJwcmVmZXJyZWRfdXNlcm5hbWUiOiJsYWNwMzEwMiIsImdpdmVuX25hbWUiOiJQYXNjYWwtRW1tYW51ZWwiLCJmYW1pbHlfbmFtZSI6IkxhY2hhbmNlIiwiZW1haWwiOiJsYWNwMzEwMkB1c2hlcmJyb29rZS5jYSJ9.n6X8E7Sl1lg1XfGxWyFCiFriaUglLcqBqery8Sm9XeNWqxjU1aZ14u5mlYBVfXoNbeHgdg9yozFxZ8A1NzfCCgB_qUMkwBOc5eUX6wG19-ah1g5X9Z32hg0MA_KRBBnDFT0_Q8kCgp8SCFieSXsYadK7TsqbvV3HHmLde_3b3Rap4mT0OWyuzrAnJlJcnatnMyRBG2bj0rSN6dOUkuS7aCd9K-romu6FmD5omEyfQNsYYez7eGCv3DIYQf_BQdo7jqISA-5srO55_guO3KK35umGXfC7onCEhtCOdyyBr_doA76zyGN7mkXbgr6cMnHDPxBvVMYV7B52oCc3YmahZg")
+//                .build();
+//        Response response = client.newCall(request).execute();
+    }
+
+    @GET
+    @Produces(MediaType.TEXT_HTML)
     @Path("/events")
     public String get_user_events(@DefaultValue("") @QueryParam("user") String user) throws IOException {
         if (user == "") {
@@ -118,45 +133,13 @@ private String url = "https://www.gel.usherbrooke.ca/horarius/icalendar?key=67a8
         return result.toString();
     }
 
-    private Statement setup_postgres_connection() {
-        // Setup drivers
-        // https://forum.katalon.com/t/java-sql-sqlexception-no-suitable-driver-found-for-jdbc-localhost-5433/30308
-        try {
-            Class.forName("org.postgresql.Driver");
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        }
 
-        // https://docs.microsoft.com/en-us/sql/connect/jdbc/step-3-proof-of-concept-connecting-to-sql-using-java?view=sql-server-ver15
-        String connectionUrl =  "jdbc:postgresql://localhost:5433/postgres";
-        Properties props = new Properties();
-        props.setProperty("user", "postgres");
-        props.setProperty("password", "postgres");
-
-        try {
-            Connection connection = DriverManager.getConnection(connectionUrl, props);
-            Statement statement = connection.createStatement();
-
-            System.out.println("Connection successful");
-            return statement;
-        } catch(SQLException e)
-        {
-            System.out.println("Connection error");
-            e.printStackTrace();
-
-            return null;
-        }
-    }
 
     private String get_user_ical_key(String userCIP) {
         try {
-            Statement statement = setup_postgres_connection();
-            if (statement == null) {
-                return "";
-            }
+            PostgresService pgs = new PostgresService();
 
-            String query = "SELECT * FROM Etudiant;"; // WHERE cip='" + userCIP + "';";
-            ResultSet rs = statement.executeQuery(query);
+            ResultSet rs = pgs.executeQuery("SELECT * FROM Etudiant;");
 
             System.out.println(rs.getMetaData().getColumnCount());
 
@@ -173,11 +156,6 @@ private String url = "https://www.gel.usherbrooke.ca/horarius/icalendar?key=67a8
             return "";
         }
     }
-
-
-
-
-
 
 
 
