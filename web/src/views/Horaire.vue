@@ -354,14 +354,14 @@ export default {
     this.getToday();
     this.darkMode = true;
     const successCallback = (position) => {
-          if(position.coords.accuracy >= 1000){
-            //let infoPosition = prompt("Entrer votre addresse", "");
-            this.position = infoPosition;
-          }
-          else{
-            this.position = position;
-          }
-          console.log(this.position);
+          // if(position.coords.accuracy >= 1000){
+          //   let infoPosition = prompt("Entrer votre addresse", "");
+          //   this.position = infoPosition;
+          // }
+          // else{
+          //   this.position = position;
+          // }
+          console.log(position);
         };
     const errorCallback = (error) => {
         console.error(error);
