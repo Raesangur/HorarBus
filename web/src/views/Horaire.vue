@@ -36,7 +36,6 @@
             <b-dropdown-item
               @click="
                 showPref();
-                toggle;
               "
             >
               Mes paramètres
@@ -159,14 +158,26 @@
         @click:event="showEvent"
         :type="type"
         class="calendar"
+        
       >
         <template v-slot:event="{ event }">
-          <div class="event">
+          <div class="event" v-click-outside="dismissEvent">
               {{ event.heure }}
               <br>
               <a style="font-weight: 700;">{{ event.name }}</a>
               <br>
               {{ event.local }}
+              <div v-if="event.open">
+                <div class="centerBorder"> </div>
+                {{event.description1}}
+                <br>
+                <br>
+                {{event.description2}}
+                <div class="centerBorder" v-if="event.prof"> </div>
+                {{event.prof}}
+                <div class="centerBorder" v-if="event.session"> </div>
+                {{event.session}}
+              </div>
           </div>
         </template>
         <template v-slot:day-body="{ date, week }">
@@ -296,6 +307,9 @@ export default {
           " - " +
           "2021-11-01 16:00".split(" ")[1],
         local: "C1-5006",
+        open:false,
+        prof:"Bernie",
+        session:"Session 3 génie informatique",
       },
     ],
     days: [
@@ -433,8 +447,19 @@ export default {
         this.$refs.calendar.prev();
       }
     },
-    showEvent() {
-      console.log("demande de show")
+    showEvent(event) {
+      for(let event in this.events){
+        this.events[event].open = false;
+      }
+      event.event.open = true;
+      event.nativeEvent.target.style.height="fit-content"
+      event.nativeEvent.path[1].style.height="fit-content"
+    },
+    dismissEvent(){
+      for(let event in this.events){
+        this.events[event].open = false;
+      }
+      
     },
     setToday() {
       const now = new Date();
@@ -506,7 +531,7 @@ export default {
   opacity: 0.95;
 }
 .my-event {
-  white-space: nowrap;
+  white-space: normal;
   border-radius: 2px;
   background-color: #1867c0;
   color: #ffffff;
@@ -526,6 +551,9 @@ export default {
 .event{
   font-weight: 300;
   text-align: left;
+  padding: 10px;
+  border-radius: 5px;
+  white-space: normal;
 }
 .my-event.with-time {
   position: absolute;
@@ -695,6 +723,7 @@ nav {
   font-size: 15px;
   font-weight: bolder;
   border: 0 !important;
+  border-radius: 10px;
 }
 /deep/.v-calendar .v-event {
   color: #ffffff !important;
@@ -798,9 +827,18 @@ nav {
 }
 /deep/.v-calendar .v-event-timed-container {
   margin-right: 0 !important;
+  border-radius: 10px;
 }
 .calendar-mobile{
   display: none;
+}
+.centerBorder{
+  width: 95%;
+  text-align: center;
+  border-bottom: 0.5px solid rgba(255, 255, 255, 0.8);
+  line-height: 0.1em;
+  float: none !important;
+  margin: 20px auto;
 }
 @media (max-width: 992px) {
   /deep/.modal {
