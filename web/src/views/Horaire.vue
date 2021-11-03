@@ -725,6 +725,11 @@ nav {
   border: 0 !important;
   border-radius: 10px;
 }
+/deep/.custom-control-input:checked ~ .custom-control-label::before{
+  background: #222222;
+  border-color: #ffffff;
+}
+
 /deep/.v-calendar .v-event {
   color: #ffffff !important;
   font-size: 14px;
