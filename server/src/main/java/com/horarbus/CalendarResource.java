@@ -112,7 +112,8 @@ private String url = "https://www.gel.usherbrooke.ca/horarius/icalendar?key=67a8
         }
 
         System.out.println("Getting key for user: " + user);
-        String ical_key = get_user_ical_key(user);
+        UserService us = new UserService(user);
+        String ical_key = us.get_ical_key();
 
         ICalendar ical = generateICal(ical_key);
 
@@ -133,29 +134,6 @@ private String url = "https://www.gel.usherbrooke.ca/horarius/icalendar?key=67a8
         return result.toString();
     }
 
-
-
-    private String get_user_ical_key(String userCIP) {
-        try {
-            PostgresService pgs = new PostgresService();
-
-            ResultSet rs = pgs.executeQuery("SELECT * FROM Etudiant;");
-
-            System.out.println(rs.getMetaData().getColumnCount());
-
-            if(rs.next()) {
-                String key = rs.getString("cle_ical");
-                System.out.println(key);
-                return key;
-            }
-
-            return "";
-        } catch(SQLException e) {
-            e.printStackTrace();
-
-            return "";
-        }
-    }
 
 
 
