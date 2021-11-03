@@ -69,46 +69,56 @@
           </div>
         </b-sidebar>
       </b-navbar>
-      <b-modal
-        ref="pref"
-        hide-footer
-        hide-header
-        :centered="true"
-        body-class="preference"
-      >
-        <b-row>
-          <b-col cols="10" class="title"> Mes préférences </b-col>
-          <b-col cols="2" class="zoneClose">
-            <button @click="hidePref()" class="close">x</button>
-          </b-col>
-        </b-row>
-        <b-row>
-          <b-col cols="12" class="sectionPref"> Mode de transport </b-col>
-        </b-row>
-        <b-row>
-          <b-col cols="12" class="sectionPref"> Notifications </b-col>
-        </b-row>
-        <b-row>
-          <b-col cols="12" class="sectionPref"> Avance minimum </b-col>
-        </b-row>
-        <b-row>
-          <b-col cols="12"> </b-col>
-        </b-row>
-        <b-row>
-          <b-col cols="12" class="sectionPref"> Domicile </b-col>
-        </b-row>
-        <b-row>
-          <b-col cols="12" class="sectionPref">
-            Dark Mode
-            <b-form-checkbox
-              v-model="darkMode"
-              name="check-button"
-              switch
-              size="lg"
-            ></b-form-checkbox>
-          </b-col>
-        </b-row>
+
+
+      <b-modal ref="pref"
+               hide-footer
+               hide-header
+               :centered="true"
+               body-class="preference">
+          <b-row>
+              <b-col cols="10" class="title"> Mes préférences </b-col>
+              <b-col cols="2" class="zoneClose">
+                  <button @click="hidePref()" class="close">x</button>
+              </b-col>
+          </b-row>
+          <b-row>
+              <b-col cols="12" class="sectionPref"> Mode de transport </b-col>
+          </b-row>
+
+
+          <b-form-group v-slot="{ ariaDescribedby }">
+              <b-form-radio v-model="transport" :aria-describedby="ariaDescribedby" name="some-radios" value="walk" button class="buttonTransport"><img :src="require('../assets/walk.png')" /></b-form-radio>
+              <b-form-radio v-model="transport" :aria-describedby="ariaDescribedby" name="some-radios" value="bike" button class="buttonTransport"><img :src="require('../assets/bike.png')" /></b-form-radio>
+              <b-form-radio v-model="transport" :aria-describedby="ariaDescribedby" name="some-radios" value="bus" button class="buttonTransport"><img :src="require('../assets/bus.png')" /></b-form-radio>
+              <b-form-radio v-model="transport" :aria-describedby="ariaDescribedby" name="some-radios" value="car" button class="buttonTransport"><img :src="require('../assets/car.png')" /></b-form-radio>
+          </b-form-group>
+
+          <b-row>
+              <b-col cols="12" class="sectionPref"> Notifications </b-col>
+          </b-row>
+          <b-row>
+              <b-col cols="12" class="sectionPref"> Avance minimum </b-col>
+          </b-row>
+          <b-row>
+              <b-col cols="12"> </b-col>
+          </b-row>
+          <b-row>
+              <b-col cols="12" class="sectionPref"> Domicile </b-col>
+          </b-row>
+          <b-row>
+              <b-col cols="12" class="sectionPref">
+                  Dark Mode
+                  <b-form-checkbox v-model="darkMode"
+                                   name="check-button"
+                                   switch
+                                   size="lg"></b-form-checkbox>
+              </b-col>
+          </b-row>
       </b-modal>
+
+
+
       <b-modal
         ref="chooseDate"
         hide-footer
@@ -116,6 +126,8 @@
         body-class="modal-calendar"
         dialog-class="modal-left"
       >
+
+
         <b-row>
           <b-col cols="10" class="title"> {{ value }} </b-col>
           <b-col cols="2" class="zoneClose">
@@ -213,9 +225,18 @@ export default {
     Fullcalendar,
   },
   data: () => ({
+    transport: "bus",
+    transportOption: [
+        { text: 'Walk', value: 'walk' },
+        { text: 'Bike', value: 'bike' },
+        { text: 'Bus', value: 'bus' },
+        { text: 'Car', value: 'car' }
+    ],
+
     today: new Date(),
     value: new Date(),
-    type: "week",
+    type:"week",
+    
     calendarOptions: {
       plugins: [InteractionPlugin, ListPlugin],
       initialView: "listWeek",
@@ -330,7 +351,7 @@ export default {
     this.scrollToTime();
     this.updateTime();
     this.getToday();
-    this.darkMode = true;
+    //this.darkMode = true;
   },
   watch: {
     value() {
@@ -527,6 +548,28 @@ export default {
 </script>
 
 <style scoped>
+
+.buttonTransport {
+        margin: 0 10px;       
+}
+/deep/.buttonTransport > .btn {
+        background: #1867c0 !important;
+}
+
+    /deep/.buttonTransport > .active {
+        background: #021a36 !important;
+    }
+
+    .buttonTransport:first-child {
+        margin-left: 0px;
+    }
+
+
+
+
+
+
+
 /deep/.v-calendar .v-event-timed:hover{
   opacity: 0.95;
 }
