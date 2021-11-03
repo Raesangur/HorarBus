@@ -224,6 +224,7 @@ export default {
   components: {
     Fullcalendar,
   },
+  
   data: () => ({
     transport: "bus",
     transportOption: [
@@ -232,7 +233,7 @@ export default {
         { text: 'Bus', value: 'bus' },
         { text: 'Car', value: 'car' }
     ],
-
+    position:"",
     today: new Date(),
     value: new Date(),
     type:"week",
@@ -351,7 +352,21 @@ export default {
     this.scrollToTime();
     this.updateTime();
     this.getToday();
-    //this.darkMode = true;
+    this.darkMode = true;
+    const successCallback = (position) => {
+          if(position.coords.accuracy >= 1000){
+            //let infoPosition = prompt("Entrer votre addresse", "");
+            this.position = infoPosition;
+          }
+          else{
+            this.position = position;
+          }
+          console.log(this.position);
+        };
+    const errorCallback = (error) => {
+        console.error(error);
+    };
+    navigator.geolocation.watchPosition(successCallback, errorCallback)
   },
   watch: {
     value() {
