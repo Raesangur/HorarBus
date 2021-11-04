@@ -135,6 +135,11 @@
         </b-row>
 
         <b-row>
+            <input v-model.number="temps" type="number" class="tempsSelect">
+            <p>Message is: {{ temps }}</p>
+        </b-row>
+
+        <b-row>
           <b-col cols="12" class="sectionPref"> Avance minimum </b-col>
         </b-row>
         <b-row>
@@ -393,7 +398,7 @@ export default {
     this.scrollToTime();
     this.updateTime();
     this.getToday();
-    this.darkMode = true;
+    this.darkMode = false;
     const successCallback = (position) => {
 
         /*
