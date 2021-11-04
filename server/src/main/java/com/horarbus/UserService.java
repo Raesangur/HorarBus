@@ -13,21 +13,7 @@ public class UserService {
     }
 
     private String select_column(String column) {
-        try {
-            ResultSet rs = pgs.executeQuery("SELECT " + column + " FROM Etudiant WHERE cip='" + cip + "';");
-
-            if(rs.next()) {
-                String value = rs.getString(column);
-                //System.out.println(key);
-                return value;
-            }
-
-            return "";
-        } catch(SQLException e) {
-            e.printStackTrace();
-
-            return "";
-        }
+        return pgs.select_column(column, "Etudiant", "cip='" + cip + "'");
     }
 
     public String get_ical_key() {

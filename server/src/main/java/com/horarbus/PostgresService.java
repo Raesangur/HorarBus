@@ -30,6 +30,30 @@ public class PostgresService {
         }
     }
 
+    public String select_column(String column, String table, String condition) {
+        try {
+            ResultSet rs = null;
+            String query = "SELECT " + column + " FROM " + table;
+            if (condition == null) {
+                rs = executeQuery(query + ";");
+            } else {
+                rs = executeQuery(query + " WHERE " + condition + ";");
+            }
+
+            if(rs.next()) {
+                String value = rs.getString(column);
+                //System.out.println(key);
+                return value;
+            }
+
+            return "";
+        } catch(SQLException e) {
+            e.printStackTrace();
+
+            return "";
+        }
+    }
+
     private Statement setup_postgres_connection() {
         // Setup drivers
         // https://forum.katalon.com/t/java-sql-sqlexception-no-suitable-driver-found-for-jdbc-localhost-5433/30308
