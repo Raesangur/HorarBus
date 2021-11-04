@@ -8,12 +8,12 @@ import maps from "@/store/maps.module";
 Vue.use(Vuex);
 
 export default new Vuex.Store({
-    state: {},
-    mutations: {},
-    actions: {},
-    modules: {
-        user,
-        calendar,
-        maps
-    },
+  state: {},
+  mutations: {},
+  actions: {},
+  modules: {
+    user,
+    calendar,
+    maps,
+  },
 });

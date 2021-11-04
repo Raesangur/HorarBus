@@ -6,7 +6,7 @@ export default {
         return Api.default().get("/api" + basic + "/pref", param);
     },
     putPref(param) {
-        return Api.default().get("/api" + basic + "/pref", param);
+        return Api.default().put("/api" + basic + "/pref", param);
     },
     getUser() {
         return Api.default().get("/" + basic + "/");

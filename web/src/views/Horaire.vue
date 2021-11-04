@@ -86,7 +86,7 @@
         </b-row>
         <b-form-group v-slot="{ ariaDescribedby }">
           <b-form-radio
-            v-model="transport"
+            v-model="pref.transport"
             :aria-describedby="ariaDescribedby"
             name="some-radios"
             value="walk"
@@ -95,7 +95,7 @@
             ><img :src="require('../assets/walk.png')"
           /></b-form-radio>
           <b-form-radio
-            v-model="transport"
+            v-model="pref.transport"
             :aria-describedby="ariaDescribedby"
             name="some-radios"
             value="bike"
@@ -104,7 +104,7 @@
             ><img :src="require('../assets/bike.png')"
           /></b-form-radio>
           <b-form-radio
-            v-model="transport"
+            v-model="pref.transport"
             :aria-describedby="ariaDescribedby"
             name="some-radios"
             value="bus"
@@ -113,7 +113,7 @@
             ><img :src="require('../assets/bus.png')"
           /></b-form-radio>
           <b-form-radio
-            v-model="transport"
+            v-model="pref.transport"
             :aria-describedby="ariaDescribedby"
             name="some-radios"
             value="car"
@@ -126,19 +126,25 @@
         <!--Notification-->
         <b-row>
           <b-col cols="12" class="sectionPref">
-            Notifications 
-            <b-row style="margin:0">
+            Notifications
+            <b-row style="margin: 0">
               <b-form-checkbox
-                v-model="notification_enable"
+                v-model="pref.notification_enable"
                 name="check-button"
                 class="checkboxNotification"
               >
               </b-form-checkbox>
               <b-col>
-                <input v-model.number="temps_avance_notification" id="timenotif" :disabled="!notification_enable" type="number" class="tempsSelect"/>
+                <input
+                  v-model.number="pref.temps_avance_notification"
+                  id="timenotif"
+                  :disabled="!pref.notification_enable"
+                  type="number"
+                  class="tempsSelect"
+                />
               </b-col>
-            </b-row>   
-            <div style="font-size:12px">
+            </b-row>
+            <div style="font-size: 12px">
               Entrer le temps avant le départ pour recevoir une notification.
             </div>
           </b-col>
@@ -147,26 +153,29 @@
         <!--Temps d'avance minimum-->
         <b-row>
           <b-col cols="12" class="sectionPref">
-            Avance minimum 
-            <br>
-            <input v-model.number="temps_avance" type="number" class="tempsSelect">
+            Avance minimum
+            <br />
+            <input
+              v-model.number="pref.temps_avance"
+              type="number"
+              class="tempsSelect"
+            />
           </b-col>
         </b-row>
 
         <!--Domicile-->
         <b-row>
-          <b-col cols="12" class="sectionPref"> 
+          <b-col cols="12" class="sectionPref">
             Domicile
-            <br>
-            <input v-model="adresse_maison" placeholder="Adresse du domicile" class="tempsSelect">
+            <br />
+            <input
+              v-model="pref.adresse_maison"
+              placeholder="Adresse du domicile"
+              class="tempsSelect"
+            />
           </b-col>
         </b-row>
 
-        <b-row>
-            
-        </b-row>
-
-          
         <b-row>
           <b-col cols="12" class="sectionPref">
             Dark Mode
@@ -176,6 +185,17 @@
               switch
               size="lg"
             ></b-form-checkbox>
+          </b-col>
+        </b-row>
+        <b-row>
+          <b-col style="display:flex;justify-content:center">
+            <b-button
+              variant="dark"
+              class="saveButton"
+              @click="sendPref"
+            >
+              Enregistrer les informations
+            </b-button>
           </b-col>
         </b-row>
       </b-modal>
@@ -285,17 +305,13 @@ export default {
   },
 
   data: () => ({
-    adresse_maison:"",
-    temps_avance: 0,
-    transport: "bus",
-    notification_enable: false,
-    temps_avance_notification: 0,
-    transportOption: [
-      { text: "Walk", value: "walk" },
-      { text: "Bike", value: "bike" },
-      { text: "Bus", value: "bus" },
-      { text: "Car", value: "car" },
-    ],
+    pref: {
+      adresse_maison: "",
+      temps_avance: 0,
+      transport: "bus",
+      notification_enable: false,
+      temps_avance_notification: 0,
+    },
     position: "",
     today: new Date(),
     value: new Date(),
@@ -369,7 +385,7 @@ export default {
     },
     ready: false,
     largeur: 0,
-    darkMode: true,
+    darkMode: false,
     colors: [
       "blue",
       "indigo",
@@ -448,6 +464,8 @@ export default {
     this.updateTime();
     this.getToday();
     this.darkMode = true;
+    //this.getUser();
+    //this.getPref(this.user);
     const successCallback = (position) => {
       // if(position.coords.accuracy >= 1000){
       //   let infoPosition = prompt("Entrer votre addresse", "");
@@ -526,6 +544,12 @@ export default {
   },
   methods: {
     ...mapActions(["getPref", "getMe", "putMe", "putPref", "getMaps"]),
+    sendPref() {
+      let pref = this.pref;
+      pref.darkMode = this.darkMode;
+      console.log(pref)
+      //this.putPref(pref);
+    },
     onResize() {
       this.resize();
     },
@@ -606,15 +630,20 @@ export default {
     showEvent(event) {
       event.event.open = true;
       event.nativeEvent.target.style.height = "fit-content";
-      if (this.eventActive.event !== event.event) {
+      if(this.eventActive.event === undefined){
         this.initialHeight = event.nativeEvent.path[1].style.height;
+      }
+      else if (this.eventActive.event !== event.event) {
+        this.dismissEvent();
       }
       this.eventActive = event;
       event.nativeEvent.path[1].style.height = "fit-content";
-      document.body.addEventListener(
-        "click",
-        event.nativeEvent.target.clickOutsideEvent
-      );
+      if(this.eventActive.event === event.event){
+        document.body.addEventListener(
+          "click",
+          event.nativeEvent.target.clickOutsideEvent
+        );
+      }
     },
     dismissEvent() {
       this.eventActive.event.open = false;
@@ -623,6 +652,7 @@ export default {
         "click",
         this.eventActive.nativeEvent.target.clickOutsideEvent
       );
+      this.eventActive ="";
     },
     setToday() {
       const now = new Date();
@@ -690,12 +720,25 @@ export default {
 </script>
 
 <style scoped>
+.saveButton{
+  font-size: 16px;
+  text-align: center;
+  color: #222222;
+  height: 100%;
+  background: #ffffff;
+  border: 1px solid #222222;
+  border-radius: 10px;
+}
+.saveButton:hover{
+  background: transparent;
+  color: #ffffff;
+  border: 1px solid #ffffff;
+}
 .checkboxNotification {
   vertical-align: middle;
   display: flex;
   flex-direction: column;
   margin-top: 8px;
-
 }
 /deep/.checkboxNotification > .active {
   background-color: #021a36;
@@ -712,23 +755,23 @@ export default {
 /deep/.buttonTransport > .active {
   background: #021a36 !important;
 }
-.tempsSelect{
+.tempsSelect {
   color: #ffffff !important;
   width: 80% !important;
   border-bottom: 1px solid rgba(255, 255, 255, 0.7) !important;
   height: 30px !important;
   background: transparent !important;
 }
-.tempsSelect:disabled{
+.tempsSelect:disabled {
   background: #3d3a3a !important;
   color: #c0c0c0 !important;
   border-bottom: 1px solid rgba(255, 255, 255, 0.3) !important;
 }
-.tempsSelect:focus-within{
+.tempsSelect:focus-within {
   background: transparent !important;
   border-bottom: 1px solid rgba(255, 255, 255, 1) !important;
 }
-.tempsSelect:focus{
+.tempsSelect:focus {
   box-shadow: none !important;
   border-bottom: 1px solid rgba(255, 255, 255, 1) !important;
 }
@@ -937,7 +980,7 @@ nav {
   background: #222222;
   border-color: #ffffff;
 }
-.labelTemps{
+.labelTemps {
   color: #ffffff !important;
 }
 /deep/.v-calendar .v-event {
@@ -1055,7 +1098,7 @@ nav {
   float: none !important;
   margin: 20px auto;
 }
-button:focus{
+button:focus {
   background: transparent !important;
 }
 
@@ -1204,9 +1247,8 @@ button:focus{
   /deep/.fc-theme-standard .fc-list {
     border: 0 !important;
   }
-  /deep/.bg-dark{
+  /deep/.bg-dark {
     background: #1867c0 !important;
   }
-  
 }
 </style>
