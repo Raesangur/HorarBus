@@ -122,16 +122,21 @@
             ><img :src="require('../assets/car.png')"
           /></b-form-radio>
         </b-form-group>
-          
+
         <!--Notification-->
         <b-row>
           <b-col cols="12" class="sectionPref"> Notifications </b-col>
         </b-row>
-        
+
         <b-row>
-            <b-form-checkbox v-model="notification_enable" name="check-button" switch class="checkboxNotification"> 
-                Activer notification <b>(Checked: {{ notification_enable }})</b>     
-            </b-form-checkbox>
+          <b-form-checkbox
+            v-model="notification_enable"
+            name="check-button"
+            switch
+            class="checkboxNotification"
+          >
+            Activer notification <b>(Checked: {{ notification_enable }})</b>
+          </b-form-checkbox>
         </b-row>
 
         <b-row>
@@ -258,6 +263,7 @@ import Fullcalendar from "@fullcalendar/vue";
 import InteractionPlugin from "@fullcalendar/interaction";
 import ListPlugin from "@fullcalendar/list";
 import allLocales from "@fullcalendar/core/locales-all";
+import { mapState, mapActions } from "vuex";
 
 export default {
   components: {
@@ -265,8 +271,8 @@ export default {
   },
 
   data: () => ({
-      transport: "bus",
-      notification_enable: true,
+    transport: "bus",
+    notification_enable: true,
     transportOption: [
       { text: "Walk", value: "walk" },
       { text: "Bike", value: "bike" },
@@ -277,7 +283,8 @@ export default {
     today: new Date(),
     value: new Date(),
     type: "week",
-
+    initialHeight: "",
+    eventActive: "",
     calendarOptions: {
       plugins: [InteractionPlugin, ListPlugin],
       initialView: "listWeek",
@@ -357,6 +364,7 @@ export default {
     ],
     events: [
       {
+        id: 0,
         start: "2021-11-01 14:00",
         end: "2021-11-01 16:00",
         name: "Projet,Conception d'un système informatique distribué,Port du masque de Procédure obligatoire".split(
@@ -374,6 +382,30 @@ export default {
           "2021-11-01 14:00".split(" ")[1] +
           " - " +
           "2021-11-01 16:00".split(" ")[1],
+        local: "C1-5006",
+        open: false,
+        prof: "Bernie",
+        session: "Session 3 génie informatique",
+      },
+      {
+        id: 1,
+        start: "2021-11-04 14:00",
+        end: "2021-11-04 16:00",
+        name: "Projet,Conception d'un système informatique distribué,Port du masque de Procédure obligatoire".split(
+          ","
+        )[0],
+        description1:
+          "Projet,Conception d'un système informatique distribué,Port du masque de Procédure obligatoire".split(
+            ","
+          )[1],
+        description2:
+          "Projet,Conception d'un système informatique distribué,Port du masque de Procédure obligatoire".split(
+            ","
+          )[2],
+        heure:
+          "2021-11-04 14:00".split(" ")[1] +
+          " - " +
+          "2021-11-04 16:00".split(" ")[1],
         local: "C1-5006",
         open: false,
         prof: "Bernie",
@@ -400,14 +432,13 @@ export default {
     this.getToday();
     this.darkMode = false;
     const successCallback = (position) => {
-
-        /*
-        if (position.coords.accuracy >= 1000) {
-        //let infoPosition = prompt("Entrer votre addresse", "");
-        this.position = infoPosition;
-      } else {
-        this.position = position;
-      }*/
+      // if(position.coords.accuracy >= 1000){
+      //   let infoPosition = prompt("Entrer votre addresse", "");
+      //   this.position = infoPosition;
+      // }
+      // else{
+      //   this.position = position;
+      // }
       console.log(position);
     };
     const errorCallback = (error) => {
@@ -468,6 +499,7 @@ export default {
   },
 
   computed: {
+    ...mapState({}),
     cal() {
       return this.ready ? this.$refs.calendar : null;
     },
@@ -476,6 +508,7 @@ export default {
     },
   },
   methods: {
+    ...mapActions(["getPref", "getMe", "putMe", "putPref", "getMaps"]),
     onResize() {
       this.resize();
     },
@@ -554,17 +587,25 @@ export default {
       }
     },
     showEvent(event) {
-      for (let event in this.events) {
-        this.events[event].open = false;
-      }
       event.event.open = true;
       event.nativeEvent.target.style.height = "fit-content";
+      if (this.eventActive.event !== event.event) {
+        this.initialHeight = event.nativeEvent.path[1].style.height;
+      }
+      this.eventActive = event;
       event.nativeEvent.path[1].style.height = "fit-content";
+      document.body.addEventListener(
+        "click",
+        event.nativeEvent.target.clickOutsideEvent
+      );
     },
     dismissEvent() {
-      for (let event in this.events) {
-        this.events[event].open = false;
-      }
+      this.eventActive.event.open = false;
+      this.eventActive.nativeEvent.path[1].style.height = this.initialHeight;
+      document.body.removeEventListener(
+        "click",
+        this.eventActive.nativeEvent.target.clickOutsideEvent
+      );
     },
     setToday() {
       const now = new Date();
@@ -632,15 +673,13 @@ export default {
 </script>
 
 <style scoped>
-    .checkboxNotification {        
-        margin-left: 15px;
-    }
-    /deep/.checkboxNotification > .active {
-        background-color: #021a36; 
-        /*!important;*/
-    }
-
-
+.checkboxNotification {
+  margin-left: 15px;
+}
+/deep/.checkboxNotification > .active {
+  background-color: #021a36;
+  /*!important;*/
+}
 
 .buttonTransport {
   margin: 0 10px;
