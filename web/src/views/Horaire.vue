@@ -33,11 +33,7 @@
               <a class="nom"> John Doe </a>
             </template>
             <!--<b-dropdown-item href="/profile"><font-awesome-icon :icon="shoppingCog" /> Profile</b-dropdown-item>-->
-            <b-dropdown-item
-              @click="
-                showPref();
-              "
-            >
+            <b-dropdown-item @click="showPref()">
               Mes paramètres
             </b-dropdown-item>
             <b-dropdown-item @click="logout">Se déconnecter</b-dropdown-item>
@@ -70,54 +66,95 @@
         </b-sidebar>
       </b-navbar>
 
+      <b-modal
+        ref="pref"
+        hide-footer
+        hide-header
+        :centered="true"
+        body-class="preference"
+      >
+        <b-row>
+          <b-col cols="10" class="title"> Mes préférences </b-col>
+          <b-col cols="2" class="zoneClose">
+            <button @click="hidePref()" class="close">x</button>
+          </b-col>
+        </b-row>
 
-      <b-modal ref="pref"
-               hide-footer
-               hide-header
-               :centered="true"
-               body-class="preference">
-          <b-row>
-              <b-col cols="10" class="title"> Mes préférences </b-col>
-              <b-col cols="2" class="zoneClose">
-                  <button @click="hidePref()" class="close">x</button>
-              </b-col>
-          </b-row>
-          <b-row>
-              <b-col cols="12" class="sectionPref"> Mode de transport </b-col>
-          </b-row>
+        <!--Mode de transport-->
+        <b-row>
+          <b-col cols="12" class="sectionPref"> Mode de transport </b-col>
+        </b-row>
+        <b-form-group v-slot="{ ariaDescribedby }">
+          <b-form-radio
+            v-model="transport"
+            :aria-describedby="ariaDescribedby"
+            name="some-radios"
+            value="walk"
+            button
+            class="buttonTransport"
+            ><img :src="require('../assets/walk.png')"
+          /></b-form-radio>
+          <b-form-radio
+            v-model="transport"
+            :aria-describedby="ariaDescribedby"
+            name="some-radios"
+            value="bike"
+            button
+            class="buttonTransport"
+            ><img :src="require('../assets/bike.png')"
+          /></b-form-radio>
+          <b-form-radio
+            v-model="transport"
+            :aria-describedby="ariaDescribedby"
+            name="some-radios"
+            value="bus"
+            button
+            class="buttonTransport"
+            ><img :src="require('../assets/bus.png')"
+          /></b-form-radio>
+          <b-form-radio
+            v-model="transport"
+            :aria-describedby="ariaDescribedby"
+            name="some-radios"
+            value="car"
+            button
+            class="buttonTransport"
+            ><img :src="require('../assets/car.png')"
+          /></b-form-radio>
+        </b-form-group>
+          
+        <!--Notification-->
+        <b-row>
+          <b-col cols="12" class="sectionPref"> Notifications </b-col>
+        </b-row>
+        
+        <b-row>
+            <b-form-checkbox v-model="notification_enable" name="check-button" switch class="checkboxNotification"> 
+                Activer notification <b>(Checked: {{ notification_enable }})</b>     
+            </b-form-checkbox>
+        </b-row>
 
-
-          <b-form-group v-slot="{ ariaDescribedby }">
-              <b-form-radio v-model="transport" :aria-describedby="ariaDescribedby" name="some-radios" value="walk" button class="buttonTransport"><img :src="require('../assets/walk.png')" /></b-form-radio>
-              <b-form-radio v-model="transport" :aria-describedby="ariaDescribedby" name="some-radios" value="bike" button class="buttonTransport"><img :src="require('../assets/bike.png')" /></b-form-radio>
-              <b-form-radio v-model="transport" :aria-describedby="ariaDescribedby" name="some-radios" value="bus" button class="buttonTransport"><img :src="require('../assets/bus.png')" /></b-form-radio>
-              <b-form-radio v-model="transport" :aria-describedby="ariaDescribedby" name="some-radios" value="car" button class="buttonTransport"><img :src="require('../assets/car.png')" /></b-form-radio>
-          </b-form-group>
-
-          <b-row>
-              <b-col cols="12" class="sectionPref"> Notifications </b-col>
-          </b-row>
-          <b-row>
-              <b-col cols="12" class="sectionPref"> Avance minimum </b-col>
-          </b-row>
-          <b-row>
-              <b-col cols="12"> </b-col>
-          </b-row>
-          <b-row>
-              <b-col cols="12" class="sectionPref"> Domicile </b-col>
-          </b-row>
-          <b-row>
-              <b-col cols="12" class="sectionPref">
-                  Dark Mode
-                  <b-form-checkbox v-model="darkMode"
-                                   name="check-button"
-                                   switch
-                                   size="lg"></b-form-checkbox>
-              </b-col>
-          </b-row>
+        <b-row>
+          <b-col cols="12" class="sectionPref"> Avance minimum </b-col>
+        </b-row>
+        <b-row>
+          <b-col cols="12"> </b-col>
+        </b-row>
+        <b-row>
+          <b-col cols="12" class="sectionPref"> Domicile </b-col>
+        </b-row>
+        <b-row>
+          <b-col cols="12" class="sectionPref">
+            Dark Mode
+            <b-form-checkbox
+              v-model="darkMode"
+              name="check-button"
+              switch
+              size="lg"
+            ></b-form-checkbox>
+          </b-col>
+        </b-row>
       </b-modal>
-
-
 
       <b-modal
         ref="chooseDate"
@@ -126,8 +163,6 @@
         body-class="modal-calendar"
         dialog-class="modal-left"
       >
-
-
         <b-row>
           <b-col cols="10" class="title"> {{ value }} </b-col>
           <b-col cols="2" class="zoneClose">
@@ -170,26 +205,25 @@
         @click:event="showEvent"
         :type="type"
         class="calendar"
-        
       >
         <template v-slot:event="{ event }">
           <div class="event" v-click-outside="dismissEvent">
-              {{ event.heure }}
-              <br>
-              <a style="font-weight: 700;">{{ event.name }}</a>
-              <br>
-              {{ event.local }}
-              <div v-if="event.open">
-                <div class="centerBorder"> </div>
-                {{event.description1}}
-                <br>
-                <br>
-                {{event.description2}}
-                <div class="centerBorder" v-if="event.prof"> </div>
-                {{event.prof}}
-                <div class="centerBorder" v-if="event.session"> </div>
-                {{event.session}}
-              </div>
+            {{ event.heure }}
+            <br />
+            <a style="font-weight: 700">{{ event.name }}</a>
+            <br />
+            {{ event.local }}
+            <div v-if="event.open">
+              <div class="centerBorder"></div>
+              {{ event.description1 }}
+              <br />
+              <br />
+              {{ event.description2 }}
+              <div class="centerBorder" v-if="event.prof"></div>
+              {{ event.prof }}
+              <div class="centerBorder" v-if="event.session"></div>
+              {{ event.session }}
+            </div>
           </div>
         </template>
         <template v-slot:day-body="{ date, week }">
@@ -224,20 +258,21 @@ export default {
   components: {
     Fullcalendar,
   },
-  
+
   data: () => ({
-    transport: "bus",
+      transport: "bus",
+      notification_enable: true,
     transportOption: [
-        { text: 'Walk', value: 'walk' },
-        { text: 'Bike', value: 'bike' },
-        { text: 'Bus', value: 'bus' },
-        { text: 'Car', value: 'car' }
+      { text: "Walk", value: "walk" },
+      { text: "Bike", value: "bike" },
+      { text: "Bus", value: "bus" },
+      { text: "Car", value: "car" },
     ],
-    position:"",
+    position: "",
     today: new Date(),
     value: new Date(),
-    type:"week",
-    
+    type: "week",
+
     calendarOptions: {
       plugins: [InteractionPlugin, ListPlugin],
       initialView: "listWeek",
@@ -245,12 +280,18 @@ export default {
       //eventClick: this.handleEventClick(),
       eventDidMount: function (arg) {
         let p = document.createElement("p");
-        p.innerHTML = arg.event.extendedProps.description1 + "<br><br>" + arg.event.extendedProps.description2
+        p.innerHTML =
+          arg.event.extendedProps.description1 +
+          "<br><br>" +
+          arg.event.extendedProps.description2;
         p.setAttribute("style", "margin-top: 15px; margin-bottom:15px");
         let div = document.createElement("div");
         div.textContent = arg.event.extendedProps.local;
         div.setAttribute("class", "local");
-        if (arg.event.extendedProps.description1 && arg.event.extendedProps.description2) {
+        if (
+          arg.event.extendedProps.description1 &&
+          arg.event.extendedProps.description2
+        ) {
           arg.el.cells[2].appendChild(p);
         }
         if (arg.event.extendedProps.local) {
@@ -299,7 +340,7 @@ export default {
     },
     ready: false,
     largeur: 0,
-    darkMode: false,
+    darkMode: true,
     colors: [
       "blue",
       "indigo",
@@ -329,9 +370,9 @@ export default {
           " - " +
           "2021-11-01 16:00".split(" ")[1],
         local: "C1-5006",
-        open:false,
-        prof:"Bernie",
-        session:"Session 3 génie informatique",
+        open: false,
+        prof: "Bernie",
+        session: "Session 3 génie informatique",
       },
     ],
     days: [
@@ -354,49 +395,73 @@ export default {
     this.getToday();
     this.darkMode = true;
     const successCallback = (position) => {
-          if(position.coords.accuracy >= 1000){
-            //let infoPosition = prompt("Entrer votre addresse", "");
-            this.position = infoPosition;
-          }
-          else{
-            this.position = position;
-          }
-          console.log(this.position);
-        };
-    const errorCallback = (error) => {
-        console.error(error);
+
+        /*
+        if (position.coords.accuracy >= 1000) {
+        //let infoPosition = prompt("Entrer votre addresse", "");
+        this.position = infoPosition;
+      } else {
+        this.position = position;
+      }*/
+      console.log(position);
     };
-    navigator.geolocation.watchPosition(successCallback, errorCallback)
+    const errorCallback = (error) => {
+      console.error(error);
+    };
+    navigator.geolocation.watchPosition(successCallback, errorCallback);
   },
   watch: {
     value() {
       let calendarApi = this.$refs.fullCalendar.getApi();
       calendarApi.gotoDate(this.value);
     },
-    darkMode(){
-      if(this.darkMode == true){
-        for(let i=0;i< document.getElementsByClassName("fc-list-day-cushion").length;i++){
-          document.getElementsByClassName("fc-list-day-cushion")[i].classList.add("fc-list-day-dark");
+    darkMode() {
+      if (this.darkMode == true) {
+        for (
+          let i = 0;
+          i < document.getElementsByClassName("fc-list-day-cushion").length;
+          i++
+        ) {
+          document
+            .getElementsByClassName("fc-list-day-cushion")
+            [i].classList.add("fc-list-day-dark");
         }
-        for(let i=0;i< document.getElementsByClassName("fc-event").length;i++){
-          document.getElementsByClassName("fc-event")[i].classList.add("fc-event-dark");
+        for (
+          let i = 0;
+          i < document.getElementsByClassName("fc-event").length;
+          i++
+        ) {
+          document
+            .getElementsByClassName("fc-event")
+            [i].classList.add("fc-event-dark");
         }
-        document.getElementById("app").classList.add("dark")
+        document.getElementById("app").classList.add("dark");
         document.getElementsByTagName("footer")[0].style.color = "#ffffff";
-      }else{
-        for(let i=0;i< document.getElementsByClassName("fc-list-day-cushion").length;i++){
-          document.getElementsByClassName("fc-list-day-cushion")[i].classList.remove("fc-list-day-dark");
+      } else {
+        for (
+          let i = 0;
+          i < document.getElementsByClassName("fc-list-day-cushion").length;
+          i++
+        ) {
+          document
+            .getElementsByClassName("fc-list-day-cushion")
+            [i].classList.remove("fc-list-day-dark");
         }
-        for(let i=0;i< document.getElementsByClassName("fc-event").length;i++){
-          document.getElementsByClassName("fc-event")[i].classList.remove("fc-event-dark");
+        for (
+          let i = 0;
+          i < document.getElementsByClassName("fc-event").length;
+          i++
+        ) {
+          document
+            .getElementsByClassName("fc-event")
+            [i].classList.remove("fc-event-dark");
         }
-        document.getElementById("app").classList.remove("dark")
+        document.getElementById("app").classList.remove("dark");
         document.getElementsByTagName("footer")[0].style.color = "#000000";
       }
-      
     },
   },
-  
+
   computed: {
     cal() {
       return this.ready ? this.$refs.calendar : null;
@@ -484,18 +549,17 @@ export default {
       }
     },
     showEvent(event) {
-      for(let event in this.events){
+      for (let event in this.events) {
         this.events[event].open = false;
       }
       event.event.open = true;
-      event.nativeEvent.target.style.height="fit-content"
-      event.nativeEvent.path[1].style.height="fit-content"
+      event.nativeEvent.target.style.height = "fit-content";
+      event.nativeEvent.path[1].style.height = "fit-content";
     },
-    dismissEvent(){
-      for(let event in this.events){
+    dismissEvent() {
+      for (let event in this.events) {
         this.events[event].open = false;
       }
-      
     },
     setToday() {
       const now = new Date();
@@ -563,29 +627,32 @@ export default {
 </script>
 
 <style scoped>
+    .checkboxNotification {        
+        margin-left: 15px;
+    }
+    /deep/.checkboxNotification > .active {
+        background-color: #021a36; 
+        /*!important;*/
+    }
+
+
 
 .buttonTransport {
-        margin: 0 10px;       
+  margin: 0 10px;
 }
 /deep/.buttonTransport > .btn {
-        background: #1867c0 !important;
+  background: #1867c0 !important;
 }
 
-    /deep/.buttonTransport > .active {
-        background: #021a36 !important;
-    }
+/deep/.buttonTransport > .active {
+  background: #021a36 !important;
+}
 
-    .buttonTransport:first-child {
-        margin-left: 0px;
-    }
+.buttonTransport:first-child {
+  margin-left: 0px;
+}
 
-
-
-
-
-
-
-/deep/.v-calendar .v-event-timed:hover{
+/deep/.v-calendar .v-event-timed:hover {
   opacity: 0.95;
 }
 .my-event {
@@ -606,7 +673,7 @@ export default {
 /deep/.v-calendar-daily__scroll-area {
   overflow: unset;
 }
-.event{
+.event {
   font-weight: 300;
   text-align: left;
   padding: 10px;
@@ -707,7 +774,6 @@ export default {
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
-  
 }
 
 #nav {
@@ -783,7 +849,7 @@ nav {
   border: 0 !important;
   border-radius: 10px;
 }
-/deep/.custom-control-input:checked ~ .custom-control-label::before{
+/deep/.custom-control-input:checked ~ .custom-control-label::before {
   background: #222222;
   border-color: #ffffff;
 }
@@ -849,7 +915,7 @@ nav {
   background-color: #222222 !important;
   border: 0;
 }
-/deep/.theme--light.v-calendar-daily{
+/deep/.theme--light.v-calendar-daily {
   border: 0;
 }
 /deep/.modal-left {
@@ -892,10 +958,10 @@ nav {
   margin-right: 0 !important;
   border-radius: 10px;
 }
-.calendar-mobile{
+.calendar-mobile {
   display: none;
 }
-.centerBorder{
+.centerBorder {
   width: 95%;
   text-align: center;
   border-bottom: 0.5px solid rgba(255, 255, 255, 0.8);
@@ -909,7 +975,7 @@ nav {
   }
 }
 @media (max-width: 768px) {
-  .calendar-mobile{
+  .calendar-mobile {
     display: unset;
   }
   .sideItem {
@@ -1045,9 +1111,8 @@ nav {
   /deep/.fc-list-event-title a {
     font-size: 16px;
   }
-  /deep/.fc-theme-standard .fc-list{
+  /deep/.fc-theme-standard .fc-list {
     border: 0 !important;
   }
-  
 }
 </style>
