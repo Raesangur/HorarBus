@@ -142,22 +142,28 @@
               Entrer le temps avant le départ pour recevoir une notification.
             </div>
           </b-col>
-          
         </b-row>
-        <b-row>
-          <b-col>
-          </b-col>
-        </b-row>
-
+        <!--Temps d'avance minimum-->
         <b-row>
           <b-col cols="12" class="sectionPref"> Avance minimum </b-col>
+        </b-row>
+          <b-row>
+            <input v-model.number="temps_avance" type="number" class="tempsSelect">
         </b-row>
         <b-row>
           <b-col cols="12"> </b-col>
         </b-row>
+
+          <!--Domicil-->
         <b-row>
           <b-col cols="12" class="sectionPref"> Domicile </b-col>
         </b-row>
+
+        <b-row>
+            <input v-model="adresse_maison" placeholder="Adresse du domicil" class="tempsSelect">
+        </b-row>
+
+          
         <b-row>
           <b-col cols="12" class="sectionPref">
             Dark Mode
@@ -276,6 +282,8 @@ export default {
   },
 
   data: () => ({
+    adresse_maison:"",
+    temps_avance: 10,
     transport: "bus",
     notification_enable: true,
     temps_avance_notification: 0,
