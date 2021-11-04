@@ -1,6 +1,7 @@
 {
   "ExpandedNodes": [
     "",
+    "\\docker",
     "\\web",
     "\\web\\src",
     "\\web\\src\\views"

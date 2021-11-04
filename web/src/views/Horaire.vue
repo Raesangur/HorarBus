@@ -79,10 +79,11 @@
             <button @click="hidePref()" class="close">x</button>
           </b-col>
         </b-row>
+
+        <!--Mode de transport-->
         <b-row>
           <b-col cols="12" class="sectionPref"> Mode de transport </b-col>
         </b-row>
-
         <b-form-group v-slot="{ ariaDescribedby }">
           <b-form-radio
             v-model="transport"
@@ -122,9 +123,22 @@
           /></b-form-radio>
         </b-form-group>
 
+        <!--Notification-->
         <b-row>
           <b-col cols="12" class="sectionPref"> Notifications </b-col>
         </b-row>
+
+        <b-row>
+          <b-form-checkbox
+            v-model="notification_enable"
+            name="check-button"
+            switch
+            class="checkboxNotification"
+          >
+            Activer notification <b>(Checked: {{ notification_enable }})</b>
+          </b-form-checkbox>
+        </b-row>
+
         <b-row>
           <b-col cols="12" class="sectionPref"> Avance minimum </b-col>
         </b-row>
@@ -244,7 +258,7 @@ import Fullcalendar from "@fullcalendar/vue";
 import InteractionPlugin from "@fullcalendar/interaction";
 import ListPlugin from "@fullcalendar/list";
 import allLocales from "@fullcalendar/core/locales-all";
-import  {mapState, mapActions} from "vuex";
+import { mapState, mapActions } from "vuex";
 
 export default {
   components: {
@@ -253,6 +267,7 @@ export default {
 
   data: () => ({
     transport: "bus",
+    notification_enable: true,
     transportOption: [
       { text: "Walk", value: "walk" },
       { text: "Bike", value: "bike" },
@@ -332,7 +347,7 @@ export default {
     },
     ready: false,
     largeur: 0,
-    darkMode: false,
+    darkMode: true,
     colors: [
       "blue",
       "indigo",
@@ -479,9 +494,7 @@ export default {
   },
 
   computed: {
-    ...mapState({
-
-    }),
+    ...mapState({}),
     cal() {
       return this.ready ? this.$refs.calendar : null;
     },
@@ -490,7 +503,7 @@ export default {
     },
   },
   methods: {
-    ...mapActions(["getPref","getMe","putMe","putPref","getMaps"]),
+    ...mapActions(["getPref", "getMe", "putMe", "putPref", "getMaps"]),
     onResize() {
       this.resize();
     },
@@ -576,13 +589,18 @@ export default {
       }
       this.eventActive = event;
       event.nativeEvent.path[1].style.height = "fit-content";
-      document.body.addEventListener('click', event.nativeEvent.target.clickOutsideEvent)
+      document.body.addEventListener(
+        "click",
+        event.nativeEvent.target.clickOutsideEvent
+      );
     },
     dismissEvent() {
       this.eventActive.event.open = false;
       this.eventActive.nativeEvent.path[1].style.height = this.initialHeight;
-      document.body.removeEventListener('click', this.eventActive.nativeEvent.target.clickOutsideEvent)
-      
+      document.body.removeEventListener(
+        "click",
+        this.eventActive.nativeEvent.target.clickOutsideEvent
+      );
     },
     setToday() {
       const now = new Date();
@@ -650,6 +668,14 @@ export default {
 </script>
 
 <style scoped>
+.checkboxNotification {
+  margin-left: 15px;
+}
+/deep/.checkboxNotification > .active {
+  background-color: #021a36;
+  /*!important;*/
+}
+
 .buttonTransport {
   margin: 0 10px;
 }
