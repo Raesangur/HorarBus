@@ -33,10 +33,10 @@ private String url = "https://www.gel.usherbrooke.ca/horarius/icalendar?key=67a8
     @GET
     @Produces(MediaType.TEXT_XML)
     @Path("/all")
-    public String get_ical() throws IOException{
-
+    public String get_ical(@Context RoutingContext context) throws IOException {
         ICalendar ical = generateICal(url);
 
+        System.out.println(context.get("authData").toString());
 
         Writer result = new StringWriter();
         JCalWriter jcw = new JCalWriter(result);
