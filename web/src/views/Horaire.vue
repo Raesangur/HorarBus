@@ -125,23 +125,28 @@
 
         <!--Notification-->
         <b-row>
-          <b-col cols="12" class="sectionPref"> Notifications </b-col>
+          <b-col cols="12" class="sectionPref">
+            Notifications 
+            <b-row style="margin:0">
+              <b-form-checkbox
+                v-model="notification_enable"
+                name="check-button"
+                class="checkboxNotification"
+              >
+              </b-form-checkbox>
+              <b-col>
+                <input v-model.number="temps_avance_notification" id="timenotif" :disabled="!notification_enable" type="number" class="tempsSelect"/>
+              </b-col>
+            </b-row>   
+            <div style="font-size:12px">
+              Entrer le temps avant le départ pour recevoir une notification.
+            </div>
+          </b-col>
+          
         </b-row>
-
         <b-row>
-          <b-form-checkbox
-            v-model="notification_enable"
-            name="check-button"
-            switch
-            class="checkboxNotification"
-          >
-            Activer notification <b>(Checked: {{ notification_enable }})</b>
-          </b-form-checkbox>
-        </b-row>
-
-        <b-row>
-            <input v-model.number="temps" type="number" class="tempsSelect">
-            <p>Message is: {{ temps }}</p>
+          <b-col>
+          </b-col>
         </b-row>
 
         <b-row>
@@ -273,6 +278,7 @@ export default {
   data: () => ({
     transport: "bus",
     notification_enable: true,
+    temps_avance_notification: 0,
     transportOption: [
       { text: "Walk", value: "walk" },
       { text: "Bike", value: "bike" },
@@ -430,7 +436,7 @@ export default {
     this.scrollToTime();
     this.updateTime();
     this.getToday();
-    this.darkMode = false;
+    this.darkMode = true;
     const successCallback = (position) => {
       // if(position.coords.accuracy >= 1000){
       //   let infoPosition = prompt("Entrer votre addresse", "");
@@ -674,7 +680,11 @@ export default {
 
 <style scoped>
 .checkboxNotification {
-  margin-left: 15px;
+  vertical-align: middle;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+
 }
 /deep/.checkboxNotification > .active {
   background-color: #021a36;
@@ -691,7 +701,14 @@ export default {
 /deep/.buttonTransport > .active {
   background: #021a36 !important;
 }
-
+.tempsSelect{
+  color: #ffffff !important;
+  width: 80% !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.9) !important;
+}
+.tempsSelect:focus{
+  box-shadow:none;
+}
 .buttonTransport:first-child {
   margin-left: 0px;
 }
@@ -883,7 +900,7 @@ nav {
   border-radius: 15px;
 }
 .sectionPref {
-  font-size: 13px;
+  font-size: 16px;
   font-weight: bold;
 }
 /deep/.theme--dark.v-calendar-events .v-event-timed {
@@ -897,7 +914,9 @@ nav {
   background: #222222;
   border-color: #ffffff;
 }
-
+.labelTemps{
+  color: #ffffff !important;
+}
 /deep/.v-calendar .v-event {
   color: #ffffff !important;
   font-size: 14px;
@@ -984,7 +1003,7 @@ nav {
 .sectionPref > .custom-switch > label {
   color: #ffffff;
   font-weight: bold;
-  font-size: 13px;
+  font-size: 16px;
 }
 /deep/.black {
   background-color: #0062cc !important;
