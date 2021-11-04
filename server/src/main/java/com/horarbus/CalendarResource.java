@@ -5,8 +5,10 @@ import biweekly.ICalendar;
 import biweekly.component.VEvent;
 import biweekly.io.json.JCalWriter;
 import biweekly.property.Location;
+import io.vertx.ext.web.RoutingContext;
 
 import javax.ws.rs.*;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import java.io.IOException;
 import java.io.StringWriter;
