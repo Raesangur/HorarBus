@@ -143,24 +143,27 @@
             </div>
           </b-col>
         </b-row>
+
         <!--Temps d'avance minimum-->
         <b-row>
-          <b-col cols="12" class="sectionPref"> Avance minimum </b-col>
-        </b-row>
-          <b-row>
+          <b-col cols="12" class="sectionPref">
+            Avance minimum 
+            <br>
             <input v-model.number="temps_avance" type="number" class="tempsSelect">
-        </b-row>
-        <b-row>
-          <b-col cols="12"> </b-col>
+          </b-col>
         </b-row>
 
-          <!--Domicil-->
+        <!--Domicile-->
         <b-row>
-          <b-col cols="12" class="sectionPref"> Domicile </b-col>
+          <b-col cols="12" class="sectionPref"> 
+            Domicile
+            <br>
+            <input v-model="adresse_maison" placeholder="Adresse du domicile" class="tempsSelect">
+          </b-col>
         </b-row>
 
         <b-row>
-            <input v-model="adresse_maison" placeholder="Adresse du domicil" class="tempsSelect">
+            
         </b-row>
 
           
@@ -283,9 +286,9 @@ export default {
 
   data: () => ({
     adresse_maison:"",
-    temps_avance: 10,
+    temps_avance: 0,
     transport: "bus",
-    notification_enable: true,
+    notification_enable: false,
     temps_avance_notification: 0,
     transportOption: [
       { text: "Walk", value: "walk" },
@@ -691,7 +694,7 @@ export default {
   vertical-align: middle;
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  margin-top: 8px;
 
 }
 /deep/.checkboxNotification > .active {
@@ -712,10 +715,22 @@ export default {
 .tempsSelect{
   color: #ffffff !important;
   width: 80% !important;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.9) !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.7) !important;
+  height: 30px !important;
+  background: transparent !important;
+}
+.tempsSelect:disabled{
+  background: #3d3a3a !important;
+  color: #c0c0c0 !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.3) !important;
+}
+.tempsSelect:focus-within{
+  background: transparent !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 1) !important;
 }
 .tempsSelect:focus{
-  box-shadow:none;
+  box-shadow: none !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 1) !important;
 }
 .buttonTransport:first-child {
   margin-left: 0px;
@@ -1040,6 +1055,10 @@ nav {
   float: none !important;
   margin: 20px auto;
 }
+button:focus{
+  background: transparent !important;
+}
+
 @media (max-width: 992px) {
   /deep/.modal {
     width: 100%;
@@ -1185,5 +1204,9 @@ nav {
   /deep/.fc-theme-standard .fc-list {
     border: 0 !important;
   }
+  /deep/.bg-dark{
+    background: #1867c0 !important;
+  }
+  
 }
 </style>
