@@ -1,5 +1,7 @@
 package com.horarbus.auth;
 
+import io.vertx.core.json.JsonObject;
+
 public class AuthData {
     private String cip;
     private String firstname;
@@ -11,6 +13,15 @@ public class AuthData {
         this.firstname = firstname;
         this.lastname = lastname;
         this.email = email;
+    }
+
+    public AuthData(JsonObject json) {
+        this(
+                json.getString("preferred_username"),
+                json.getString("given_name"),
+                json.getString("family_name"),
+                json.getString("email")
+        );
     }
 
     public String getCip() {
