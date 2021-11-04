@@ -18,6 +18,9 @@ export default {
 };
 </script>
 <style>
+body{
+  padding: 0 !important;
+}
 footer {
   position: relative;
   margin-top: 20px;

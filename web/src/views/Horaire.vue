@@ -728,7 +728,9 @@ export default {
   background: #ffffff;
   border: 1px solid #222222;
   border-radius: 10px;
+  font-weight: bold;
 }
+
 .saveButton:hover{
   background: transparent;
   color: #ffffff;
@@ -904,7 +906,7 @@ export default {
 }
 
 #nav {
-  padding: 30px;
+  padding: 30px !important;
 }
 nav ul li {
   width: 100%;
@@ -920,6 +922,7 @@ nav ul li {
 .navbar {
   background: #1867c0;
   flex-wrap: nowrap !important;
+  padding: 7.5px 15px !important;
 }
 
 .caret {
