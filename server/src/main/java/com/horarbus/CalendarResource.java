@@ -37,7 +37,12 @@ private String url = "https://www.gel.usherbrooke.ca/horarius/icalendar?key=67a8
     public String test() {
         PostgresService pgs = new PostgresService();
 
-        pgs.update_column("nom", "etudiant", "'mini'", "cip='lacp3102'");
+        pgs.update_column("nom",
+                "etudiant",
+                "Petit",
+                "cip",
+                "lacp3102");
+
         return "";
     }
 
