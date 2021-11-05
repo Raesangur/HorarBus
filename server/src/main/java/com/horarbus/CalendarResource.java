@@ -3,7 +3,6 @@ package com.horarbus;
 import biweekly.Biweekly;
 import biweekly.ICalendar;
 import biweekly.component.VEvent;
-import biweekly.io.json.JCalWriter;
 import biweekly.property.Location;
 import com.horarbus.auth.AuthData;
 import io.vertx.ext.web.RoutingContext;
@@ -15,8 +14,6 @@ import java.io.IOException;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.net.URL;
-import java.sql.*;
-import java.util.Properties;
 import java.util.Scanner;
 
 @Path("/calendar")
@@ -35,13 +32,7 @@ private String url = "https://www.gel.usherbrooke.ca/horarius/icalendar?key=67a8
     @Produces(MediaType.TEXT_HTML)
     @Path("/test")
     public String test() {
-        PostgresService pgs = new PostgresService();
-
-        pgs.update_column("nom",
-                "etudiant",
-                "Petit",
-                "cip",
-                "lacp3102");
+        PostgresHandler pgs = new PostgresHandler();
 
         return "";
     }
@@ -54,12 +45,12 @@ private String url = "https://www.gel.usherbrooke.ca/horarius/icalendar?key=67a8
         String user = authData.getCip();
 
         System.out.println("Getting key for user: " + user);
-        UserService us = new UserService(user);
+        UserHandler us = new UserHandler(user);
 
-        if (us.is_valid() == false) {
+        if (!us.is_valid()) {
             return "";
         }
-        
+
         String ical_key = us.get_ical_key();
 
         ICalendar ical = generateICal(ical_key);

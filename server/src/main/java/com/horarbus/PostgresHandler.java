@@ -3,11 +3,11 @@ package com.horarbus;
 import java.sql.*;
 import java.util.Properties;
 
-public class PostgresService {
+public class PostgresHandler {
 
     private Statement statement;
 
-    public PostgresService() {
+    public PostgresHandler() {
         statement = setup_postgres_connection();
     }
 
@@ -80,6 +80,30 @@ public class PostgresService {
         return generate_prepared_statement(query);
     }
 
+    private PreparedStatement generate_insert_query(String table, String[] columns) {
+        String query = "INSERT INTO " + table + " (";
+        for (int i = 0; i < columns.length; i++) {
+            String col = columns[i];
+            query += col;
+
+            if (i != columns.length - 1) {
+                query += ", ";
+            }
+        }
+        query += ") " +
+                "VALUES (";
+        for (int i = 0; i < columns.length; i++) {
+            query += "?";
+
+            if (i != columns.length - 1) {
+                query += ", ";
+            }
+        }
+        query += ");";
+
+        return generate_prepared_statement(query);
+    }
+
     public String select_column(String column,
                                 String table,
                                 String conditionColumn,
@@ -126,6 +150,26 @@ public class PostgresService {
         return "";
     }
 
+    public void insert_row(String table, String[] columns, String[] values) {
+        if (columns.length != values.length){
+            return;
+        }
+
+        PreparedStatement query = generate_insert_query(table, columns);
+        if (query == null) {
+            return;
+        }
+
+        try {
+            for (int i = 1; i <= values.length; i++) {
+                query.setString(i, values[i - 1]);
+            }
+
+            executeQuery(query);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
 
     public void update_column(String column,
                               String table,
