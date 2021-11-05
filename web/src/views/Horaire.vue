@@ -251,12 +251,15 @@
         class="calendar"
       >
         <template v-slot:event="{ event }">
-          <div class="event" v-click-outside="dismissEvent">
+          <div class="event" v-click-outside="dismissEvent" v-if="!event.trajet">
             {{ event.heure }}
             <br />
             <a style="font-weight: 700">{{ event.name }}</a>
             <br />
-            {{ event.local }}
+            <div v-if="event.local">
+              {{ event.local }}
+            </div>
+            
             <div v-if="event.open">
               <div class="centerBorder"></div>
               {{ event.description1 }}
@@ -266,9 +269,44 @@
               <div class="centerBorder" v-if="event.prof"></div>
               {{ event.prof }}
               <div class="centerBorder" v-if="event.session"></div>
-              {{ event.session }}
+              <a :href="event.url">{{ event.session }}</a>
             </div>
           </div>
+          <div class="event" v-click-outside="dismissEvent" v-else>
+            {{ event.heureDepart }} - <a style="font-weight: 700">{{ event.name }}</a>
+            <br />
+            Arrivé prévue à {{ event.heureArrive }}
+            <div class="centerBorder" v-if="event.session"></div>
+            
+            <br />
+            <div v-if="event.local">
+              {{ event.local }}
+            </div>
+            
+            <div v-if="event.open">
+              <div class="centerBorder"></div>
+              {{ event.description1 }}
+              <br />
+              <br />
+              {{ event.description2 }}
+              <div class="centerBorder" v-if="event.prof"></div>
+              {{ event.prof }}
+              <div class="centerBorder" v-if="event.session"></div>
+              <a :href="event.url">{{ event.session }}</a>
+            </div>
+            <div v-if="event.open">
+              <div class="centerBorder"></div>
+              {{ event.description1 }}
+              <br />
+              <br />
+              {{ event.description2 }}
+              <div class="centerBorder" v-if="event.prof"></div>
+              {{ event.prof }}
+              <div class="centerBorder"></div>
+              <a href="#">voir la carte</a>
+            </div>
+          </div>
+          
         </template>
         <template v-slot:day-body="{ date, week }">
           <div
@@ -419,6 +457,7 @@ export default {
         open: false,
         prof: "Bernie",
         session: "Session 3 génie informatique",
+        trajet:false,
       },
       {
         id: 1,
@@ -442,7 +481,28 @@ export default {
         local: "C1-5006",
         open: false,
         prof: "Bernie",
+        trajet:false,
         session: "Session 3 génie informatique",
+      },
+      {
+        id: 2,
+        start: "2021-11-04 13:00",
+        end: "2021-11-04 13:30",
+        name: "Départ UdeS,Terminus intersection Blvd - Rue,Autobus #69,Arrive dans 420s".split(
+          ","
+        )[0],
+        description1:
+          "Départ UdeS,Terminus intersection Blvd - Rue,Autobus #69".split(
+            ","
+          )[1],
+        description2:
+          "Départ UdeS,Terminus intersection Blvd - Rue,Autobus #69".split(
+            ","
+          )[2],
+        heureDepart: "2021-11-04 13:00".split(" ")[1],
+        heureArrive: "2021-11-04 14:00".split(" ")[1],
+        open: false,
+        trajet:true,
       },
     ],
     days: [
@@ -679,11 +739,10 @@ export default {
     showEvent(event) {
       event.event.open = true;
       event.nativeEvent.target.style.height = "fit-content";
+      event.nativeEvent.path[1].style.zIndex = "1000";
       if(this.eventActive.event === undefined){
         this.initialHeight = event.nativeEvent.path[1].style.height;
-      }
-      else if (this.eventActive.event !== event.event) {
-        this.dismissEvent();
+        console.log(this.initialHeight)
       }
       this.eventActive = event;
       event.nativeEvent.path[1].style.height = "fit-content";
@@ -693,9 +752,13 @@ export default {
           event.nativeEvent.target.clickOutsideEvent
         );
       }
+      else{
+        this.dismissEvent();
+      }
     },
     dismissEvent() {
       this.eventActive.event.open = false;
+      this.eventActive.nativeEvent.path[1].style.zIndex = "0";
       this.eventActive.nativeEvent.path[1].style.height = this.initialHeight;
       document.body.removeEventListener(
         "click",
@@ -857,7 +920,9 @@ export default {
   padding: 10px;
   border-radius: 5px;
   white-space: normal;
+  color: #ffffff;
 }
+
 .my-event.with-time {
   position: absolute;
   right: 4px;
@@ -1024,8 +1089,8 @@ nav {
 /deep/.theme--dark.v-calendar-events .v-event-timed {
   color: #ffffff !important;
   font-size: 15px;
+  border: 1px solid #ffffff;
   font-weight: bolder;
-  border: 0 !important;
   border-radius: 10px;
 }
 /deep/.custom-control-input:checked ~ .custom-control-label::before {

@@ -1,6 +1,6 @@
 import Api from "@/services/api";
 
-const basic = "calendar";
+const basic = "user";
 export default {
     getPref(param) {
         return Api.default().get("/api" + basic + "/pref", param);
