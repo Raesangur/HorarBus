@@ -22,7 +22,7 @@ public class UserResource {
         JsonObject userData = new JsonObject();
 
         // TODO: read data
-        UserService service = new UserService("temp ici");    
+        UserHandler service = new UserHandler("temp ici");
         userData.put("firstname", "John");
         userData.put("lastname", "Doe");
         userData.put("preferences", service.get_preferences());

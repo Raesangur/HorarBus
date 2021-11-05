@@ -192,6 +192,43 @@ public class PostgresHandler {
     }
     public void update_column(String column,
                               String table,
+                              String value,
+                              String conditionColumn,
+                              int conditionValue) {
+        PreparedStatement query = generate_update_query(column, table, conditionColumn);
+        if (query == null) {
+            return;
+        }
+
+        try {
+            query.setString(1, value);
+            query.setInt(2, conditionValue);
+
+            executeQuery(query);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+    public void update_column(String column,
+                              String table,
+                              int value,
+                              String conditionColumn,
+                              String conditionValue) {
+        PreparedStatement query = generate_update_query(column, table, conditionColumn);
+        if (query == null) {
+            return;
+        }
+
+        try {
+            query.setInt(1, value);
+            query.setString(2, conditionValue);
+            executeQuery(query);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+    public void update_column(String column,
+                              String table,
                               int value,
                               String conditionColumn,
                               int conditionValue) {
