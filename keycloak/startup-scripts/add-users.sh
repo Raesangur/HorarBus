@@ -1,3 +1,4 @@
+#!/bin/bash
 # Script d'ajout des usagers d'administration du serveur
 
 /opt/jboss/keycloak/bin/add-user-keycloak.sh -u admin  -p admin
