@@ -6,3 +6,4 @@
 node_modules/
 .env
 keycloak/utils/*.json
+docker/ssl
