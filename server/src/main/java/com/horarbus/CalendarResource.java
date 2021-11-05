@@ -37,7 +37,12 @@ private String url = "https://www.gel.usherbrooke.ca/horarius/icalendar?key=67a8
     public String test() {
         PostgresService pgs = new PostgresService();
 
-        pgs.update_column("nom", "etudiant", "'mini'", "cip='lacp3102'");
+        pgs.update_column("nom",
+                "etudiant",
+                "Petit",
+                "cip",
+                "lacp3102");
+
         return "";
     }
 
@@ -48,31 +53,13 @@ private String url = "https://www.gel.usherbrooke.ca/horarius/icalendar?key=67a8
         AuthData authData = context.get("authData");
         String user = authData.getCip();
 
-        if (user == "") {
-            System.out.println("Invalid CIP: No input");
-            return "";
-        }
-
-        user = user.toLowerCase().strip();
-        if (user.length() != 8) {   // cip: abcd1234
-            System.out.println("Invalid CIP: Invalid length");
-            return "";
-        }
-
-        if (!Character.isLetter(user.charAt(0)) ||
-            !Character.isLetter(user.charAt(1)) ||
-            !Character.isLetter(user.charAt(2)) ||
-            !Character.isLetter(user.charAt(3)) ||
-            !Character.isDigit(user.charAt(4))  ||
-            !Character.isDigit(user.charAt(5))  ||
-            !Character.isDigit(user.charAt(6))  ||
-            !Character.isDigit(user.charAt(7))) {
-                System.out.println("Invalid CIP: Invalid format");
-                return "";
-        }
-
         System.out.println("Getting key for user: " + user);
         UserService us = new UserService(user);
+
+        if (us.is_valid() == false) {
+            return "";
+        }
+        
         String ical_key = us.get_ical_key();
 
         ICalendar ical = generateICal(ical_key);

@@ -50,6 +50,15 @@ public class PostgresService {
         }
     }
 
+    private PreparedStatement generate_prepared_statement(String query) {
+        try {
+            return getConnection().prepareStatement(query);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
     private PreparedStatement generate_select_query(String column, String table, String conditionColumn) {
         String query = "SELECT " + column + " FROM " + table;
         //String query = "SELECT ? FROM ?";
@@ -60,12 +69,15 @@ public class PostgresService {
             query += " WHERE " + conditionColumn + "= ?;";
         }
 
-        try {
-            return getConnection().prepareStatement(query);
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return null;
-        }
+        return generate_prepared_statement(query);
+    }
+
+    private PreparedStatement generate_update_query(String column, String table, String conditionColumn) {
+        String query = "UPDATE " + table +
+                " SET " + column + " = ?" +
+                " WHERE " + conditionColumn + " = ?;";
+
+        return generate_prepared_statement(query);
     }
 
     public String select_column(String column,
@@ -115,14 +127,42 @@ public class PostgresService {
     }
 
 
-    public void update_column(String column, String table, String value, String condition) {
-        String query = "UPDATE " + table +
-                       "SET " + column + " = " + value +
-                       "WHERE " + condition + ";";
+    public void update_column(String column,
+                              String table,
+                              String value,
+                              String conditionColumn,
+                              String conditionValue) {
+        PreparedStatement query = generate_update_query(column, table, conditionColumn);
+        if (query == null) {
+            return;
+        }
 
-        System.out.println(query);
+        try {
+            query.setString(1, value);
+            query.setString(2, conditionValue);
 
-        System.out.println(executeQuery(query).toString());
+            executeQuery(query);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+    public void update_column(String column,
+                              String table,
+                              int value,
+                              String conditionColumn,
+                              int conditionValue) {
+        PreparedStatement query = generate_update_query(column, table, conditionColumn);
+        if (query == null) {
+            return;
+        }
+
+        try {
+            query.setInt(1, value);
+            query.setInt(2, conditionValue);
+            executeQuery(query);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
     private Statement setup_postgres_connection() {
