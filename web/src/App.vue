@@ -8,13 +8,10 @@
 </template>
 
 <script>
-import { axios } from "./services/api";
 
 export default {
   data: () => ({}),
-  mounted() {
-    axios.get("/api/hello").then((response) => console.log(response));
-  },
+
 };
 </script>
 <style>

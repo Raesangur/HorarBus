@@ -464,7 +464,7 @@ export default {
     this.updateTime();
     this.getToday();
     this.darkMode = true;
-    //this.getUser();
+    this.getUser();
     //this.getPref(this.user);
     //this.getevents(this.user);
     const successCallback = (position) => {
@@ -590,7 +590,7 @@ export default {
     },
   },
   methods: {
-    ...mapActions(["getPref", "getMe", "putMe", "putPref", "getMaps"]),
+    ...mapActions(["getPref", "getUser", "putUser", "putPref", "getMaps"]),
     sendPref() {
       let pref = this.pref;
       pref.darkMode = this.darkMode;
