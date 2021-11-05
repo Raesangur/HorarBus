@@ -65,10 +65,13 @@ public class UserService {
 
     public JsonObject get_preferences() {
         JsonObject response = new JsonObject();
-        response.put("cip", cip);
-        response.put("temps_avance_default", get_temps_avance_default());
-        response.put("temps_notification_default", get_temps_notification());
-        response.put("transport_default", get_transport_default());
+        // response.put("cip", cip);
+        // response.put("temps_avance_default", get_temps_avance_default());
+        // response.put("temps_notification_default", get_temps_notification());
+        // response.put("transport_default", get_transport_default());
+        response.put("temps_avance_default", "15000");
+        response.put("temps_notification_default", "60000");
+        response.put("transport_default", "bus");
 
         return response;
     }
