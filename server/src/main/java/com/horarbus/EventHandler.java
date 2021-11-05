@@ -1,12 +1,14 @@
 package com.horarbus;
 
+import io.vertx.core.json.JsonObject;
+
 public class EventHandler {
-    private PostgresService pgs = null;
+    private PostgresHandler pgs = null;
     private int event_id = 0;
 
     EventHandler(int event_id) {
         this.event_id = event_id;
-        pgs = new PostgresService();
+        pgs = new PostgresHandler();
     }
 
     private String select_column(String column) {
@@ -39,5 +41,19 @@ public class EventHandler {
 
     private int get_uid() {
         return Integer.parseInt(select_column("uid"));
+    }
+
+    public JsonObject get_event() {
+        JsonObject response = new JsonObject();
+        response.put("event_id", event_id);
+        response.put("debut", get_debut());
+        response.put("fin", get_fin());
+        response.put("nom", get_nom());
+        response.put("description", get_description());
+        response.put("summary", get_summary());
+        response.put("coord", get_coords());
+        response.put("uid", get_uid());
+
+        return response;
     }
 }

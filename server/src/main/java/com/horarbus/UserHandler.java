@@ -1,22 +1,43 @@
 package com.horarbus;
 
-import io.vertx.core.json.Json;
 import io.vertx.core.json.JsonObject;
 
-public class UserService {
-    private PostgresService pgs = null;
+public class UserHandler {
+    private PostgresHandler pgh = null;
     private String cip = null;
 
-    public UserService(String cip) {
+    public UserHandler(String cip) {
+        if (!validate_cip(cip)) {
+            return;
+        }
+
+        this.cip = cip;
+        pgh = new PostgresHandler();
+    }
+
+    public UserHandler(String cip, String nom, String prenom) {
+        if (!validate_cip(cip)) {
+            return;
+        }
+
+        this.cip = cip;
+        pgh = new PostgresHandler();
+
+        pgh.insert_row("etudiant",
+                        new String[]{"cip", "nom", "prenom"},
+                        new String[]{cip, nom, prenom});
+    }
+
+    private boolean validate_cip(String cip) {
         if (cip == "") {
             System.out.println("Invalid CIP: No input");
-            return;
+            return false;
         }
 
         cip = cip.toLowerCase().strip();
         if (cip.length() != 8) {   // cip: abcd1234
             System.out.println("Invalid CIP: Invalid length");
-            return;
+             return false;
         }
 
         if (!Character.isLetter(cip.charAt(0)) ||
@@ -28,19 +49,18 @@ public class UserService {
                 !Character.isDigit(cip.charAt(6))  ||
                 !Character.isDigit(cip.charAt(7))) {
             System.out.println("Invalid CIP: Invalid format");
-            return;
+            return false;
         }
 
-        this.cip = cip;
-        pgs = new PostgresService();
+        return true;
     }
 
     public boolean is_valid() {
-        return cip != null && pgs != null;
+        return cip != null && pgh != null;
     }
 
     private String select_column(String column) {
-        return pgs.select_column(column, "Etudiant", "cip", cip);
+        return pgh.select_column(column, "Etudiant", "cip", cip);
     }
 
     public String get_ical_key() {
