@@ -1,8 +1,5 @@
 package com.horarbus;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
-
 public class UserService {
     private PostgresService pgs = null;
     private String cip = null;
@@ -13,7 +10,7 @@ public class UserService {
     }
 
     private String select_column(String column) {
-        return pgs.select_column(column, "Etudiant", "cip='" + cip + "'");
+        return pgs.select_column(column, "Etudiant", "cip", cip);
     }
 
     public String get_ical_key() {
