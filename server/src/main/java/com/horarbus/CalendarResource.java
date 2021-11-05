@@ -37,7 +37,7 @@ private String url = "https://www.gel.usherbrooke.ca/horarius/icalendar?key=67a8
     public String test() {
         PostgresService pgs = new PostgresService();
 
-        pgs.update_column("transport_default", "etudiant", "'TRANSIT'", "cip='lacp3102'");
+        pgs.update_column("nom", "etudiant", "'mini'", "cip='lacp3102'");
         return "";
     }
 
@@ -52,6 +52,7 @@ private String url = "https://www.gel.usherbrooke.ca/horarius/icalendar?key=67a8
             System.out.println("Invalid CIP: No input");
             return "";
         }
+
         user = user.toLowerCase().strip();
         if (user.length() != 8) {   // cip: abcd1234
             System.out.println("Invalid CIP: Invalid length");

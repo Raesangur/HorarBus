@@ -10,7 +10,7 @@ public class EventHandler {
     }
 
     private String select_column(String column) {
-        return pgs.select_column(column, "Evenement", "event_id=" + event_id);
+        return pgs.select_column(column, "Evenement", "event_id", event_id);
     }
 
     private String get_debut() {

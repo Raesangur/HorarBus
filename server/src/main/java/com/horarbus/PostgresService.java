@@ -14,52 +14,115 @@ public class PostgresService {
     public Statement getStatement() {
         return statement;
     }
-
-    public ResultSet executeQuery(String query) {
-
-        if (statement == null) {
-            return null;
-        }
-
+    public Connection getConnection() {
         try {
-            return statement.executeQuery(query);
-
+            return getStatement().getConnection();
         } catch (SQLException e) {
             e.printStackTrace();
             return null;
         }
     }
 
-    public String select_column(String column, String table, String condition) {
+    public ResultSet executeQuery(String query) {
+
+        if (getStatement() == null) {
+            return null;
+        }
+
         try {
-            ResultSet rs = null;
-            String query = "SELECT " + column + " FROM " + table;
-            if (condition == null) {
-                rs = executeQuery(query + ";");
-            } else {
-                rs = executeQuery(query + " WHERE " + condition + ";");
-            }
-
-            if(rs.next()) {
-                String value = rs.getString(column);
-                //System.out.println(key);
-                return value;
-            }
-
-            return "";
-        } catch(SQLException e) {
+            return statement.executeQuery(query);
+        } catch (SQLException e) {
             e.printStackTrace();
-
-            return "";
+            return null;
         }
     }
+
+    public ResultSet executeQuery(PreparedStatement query) {
+        if (query == null) {
+            return null;
+        }
+
+        try {
+            return query.executeQuery();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    private PreparedStatement generate_select_query(String column, String table, String conditionColumn) {
+        String query = "SELECT " + column + " FROM " + table;
+        //String query = "SELECT ? FROM ?";
+
+        if (conditionColumn == null) {
+            query += ";";
+        } else {
+            query += " WHERE " + conditionColumn + "= ?;";
+        }
+
+        try {
+            return getConnection().prepareStatement(query);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public String select_column(String column,
+                                String table,
+                                String conditionColumn,
+                                String conditionValue) {
+        PreparedStatement query = generate_select_query(column, table, conditionColumn);
+        if (query == null) {
+            return "";
+        }
+
+        try {
+            query.setString(1, conditionValue);
+
+            ResultSet rs = executeQuery(query);
+
+            if (rs.next())  {
+                return rs.getString(column);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return "";
+    }
+
+    public String select_column(String column,
+                                String table,
+                                String conditionColumn,
+                                int conditionValue) {
+        PreparedStatement query = generate_select_query(column, table, conditionColumn);
+        if (query == null) {
+            return "";
+        }
+
+        try {
+            query.setInt(1, conditionValue);
+
+            ResultSet rs = executeQuery(query);
+
+            if (rs.next())  {
+                return String.valueOf(rs.getInt(column));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return "";
+    }
+
 
     public void update_column(String column, String table, String value, String condition) {
         String query = "UPDATE " + table +
                        "SET " + column + " = " + value +
                        "WHERE " + condition + ";";
 
-        executeQuery(query);
+        System.out.println(query);
+
+        System.out.println(executeQuery(query).toString());
     }
 
     private Statement setup_postgres_connection() {
