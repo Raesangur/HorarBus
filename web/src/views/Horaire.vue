@@ -58,7 +58,7 @@
               </b-col>
             </b-row>
             <b-row>
-              <b-col class="sideItem" v-b-toggle.sidebar-menu>
+              <b-col class="sideItem" v-b-toggle.sidebar-menu @click="logout">
                 Se déconnecter
               </b-col>
             </b-row>
@@ -282,7 +282,6 @@
         <Fullcalendar
           ref="fullCalendar"
           :options="calendarOptions"
-          :events="events"
           @load="eventRender"
         />
       </div>
@@ -313,6 +312,7 @@ export default {
       temps_avance_notification: 0,
     },
     position: "",
+    watchEvent:"",
     today: new Date(),
     value: new Date(),
     type: "week",
@@ -466,6 +466,7 @@ export default {
     this.darkMode = true;
     //this.getUser();
     //this.getPref(this.user);
+    //this.getevents(this.user);
     const successCallback = (position) => {
       // if(position.coords.accuracy >= 1000){
       //   let infoPosition = prompt("Entrer votre addresse", "");
@@ -485,6 +486,52 @@ export default {
     value() {
       let calendarApi = this.$refs.fullCalendar.getApi();
       calendarApi.gotoDate(this.value);
+      this.watchEvent = calendarApi.currentData.currentDate;
+    },
+    watchEvent(){
+      if (this.darkMode == true) {
+        for (
+          let i = 0;
+          i < document.getElementsByClassName("fc-list-day-cushion").length;
+          i++
+        ) {
+          document
+            .getElementsByClassName("fc-list-day-cushion")
+            [i].classList.add("fc-list-day-dark");
+        }
+        for (
+          let i = 0;
+          i < document.getElementsByClassName("fc-event").length;
+          i++
+        ) {
+          document
+            .getElementsByClassName("fc-event")
+            [i].classList.add("fc-event-dark");
+        }
+        document.getElementById("app").classList.add("dark");
+        document.getElementsByTagName("footer")[0].style.color = "#ffffff";
+      } else {
+        for (
+          let i = 0;
+          i < document.getElementsByClassName("fc-list-day-cushion").length;
+          i++
+        ) {
+          document
+            .getElementsByClassName("fc-list-day-cushion")
+            [i].classList.remove("fc-list-day-dark");
+        }
+        for (
+          let i = 0;
+          i < document.getElementsByClassName("fc-event").length;
+          i++
+        ) {
+          document
+            .getElementsByClassName("fc-event")
+            [i].classList.remove("fc-event-dark");
+        }
+        document.getElementById("app").classList.remove("dark");
+        document.getElementsByTagName("footer")[0].style.color = "#000000";
+      }
     },
     darkMode() {
       if (this.darkMode == true) {
@@ -613,6 +660,7 @@ export default {
       if (this.$refs.fullCalendar) {
         let calendarApi = this.$refs.fullCalendar.getApi();
         calendarApi.next();
+        this.watchEvent = calendarApi.currentData.currentDate;
       }
       if (this.$refs.calendar) {
         this.$refs.calendar.next();
@@ -622,6 +670,7 @@ export default {
       if (this.$refs.fullCalendar) {
         let calendarApi = this.$refs.fullCalendar.getApi();
         calendarApi.prev();
+        this.watchEvent = calendarApi.currentData.currentDate;
       }
       if (this.$refs.calendar) {
         this.$refs.calendar.prev();
@@ -1249,9 +1298,6 @@ button:focus {
   }
   /deep/.fc-theme-standard .fc-list {
     border: 0 !important;
-  }
-  /deep/.bg-dark {
-    background: #1867c0 !important;
   }
 }
 </style>
