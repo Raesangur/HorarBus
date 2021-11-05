@@ -33,6 +33,16 @@ private String url = "https://www.gel.usherbrooke.ca/horarius/icalendar?key=67a8
 
     @GET
     @Produces(MediaType.TEXT_HTML)
+    @Path("/test")
+    public String test() {
+        PostgresService pgs = new PostgresService();
+
+        pgs.update_column("transport_default", "etudiant", "'TRANSIT'", "cip='lacp3102'");
+        return "";
+    }
+
+    @GET
+    @Produces(MediaType.TEXT_HTML)
     @Path("/events")
     public String get_user_events(@Context RoutingContext context) throws IOException {
         AuthData authData = context.get("authData");

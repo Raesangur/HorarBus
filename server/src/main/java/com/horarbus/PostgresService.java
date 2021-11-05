@@ -54,6 +54,14 @@ public class PostgresService {
         }
     }
 
+    public void update_column(String column, String table, String value, String condition) {
+        String query = "UPDATE " + table +
+                       "SET " + column + " = " + value +
+                       "WHERE " + condition + ";";
+
+        executeQuery(query);
+    }
+
     private Statement setup_postgres_connection() {
         // Setup drivers
         // https://forum.katalon.com/t/java-sql-sqlexception-no-suitable-driver-found-for-jdbc-localhost-5433/30308

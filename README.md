@@ -64,6 +64,14 @@ SERVER_URL=VOTRE_ADRESSE_IP (ex: 192.168.0.1)</pre>
 
 </ul>
 
+#### SSL (HTTPS)
+
+Obtenir les certificats (voir Discord) et les ajouter dans `./docker/ssl`.
+```
+cert.crt
+cert.key
+```
+
 <hr>
 
 ### Commandes disponibles

@@ -1,4 +1,4 @@
-name: Frontend validation
+name: Automatic check
 on: [push]
 jobs:
     Frontend-Actions:
