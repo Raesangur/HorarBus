@@ -26,6 +26,7 @@ Vue.config.devtools = true;
 //     clientId: "frontend",
 //     onLoad: "login-required",
 // };
+	url: `https://${window.location.hostname}/auth`,
 
 //let keycloak = Keycloak(initOptions);
 /////////////////without keycloak
