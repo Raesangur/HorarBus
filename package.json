@@ -1,34 +1,34 @@
 {
-	"name": "horarbus",
-	"version": "1.0.0",
-	"description": "Projet UdeS de S3",
-	"main": "index.js",
-	"scripts": {
-		"predocker": "npm run set:env && npm run set:keycloak",
-		"docker": "cd docker && docker-compose down && docker-compose up -d",
-		"set:env": "node scripts/set_env.js",
-		"set:keycloak": "node scripts/set_keycloak.js",
-		"start": "npm run docker && npm run start:server",
-		"start:server": "cd server && java -jar build/quarkus-app/quarkus-run.jar",
-		"build": "npm run build:web && npm run build:server",
-		"build:web": "cd web && npm run build",
-		"build:server": "cd server && .\\gradlew build",
-		"dev": "npm run docker && concurrently \"npm run dev:web\" \"npm run dev:server\"",
-		"dev:web": "cd web && npm run serve",
-		"dev:server": "cd server && .\\gradlew quarkusDev"
-	},
-	"repository": {
-		"type": "git",
-		"url": "git+https://github.com/Raesangur/HorarBus.git"
-	},
-	"author": "",
-	"license": "ISC",
-	"bugs": {
-		"url": "https://github.com/Raesangur/HorarBus/issues"
-	},
-	"homepage": "https://github.com/Raesangur/HorarBus#readme",
-	"devDependencies": {
-		"concurrently": "^6.3.0",
-		"dotenv": "^10.0.0"
-	}
+    "name": "horbus",
+    "version": "1.0.0",
+    "description": "Projet UdeS de S3",
+    "main": "index.js",
+    "scripts": {
+        "predocker": "npm run set:env && npm run set:keycloak",
+        "docker": "cd docker && docker-compose down && docker-compose up -d",
+        "set:env": "node scripts/set_env.js",
+        "set:keycloak": "node scripts/set_keycloak.js",
+        "start": "npm run docker && npm run start:server",
+        "start:server": "cd server && java -jar build/quarkus-app/quarkus-run.jar",
+        "build": "npm run build:web && npm run build:server",
+        "build:web": "cd web && npm run build",
+        "build:server": "cd server && .\\gradlew build",
+        "dev": "npm run docker && concurrently \"npm run dev:web\" \"npm run dev:server\"",
+        "dev:web": "cd web && npm run serve",
+        "dev:server": "cd server && .\\gradlew quarkusDev"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/Raesangur/HorarBus.git"
+    },
+    "author": "",
+    "license": "ISC",
+    "bugs": {
+        "url": "https://github.com/Raesangur/HorarBus/issues"
+    },
+    "homepage": "https://github.com/Raesangur/HorarBus#readme",
+    "devDependencies": {
+        "concurrently": "^6.3.0",
+        "dotenv": "^10.0.0"
+    }
 }
