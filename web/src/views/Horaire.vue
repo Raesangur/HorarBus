@@ -328,7 +328,6 @@
 </template>
 
 <script>
-import EventModal from "../components/EventModal";
 require("@fullcalendar/list/main.css");
 import Fullcalendar from "@fullcalendar/vue";
 import InteractionPlugin from "@fullcalendar/interaction";
@@ -659,12 +658,6 @@ export default {
     },
     onResize() {
       this.resize();
-    },
-    handleEventClick(arg) {
-      this.$modal.show(EventModal, {
-        text: "This is from the component",
-        event: arg.event,
-      });
     },
     resize() {
       this.largeur = window.innerWidth;
