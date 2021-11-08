@@ -523,7 +523,8 @@ export default {
     this.updateTime();
     this.getToday();
     this.darkMode = true;
-    this.getUser();
+    let user = this.getUser();
+    console.log(user)
     //this.getPref(this.user);
     //this.getevents(this.user);
     const successCallback = (position) => {
