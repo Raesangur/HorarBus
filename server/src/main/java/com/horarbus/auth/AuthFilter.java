@@ -4,6 +4,9 @@ import io.vertx.core.json.JsonObject;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 
 import javax.enterprise.inject.Instance;
+import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.TrustManager;
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.container.ContainerRequestFilter;
 import javax.ws.rs.container.PreMatching;
@@ -41,7 +44,7 @@ public class AuthFilter implements ContainerRequestFilter {
     }
 
     private AuthData readAuthDataFromToken(String token) throws AuthException, IOException {
-        HttpURLConnection connection = getValidationConnection(token);
+        HttpsURLConnection connection = getValidationConnection(token);
         if (connection == null) {
             throw new AuthException("Connection failed.");
         }
@@ -53,16 +56,22 @@ public class AuthFilter implements ContainerRequestFilter {
         return new AuthData(new JsonObject(response));
     }
 
-    private HttpURLConnection getValidationConnection(String token) throws AuthException {
-        HttpURLConnection connection = null;
+    private HttpsURLConnection getValidationConnection(String token) throws AuthException {
+        HttpsURLConnection connection = null;
         try {
+            SSLContext ctx = SSLContext.getInstance("TLS");
+            ctx.init(null, new TrustManager[] {new InvalidCertificateTrustManager()}, null);
+            SSLContext.setDefault(ctx);
+
             URL url = new URL(keycloakValidationEndpoint.get());
-            connection = (HttpURLConnection) url.openConnection();
+            connection = (HttpsURLConnection) url.openConnection();
             connection.setRequestMethod("GET");
 
             connection.setUseCaches(false);
             connection.setDoOutput(true);
             connection.setRequestProperty("Authorization", token);
+
+            connection.setHostnameVerifier(new InvalidCertificateHostVerifier());
         } catch (Exception e) {
             throw new AuthException(e.getMessage());
         } finally {
@@ -74,7 +83,7 @@ public class AuthFilter implements ContainerRequestFilter {
         return connection;
     }
 
-    private String readKeycloakAnswer(HttpURLConnection connection) throws AuthException {
+    private String readKeycloakAnswer(HttpsURLConnection connection) throws AuthException {
         StringBuilder response = new StringBuilder();
 
         try {
