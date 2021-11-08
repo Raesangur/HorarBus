@@ -245,6 +245,42 @@ public class PostgresHandler {
             e.printStackTrace();
         }
     }
+    public void update_column(String column,
+                              String table,
+                              long value,
+                              String conditionColumn,
+                              String conditionValue) {
+        PreparedStatement query = generate_update_query(column, table, conditionColumn);
+        if (query == null) {
+            return;
+        }
+
+        try {
+            query.setTimestamp(1, new Timestamp(value));
+            query.setString(2, conditionValue);
+            executeQuery(query);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+    public void update_column(String column,
+                              String table,
+                              long value,
+                              String conditionColumn,
+                              int conditionValue) {
+        PreparedStatement query = generate_update_query(column, table, conditionColumn);
+        if (query == null) {
+            return;
+        }
+
+        try {
+            query.setTimestamp(1, new Timestamp(value));
+            query.setInt(2, conditionValue);
+            executeQuery(query);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
 
     private Statement setup_postgres_connection() {
         // Setup drivers
