@@ -3,6 +3,10 @@ package com.horarbus;
 import io.vertx.core.json.JsonObject;
 
 public class UserHandler {
+    private static final int DEFAULT_PREPARATION_TIME = 15;
+    private static final int DEFAULT_NOTIFICATION_TIME = 15;
+    private static final String DEFAULT_TRANSPORT = "TRANSIT";
+
     private PostgresHandler pgh = null;
     private String cip = null;
 
@@ -60,18 +64,22 @@ public class UserHandler {
     }
 
     private String select_column(String column) {
-        return pgh.select_column(column, "Etudiant", "cip", cip);
+        return pgh.select_column(column, "Student", "cip", cip);
     }
+
     private void update_column(String column, String value) {
         pgh.update_column(column, "Student", value, "cip", cip);
     }
+
     private void update_column(String column, int value) {
         pgh.update_column(column, "Student", value, "cip", cip);
     }
 
     public String get_ical_key() {
-        return select_column("cle_ical");
+        String key = select_column("ical_key");
+        return key != null ? key : "";
     }
+
     public void set_ical_key(String ical_key) {
         update_column("ical_key", ical_key);
     }
@@ -79,8 +87,9 @@ public class UserHandler {
     public int get_preparation_time() {
         String val = select_column("preparation_time");
 
-        return Integer.parseInt(val);
+        return val != null ? Integer.parseInt(val) : DEFAULT_PREPARATION_TIME;
     }
+
     public void set_preparation_time(int prep_time) {
         update_column("preparation_time", prep_time);
     }
@@ -88,13 +97,14 @@ public class UserHandler {
     public int get_notification_time() {
         String val = select_column("notification_time");
 
-        return Integer.parseInt(val);
+        return val != null ? Integer.parseInt(val) : DEFAULT_NOTIFICATION_TIME;
     }
+
     public void set_notification_time(int notif_time) {
         update_column("notification_time", notif_time);
     }
 
-    private String sanitizeTransport(String transport){
+    private String sanitizeTransport(String transport) {
         if (transport == null || transport.equals("")) {
             System.out.println("Invalid transport method");
             return null;
@@ -114,8 +124,10 @@ public class UserHandler {
     }
 
     public String get_transport() {
-        return select_column("transport");
+        String transport = select_column("transport");
+        return transport != null ? transport : DEFAULT_TRANSPORT;
     }
+
     public void set_transport(String transport) {
         transport = sanitizeTransport(transport);
         if (transport == null) {
@@ -127,7 +139,7 @@ public class UserHandler {
 
     public JsonObject get_preferences() {
         JsonObject response = new JsonObject();
-        response.put("cip", cip);
+
         response.put("preparation_time", get_preparation_time());
         response.put("notification_time", get_notification_time());
         response.put("transport", get_transport());
