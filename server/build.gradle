@@ -19,7 +19,7 @@ dependencies {
     testImplementation 'io.rest-assured:rest-assured'
 }
 
-group 'com.horarbus'
+group 'com.horbus'
 version '1.0-SNAPSHOT'
 
 java {
