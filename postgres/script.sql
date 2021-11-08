@@ -12,12 +12,12 @@ CREATE TABLE Student
   UNIQUE (ical_key)
 );
 
-CREATE TABLE Group
+CREATE TABLE Clan
 (
-  group_id              SERIAL      NOT NULL,
+  clan_id              SERIAL      NOT NULL,
   name                  VARCHAR(64) NOT NULL,
 
-  PRIMARY KEY (group_id)
+  PRIMARY KEY (clan_id)
 );
 
 CREATE TABLE Localisation
@@ -27,15 +27,15 @@ CREATE TABLE Localisation
   PRIMARY KEY (coords)
 );
 
-CREATE TABLE Member
+CREATE TABLE Clan_Member
 (
   role                  INT,
   cip                   CHAR(8)      NOT NULL,
-  group_id              SERIAL       NOT NULL,
+  clan_id              SERIAL       NOT NULL,
 
-  PRIMARY KEY (cip, group_id),
+  PRIMARY KEY (cip, clan_id),
   FOREIGN KEY (cip) REFERENCES Student(cip),
-  FOREIGN KEY (group_id) REFERENCES Group(group_id)
+  FOREIGN KEY (clan_id) REFERENCES Clan(clan_id)
 );
 
 CREATE TABLE Address
@@ -51,12 +51,13 @@ CREATE TABLE Address
 CREATE TABLE Event
 (
   event_id              SERIAL        NOT NULL,
-  start                 TIMESTAMP     NOT NULL,
-  end                   TIMESTAMP     NOT NULL,
+  time_start            TIMESTAMP     NOT NULL,
+  time_end              TIMESTAMP     NOT NULL,
   name                  VARCHAR(64)   NOT NULL,
   summary               VARCHAR(128),
   description           VARCHAR(128),
   coords                VARCHAR(256),
+  ical_id               INT,
 
   PRIMARY KEY (event_id),
   FOREIGN KEY (coords) REFERENCES Localisation(coords)
@@ -64,7 +65,7 @@ CREATE TABLE Event
 
 CREATE TABLE Traject
 (
-  cip                   CHAR(8)       NOT_NULL,
+  cip                   CHAR(8)       NOT NULL,
   event_id              SERIAL        NOT NULL,
   coords_start          VARCHAR(256)  NOT NULL,
   coords_end            VARCHAR(256)  NOT NULL,
