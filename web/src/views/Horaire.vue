@@ -15,7 +15,7 @@
           </button>
         </b-navbar-nav>
         <b-navbar-nav class="navbar-menu mx-auto" v-if="largeur >= 768">
-          <div class="nom" style="cursor: default">HorBus</div>
+          <div class="horbus nom" style="cursor: default">HorBus</div>
         </b-navbar-nav>
         <b-navbar-toggle
           class="toggle"
@@ -30,7 +30,7 @@
           <b-nav-item-dropdown right class="drop" no-caret>
             <!-- Using 'button-content' slot -->
             <template v-slot:button-content>
-              <a class="nom"> John Doe </a>
+              <a class="nom">{{user.firstname}} {{user.lastname}}</a>
             </template>
             <!--<b-dropdown-item href="/profile"><font-awesome-icon :icon="shoppingCog" /> Profile</b-dropdown-item>-->
             <b-dropdown-item @click="showPref()">
@@ -89,7 +89,7 @@
             v-model="pref.transport"
             :aria-describedby="ariaDescribedby"
             name="some-radios"
-            value="walk"
+            value="WALKING"
             button
             class="buttonTransport"
             ><img :src="require('../assets/walk.png')"
@@ -98,7 +98,7 @@
             v-model="pref.transport"
             :aria-describedby="ariaDescribedby"
             name="some-radios"
-            value="bike"
+            value="BICYCLING"
             button
             class="buttonTransport"
             ><img :src="require('../assets/bike.png')"
@@ -107,7 +107,7 @@
             v-model="pref.transport"
             :aria-describedby="ariaDescribedby"
             name="some-radios"
-            value="bus"
+            value="TRANSIT"
             button
             class="buttonTransport"
             ><img :src="require('../assets/bus.png')"
@@ -116,7 +116,7 @@
             v-model="pref.transport"
             :aria-describedby="ariaDescribedby"
             name="some-radios"
-            value="car"
+            value="DRIVING"
             button
             class="buttonTransport"
             ><img :src="require('../assets/car.png')"
@@ -251,21 +251,25 @@
         class="calendar"
       >
         <template v-slot:event="{ event }">
-          <div class="event" v-click-outside="dismissEvent" v-if="!event.trajet">
+          <div class="event" @mouseenter="setHeight(event.id)" v-click-outside="dismissEvent" v-if="!event.trajet" :id="event.id">
             {{ event.heure }}
             <br />
-            <a style="font-weight: 700">{{ event.name }}</a>
+            <a style="font-weight: 700">{{ event.summary }}</a>
             <br />
-            <div v-if="event.local">
-              {{ event.local }}
-            </div>
+            {{ event.location }}
+            {{event.open}}
             
-            <div v-if="event.open">
+            <div v-if="event.open === true">
+              
               <div class="centerBorder"></div>
               {{ event.description1 }}
-              <br />
-              <br />
+              <br>
+              <br>
               {{ event.description2 }}
+              <div v-if="event.description3">
+                <br>
+                {{ event.description3 }}
+              </div>
               <div class="centerBorder" v-if="event.prof"></div>
               {{ event.prof }}
               <div class="centerBorder" v-if="event.session"></div>
@@ -273,22 +277,19 @@
             </div>
           </div>
           <div class="event" v-click-outside="dismissEvent" v-else>
-            {{ event.heureDepart }} - <a style="font-weight: 700">{{ event.name }}</a>
+            <!-- {{ event.heureDepart }} - <a style="font-weight: 700">{{ event.summary }}</a>
             <br />
             Arrivé prévue à {{ event.heureArrive }}
             <div class="centerBorder" v-if="event.session"></div>
             
             <br />
-            <div v-if="event.local">
-              {{ event.local }}
+            <div v-if="event.location">
+              {{ event.location }}
             </div>
             
             <div v-if="event.open">
               <div class="centerBorder"></div>
               {{ event.description1 }}
-              <br />
-              <br />
-              {{ event.description2 }}
               <div class="centerBorder" v-if="event.prof"></div>
               {{ event.prof }}
               <div class="centerBorder" v-if="event.session"></div>
@@ -296,15 +297,12 @@
             </div>
             <div v-if="event.open">
               <div class="centerBorder"></div>
-              {{ event.description1 }}
-              <br />
-              <br />
               {{ event.description2 }}
               <div class="centerBorder" v-if="event.prof"></div>
               {{ event.prof }}
               <div class="centerBorder"></div>
               <a href="#">voir la carte</a>
-            </div>
+            </div> -->
           </div>
           
         </template>
@@ -316,11 +314,10 @@
           ></div>
         </template>
       </v-calendar>
-      <div class="calendar-mobile">
+      <div class="calendar-mobile" @load="switchTheme">
         <Fullcalendar
           ref="fullCalendar"
           :options="calendarOptions"
-          @load="eventRender"
         />
       </div>
     </b-col>
@@ -344,7 +341,7 @@ export default {
     pref: {
       adresse_maison: "",
       temps_avance: 0,
-      transport: "bus",
+      transport: "TRANSIT",
       notification_enable: false,
       temps_avance_notification: 0,
     },
@@ -362,13 +359,22 @@ export default {
       //eventClick: this.handleEventClick(),
       eventDidMount: function (arg) {
         let p = document.createElement("p");
-        p.innerHTML =
+        if(arg.event.extendedProps.description3){
+          p.innerHTML =
           arg.event.extendedProps.description1 +
           "<br><br>" +
-          arg.event.extendedProps.description2;
+          arg.event.extendedProps.description2
+          +"<br>"+arg.event.extendedProps.description3
+        }
+        else{
+          p.innerHTML =
+          arg.event.extendedProps.description1 +
+          "<br><br>" +
+          arg.event.extendedProps.description2
+        }
         p.setAttribute("style", "margin-top: 15px; margin-bottom:15px");
         let div = document.createElement("div");
-        div.textContent = arg.event.extendedProps.local;
+        div.textContent = arg.event.extendedProps.location;
         div.setAttribute("class", "local");
         if (
           arg.event.extendedProps.description1 &&
@@ -376,7 +382,7 @@ export default {
         ) {
           arg.el.cells[2].appendChild(p);
         }
-        if (arg.event.extendedProps.local) {
+        if (arg.event.extendedProps.location) {
           arg.el.cells[0].appendChild(div);
         }
       },
@@ -398,7 +404,7 @@ export default {
             "Projet,Conception d'un système informatique distribué,Port du masque de Procédure obligatoire".split(
               ","
             )[2],
-          local: "C1-5006",
+          location: "C1-5006",
         },
         {
           start: "2021-11-02 12:00",
@@ -415,7 +421,7 @@ export default {
             "Projet,Conception d'un système informatique distribué,Port du masque de Procédure obligatoire".split(
               ","
             )[2],
-          local: "C1-5014",
+          location: "C1-5014",
         },
       ],
       eventColor: "#1867c0",
@@ -437,14 +443,14 @@ export default {
         id: 0,
         start: "2021-11-01 14:00",
         end: "2021-11-01 16:00",
-        name: "Projet,Conception d'un système informatique distribué,Port du masque de Procédure obligatoire".split(
+        summary: "Projet,Conception d'un système informatique distribué,Port du masque de Procédure obligatoire".split(
           ","
         )[0],
         description1:
           "Projet,Conception d'un système informatique distribué,Port du masque de Procédure obligatoire".split(
             ","
           )[1],
-        description2:
+          description2:
           "Projet,Conception d'un système informatique distribué,Port du masque de Procédure obligatoire".split(
             ","
           )[2],
@@ -452,7 +458,7 @@ export default {
           "2021-11-01 14:00".split(" ")[1] +
           " - " +
           "2021-11-01 16:00".split(" ")[1],
-        local: "C1-5006",
+        location: "C1-5006",
         open: false,
         prof: "Bernie",
         session: "Session 3 génie informatique",
@@ -462,14 +468,14 @@ export default {
         id: 1,
         start: "2021-11-04 14:00",
         end: "2021-11-04 16:00",
-        name: "Projet,Conception d'un système informatique distribué,Port du masque de Procédure obligatoire".split(
+        summary: "Projet,Conception d'un système informatique distribué,Port du masque de Procédure obligatoire".split(
           ","
         )[0],
         description1:
           "Projet,Conception d'un système informatique distribué,Port du masque de Procédure obligatoire".split(
             ","
           )[1],
-        description2:
+          description2:
           "Projet,Conception d'un système informatique distribué,Port du masque de Procédure obligatoire".split(
             ","
           )[2],
@@ -477,7 +483,7 @@ export default {
           "2021-11-04 14:00".split(" ")[1] +
           " - " +
           "2021-11-04 16:00".split(" ")[1],
-        local: "C1-5006",
+        location: "C1-5006",
         open: false,
         prof: "Bernie",
         trajet:false,
@@ -487,7 +493,7 @@ export default {
         id: 2,
         start: "2021-11-04 13:00",
         end: "2021-11-04 13:30",
-        name: "Départ UdeS,Terminus intersection Blvd - Rue,Autobus #69,Arrive dans 420s".split(
+        summary: "Départ UdeS,Terminus intersection Blvd - Rue,Autobus #69,Arrive dans 420s".split(
           ","
         )[0],
         description1:
@@ -495,9 +501,9 @@ export default {
             ","
           )[1],
         description2:
-          "Départ UdeS,Terminus intersection Blvd - Rue,Autobus #69".split(
-            ","
-          )[2],
+        "Départ UdeS,Terminus intersection Blvd - Rue,Autobus #69".split(
+          ","
+        )[2],
         heureDepart: "2021-11-04 13:00".split(" ")[1],
         heureArrive: "2021-11-04 14:00".split(" ")[1],
         open: false,
@@ -523,10 +529,6 @@ export default {
     this.updateTime();
     this.getToday();
     this.darkMode = true;
-    let user = this.getUser();
-    console.log(user)
-    //this.getPref(this.user);
-    //this.getevents(this.user);
     const successCallback = (position) => {
       // if(position.coords.accuracy >= 1000){
       //   let infoPosition = prompt("Entrer votre addresse", "");
@@ -543,105 +545,60 @@ export default {
     navigator.geolocation.watchPosition(successCallback, errorCallback);
   },
   watch: {
+    user(){
+      this.getEvents();
+    },
+    eventsState(){
+      for(let i in this.eventsState){
+        this.eventsState[i].open = false;
+      }
+      this.events = this.eventsState;
+      this.calendarOptions.events = this.eventsState;
+      for(let i in this.eventsState){
+        this.events[i].start = this.eventsState[i].start.replace("T"," ").split(':')[0]+":"+this.eventsState[i].start.replace("T"," ").split(':')[1];
+        this.events[i].end = this.eventsState[i].end.replace("T"," ").split(':')[0]+":"+this.eventsState[i].end.replace("T"," ").split(':')[1];
+        this.events[i].heure = this.events[i].start.split(" ")[1] + " - " + this.events[i].end.split(" ")[1];
+        this.events[i].description1 = this.events[i].description.split("\n")[0];
+        this.events[i].description2 = this.events[i].description.split("\n")[2];
+        this.events[i].id = "eventFullWindow"+ i;
+        if(this.events[i].description.split("\n")[3]){
+          this.events[i].description3 = this.events[i].description.split("\n")[3];
+        }
+        this.calendarOptions.events[i].start = this.eventsState[i].start.replace("T"," ").split(':')[0]+":"+this.eventsState[i].start.replace("T"," ").split(':')[1];
+        this.calendarOptions.events[i].end = this.eventsState[i].end.replace("T"," ").split(':')[0]+":"+this.eventsState[i].end.replace("T"," ").split(':')[1];
+        this.calendarOptions.events[i].heure = this.calendarOptions.events[i].start.split(" ")[1] + " - " + this.events[i].end.split(" ")[1];
+        this.calendarOptions.events[i].title = this.calendarOptions.events[i].summary;
+        this.calendarOptions.events[i].description1 = this.calendarOptions.events[i].description.split("\n")[0];
+        this.calendarOptions.events[i].description2 = this.calendarOptions.events[i].description.split("\n")[2];
+        if(this.calendarOptions.events[i].description.split("\n")[3]){
+          this.calendarOptions.events[i].description3 = this.events[i].description.split("\n")[3];
+        }
+      }
+    },
+    prefState(){
+      this.pref.transport = this.prefState.transport;
+      this.pref.temps_avance = this.prefState.preparation_time;
+      this.pref.temps_avance_notification = this.prefState.notification_time;
+    },
     value() {
       let calendarApi = this.$refs.fullCalendar.getApi();
       calendarApi.gotoDate(this.value);
       this.watchEvent = calendarApi.currentData.currentDate;
     },
     watchEvent(){
-      if (this.darkMode == true) {
-        for (
-          let i = 0;
-          i < document.getElementsByClassName("fc-list-day-cushion").length;
-          i++
-        ) {
-          document
-            .getElementsByClassName("fc-list-day-cushion")
-            [i].classList.add("fc-list-day-dark");
-        }
-        for (
-          let i = 0;
-          i < document.getElementsByClassName("fc-event").length;
-          i++
-        ) {
-          document
-            .getElementsByClassName("fc-event")
-            [i].classList.add("fc-event-dark");
-        }
-        document.getElementById("app").classList.add("dark");
-        document.getElementsByTagName("footer")[0].style.color = "#ffffff";
-      } else {
-        for (
-          let i = 0;
-          i < document.getElementsByClassName("fc-list-day-cushion").length;
-          i++
-        ) {
-          document
-            .getElementsByClassName("fc-list-day-cushion")
-            [i].classList.remove("fc-list-day-dark");
-        }
-        for (
-          let i = 0;
-          i < document.getElementsByClassName("fc-event").length;
-          i++
-        ) {
-          document
-            .getElementsByClassName("fc-event")
-            [i].classList.remove("fc-event-dark");
-        }
-        document.getElementById("app").classList.remove("dark");
-        document.getElementsByTagName("footer")[0].style.color = "#000000";
-      }
+      this.switchTheme();
     },
     darkMode() {
-      if (this.darkMode == true) {
-        for (
-          let i = 0;
-          i < document.getElementsByClassName("fc-list-day-cushion").length;
-          i++
-        ) {
-          document
-            .getElementsByClassName("fc-list-day-cushion")
-            [i].classList.add("fc-list-day-dark");
-        }
-        for (
-          let i = 0;
-          i < document.getElementsByClassName("fc-event").length;
-          i++
-        ) {
-          document
-            .getElementsByClassName("fc-event")
-            [i].classList.add("fc-event-dark");
-        }
-        document.getElementById("app").classList.add("dark");
-        document.getElementsByTagName("footer")[0].style.color = "#ffffff";
-      } else {
-        for (
-          let i = 0;
-          i < document.getElementsByClassName("fc-list-day-cushion").length;
-          i++
-        ) {
-          document
-            .getElementsByClassName("fc-list-day-cushion")
-            [i].classList.remove("fc-list-day-dark");
-        }
-        for (
-          let i = 0;
-          i < document.getElementsByClassName("fc-event").length;
-          i++
-        ) {
-          document
-            .getElementsByClassName("fc-event")
-            [i].classList.remove("fc-event-dark");
-        }
-        document.getElementById("app").classList.remove("dark");
-        document.getElementsByTagName("footer")[0].style.color = "#000000";
-      }
+      this.switchTheme();
     },
   },
 
   computed: {
-    ...mapState({}),
+    ...mapState({
+      user: (state) => state.user.user,
+      prefState: (state) => state.user.pref,
+      eventsState: (state) => state.calendar.events,
+    }),
     cal() {
       return this.ready ? this.$refs.calendar : null;
     },
@@ -650,11 +607,12 @@ export default {
     },
   },
   methods: {
-    ...mapActions(["getPref", "getUser", "putUser", "putPref", "getMaps"]),
+    ...mapActions(["putUser", "putPref", "getMaps","getEvents"]),
     sendPref() {
       let pref = this.pref;
       pref.darkMode = this.darkMode;
       console.log(pref)
+      this.hidePref()
       //this.putPref(pref);
     },
     onResize() {
@@ -688,25 +646,6 @@ export default {
     updateTime() {
       setInterval(() => this.cal.updateTimes(), 60 * 1000);
     },
-    eventRender(event) {
-      let p = document.createElement("p");
-      let text = document.createTextNode(
-        event.description1 + "<br><br>" + event.description2
-      );
-      p.appendChild(text);
-      p.setAttribute("style", "margin-top: 15px; margin-bottom: 15px");
-
-      let div = document.createElement("div");
-      let local = document.createTextNode(event.local);
-      div.appendChild(local);
-      div.setAttribute("class", "local");
-      if (event.description1 && event.description2) {
-        event.element.find(".fc-list-event-title").after(p);
-      }
-      if (event.local) {
-        event.element.find(".fc-list-event-time").after(div);
-      }
-    },
     getEventColor(event) {
       return event.color;
     },
@@ -730,13 +669,60 @@ export default {
         this.$refs.calendar.prev();
       }
     },
+    switchTheme(){
+      console.log("DARK")
+      if (this.darkMode == true) {
+        for (
+          let i = 0;
+          i < document.getElementsByClassName("fc-list-day-cushion").length;
+          i++
+        ) {
+          document
+            .getElementsByClassName("fc-list-day-cushion")
+            [i].classList.add("fc-list-day-dark");
+        }
+        for (
+          let i = 0;
+          i < document.getElementsByClassName("fc-event").length;
+          i++
+        ) {
+          document
+            .getElementsByClassName("fc-event")
+            [i].classList.add("fc-event-dark");
+        }
+        document.getElementById("app").classList.add("dark");
+        document.getElementsByTagName("footer")[0].style.color = "#ffffff";
+      } else {
+        for (
+          let i = 0;
+          i < document.getElementsByClassName("fc-list-day-cushion").length;
+          i++
+        ) {
+          document
+            .getElementsByClassName("fc-list-day-cushion")
+            [i].classList.remove("fc-list-day-dark");
+        }
+        for (
+          let i = 0;
+          i < document.getElementsByClassName("fc-event").length;
+          i++
+        ) {
+          document
+            .getElementsByClassName("fc-event")
+            [i].classList.remove("fc-event-dark");
+        }
+        document.getElementById("app").classList.remove("dark");
+        document.getElementsByTagName("footer")[0].style.color = "#000000";
+      }
+    },
     showEvent(event) {
+      console.log(event)
       event.event.open = true;
       event.nativeEvent.target.style.height = "fit-content";
       event.nativeEvent.path[1].style.zIndex = "1000";
       if(this.eventActive.event === undefined){
         this.initialHeight = event.nativeEvent.path[1].style.height;
-        console.log(this.initialHeight)
+        console.log(event.nativeEvent.path[1].style.height)
       }
       this.eventActive = event;
       event.nativeEvent.path[1].style.height = "fit-content";
@@ -751,6 +737,7 @@ export default {
       }
     },
     dismissEvent() {
+      console.log("quit")
       this.eventActive.event.open = false;
       this.eventActive.nativeEvent.path[1].style.zIndex = "0";
       this.eventActive.nativeEvent.path[1].style.height = this.initialHeight;
@@ -759,6 +746,9 @@ export default {
         this.eventActive.nativeEvent.target.clickOutsideEvent
       );
       this.eventActive ="";
+    },
+    setHeight(id){
+      document.getElementById(id).style.height = document.getElementById(id).parentElement.style.height;
     },
     setToday() {
       const now = new Date();
@@ -911,7 +901,7 @@ export default {
 .event {
   font-weight: 300;
   text-align: left;
-  padding: 10px;
+  padding: 1px;
   border-radius: 5px;
   white-space: normal;
   color: #ffffff;

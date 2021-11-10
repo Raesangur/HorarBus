@@ -8,10 +8,16 @@
 </template>
 
 <script>
-
-export default {
+import { mapActions } from "vuex";export default {
   data: () => ({}),
+  methods: {
+    ...mapActions(["getUser","getEvents"]),
 
+  },
+  mounted(){
+    this.getUser();
+    this.getEvents();
+  }
 };
 </script>
 <style>

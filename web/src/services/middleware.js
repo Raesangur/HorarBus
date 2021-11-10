@@ -5,7 +5,7 @@ const applyMiddleware = (currentRoute) => {
         if (routesToRedirect.some((route) => currentRoute.startsWith(route))) {
             return {
                 routeHasChanged: true,
-                route: `${window.location.protocol}//${window.location.hostname}${currentRoute}`,
+                route: `https://${window.location.hostname}${currentRoute}`,
             };
         }
     }

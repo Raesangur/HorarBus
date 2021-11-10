@@ -7,27 +7,22 @@ export default {
         pref: {},
     },
     actions: {
-        async getUser({ commit }) {
-            try {
-                const user = await UserService.getUser();
-                commit("getUser", user);
-            } catch (err) {
-                console.log(err);
-            }
+        getUser({ commit }) {
+            UserService.getUser()
+                .then((user) => {
+                    commit("getUser", user.data);
+                    commit("getPref", user.data.preferences);
+                })
+                .catch((err) => {
+                    console.log(err);
+                });
+
         },
         async putUser({ dispatch }, payload) {
             try {
                 UserService.putUser(payload).then(() => {
                     dispatch("getUser");
                 });
-            } catch (err) {
-                console.log(err);
-            }
-        },
-        async getPref({ commit }) {
-            try {
-                const pref = await UserService.getPref();
-                commit("getPref", pref);
             } catch (err) {
                 console.log(err);
             }
@@ -46,10 +41,11 @@ export default {
     getters: {},
     mutations: {
         getUser(state, payload) {
-            state.me = payload.data;
+            state.user.firstname = payload.firstname;
+            state.user.lastname = payload.lastname;
         },
         getPref(state, payload) {
-            state.pref = payload.data;
+            state.pref = payload;
         },
     },
 };

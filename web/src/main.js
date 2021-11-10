@@ -56,7 +56,7 @@ Vue.directive("click-outside", {
 
 keycloak
     .init({ onLoad: initOptions.onLoad, checkLoginIframe: false })
-    .success((auth) => {
+    .then((auth) => {
         console.log(auth);
         if (!auth) {
             window.location.reload();
@@ -79,29 +79,29 @@ keycloak
             //console.log('here')
             keycloak
                 .updateToken(0)
-                .success((refreshed) => {
+                .then((refreshed) => {
                     //console.log(refreshed)
                     if (refreshed) {
-                        console.debug("Token refreshed" + refreshed);
+                        //console.info("Token refreshed" + refreshed);
                         localStorage.setItem("vue-token", keycloak.token);
                         localStorage.setItem("vue-refresh-token", keycloak.refreshToken);
                     } else {
-                        console.warn(
-                            "Token not refreshed, valid for " +
-                            Math.round(
-                                keycloak.tokenParsed.exp +
-                                keycloak.timeSkew -
-                                new Date().getTime() / 1000
-                            ) +
-                            " seconds"
-                        );
+                        // console.info(
+                        //     "Token not refreshed, valid for " +
+                        //     Math.round(
+                        //         keycloak.tokenParsed.exp +
+                        //         keycloak.timeSkew -
+                        //         new Date().getTime() / 1000
+                        //     ) +
+                        //     " seconds"
+                        // );
                     }
                 })
-                .error(() => {
+                .catch(() => {
                     console.error("Failed to refresh token");
                 });
         }, 10000);
     })
-    .error(() => {
+    .catch(() => {
         console.error("Authenticated Failed");
     });
