@@ -37,6 +37,10 @@ public class UserPrefs {
         }
     }
 
+    public void saveData(UserHandler handler) {
+        // TODO
+    }
+
     public JsonObject toJson() {
         JsonObject json = new JsonObject();
 

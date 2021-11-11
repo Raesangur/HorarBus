@@ -38,14 +38,31 @@ public class UserResource {
     @PUT
     @Consumes(MediaType.APPLICATION_JSON)
     @Path("/")
-    public Response setUserData(@Context RoutingContext context) {
-        // TODO
+    public Response setUserData(@Context RoutingContext context, JsonObject sentData) {
+        AuthData authData = context.get("authData");
+
+        UserHandler userHandler = new UserHandler(authData.getCip());
+        if (!userHandler.is_valid()) {
+            return Response.status(400).entity(invalidCIP()).build();
+        }
+
+        try {
+            UserPrefs prefs = new UserPrefs(sentData);
+            prefs.saveData(userHandler);
+        } catch (Exception ex) {
+            return Response.status(400).entity(invalidJson()).build();
+        }
+
         return Response.status(200).build();
     }
 
     // TODO: Join w/ calendar resource (same error messages / functions)
     private String invalidCIP() {
         return sendError("Invalid CIP associated with the current user.");
+    }
+
+    private String invalidJson() {
+        return sendError("Invalid JSON associated with the request.");
     }
 
     private String sendError(String errorMessage) {

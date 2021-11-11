@@ -1,7 +1,5 @@
 package com.horarbus;
 
-import io.vertx.core.json.JsonObject;
-
 public class UserHandler {
     private static final int DEFAULT_PREPARATION_TIME = 15;
     private static final int DEFAULT_NOTIFICATION_TIME = 15;
