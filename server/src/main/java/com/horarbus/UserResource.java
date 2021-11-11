@@ -26,10 +26,11 @@ public class UserResource {
             return invalidCIP();
         }
 
+        UserPrefs prefs = new UserPrefs(user);
         JsonObject userData = new JsonObject();
         userData.put("firstname", authData.getFirstname());
         userData.put("lastname", authData.getLastname());
-        userData.put("preferences", user.get_preferences());
+        userData.put("preferences", prefs.toJson());
 
         return userData.toString();
     }

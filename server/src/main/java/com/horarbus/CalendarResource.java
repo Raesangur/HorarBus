@@ -75,6 +75,7 @@ public class CalendarResource {
         json.put("summary", event.getSummary().getValue());
         json.put("start", event.getDateStart().getValue());
         json.put("end", event.getDateEnd().getValue());
+        json.put("color", event.getColor().getValue());
 
         Location location = event.getLocation();
         if (location != null) {

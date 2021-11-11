@@ -136,14 +136,4 @@ public class UserHandler {
 
         update_column("transport", transport);
     }
-
-    public JsonObject get_preferences() {
-        JsonObject response = new JsonObject();
-
-        response.put("preparation_time", get_preparation_time());
-        response.put("notification_time", get_notification_time());
-        response.put("transport", get_transport());
-
-        return response;
-    }
 }
