@@ -1,5 +1,5 @@
 {
-  "realm": "usager",
+  "realm": "horarbus",
   "enabled": true,
   "requiredCredentials": [ "password" ],
   "users": [
