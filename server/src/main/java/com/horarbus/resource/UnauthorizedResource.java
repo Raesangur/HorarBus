@@ -1,4 +1,4 @@
-package com.horarbus;
+package com.horarbus.resource;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;

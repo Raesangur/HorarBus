@@ -1,4 +1,4 @@
-package com.horarbus;
+package com.horarbus.resource;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
@@ -9,6 +9,7 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import com.horarbus.auth.AuthData;
+import com.horarbus.handler.UserHandler;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.web.RoutingContext;
 

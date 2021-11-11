@@ -1,4 +1,4 @@
-package com.horarbus;
+package com.horarbus.handler;
 
 import io.vertx.core.json.JsonObject;
 
@@ -144,9 +144,9 @@ public class UserHandler {
     private boolean string_to_bool(String string) {
         string = string.toLowerCase();
 
-        if(string.equals("false") {
+        if(string.equals("false")) {
             return false;
-        } else if (string.equals("true") {
+        } else if (string.equals("true")) {
             return true;
         } else {
             System.out.println("Invalid boolean string: " + string);

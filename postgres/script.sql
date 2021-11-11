@@ -24,16 +24,16 @@ CREATE TABLE Clan
 
 CREATE TABLE Localisation
 (
-  coords           VARCHAR(256) NOT NULL,
+  place_id              VARCHAR(256) NOT NULL,
 
-  PRIMARY KEY (coords)
+  PRIMARY KEY (place_id)
 );
 
 CREATE TABLE Clan_Member
 (
   role                  INT,
   cip                   CHAR(8)      NOT NULL,
-  clan_id              SERIAL       NOT NULL,
+  clan_id               SERIAL       NOT NULL,
 
   PRIMARY KEY (cip, clan_id),
   FOREIGN KEY (cip) REFERENCES Student(cip),
@@ -43,11 +43,11 @@ CREATE TABLE Clan_Member
 CREATE TABLE Address
 (
   cip                   CHAR(8)      NOT NULL,
-  coords                VARCHAR(256) NOT NULL,
+  place_id              VARCHAR(256) NOT NULL,
 
-  PRIMARY KEY (cip, coords),
+  PRIMARY KEY (cip, place_id),
   FOREIGN KEY (cip) REFERENCES Student(cip),
-  FOREIGN KEY (coords) REFERENCES Localisation(coords)
+  FOREIGN KEY (place_id) REFERENCES Localisation(place_id)
 );
 
 CREATE TABLE Event
@@ -58,11 +58,11 @@ CREATE TABLE Event
   name                  VARCHAR(64)   NOT NULL,
   summary               VARCHAR(128),
   description           VARCHAR(128),
-  coords                VARCHAR(256),
+  place_id              VARCHAR(256),
   ical_id               INT,
 
   PRIMARY KEY (event_id),
-  FOREIGN KEY (coords) REFERENCES Localisation(coords)
+  FOREIGN KEY (place_id) REFERENCES Localisation(place_id)
 );
 
 CREATE TABLE Traject
@@ -77,8 +77,8 @@ CREATE TABLE Traject
   preparation_time      INT,
 
   PRIMARY KEY (cip, event_id),
-  FOREIGN KEY (coords_end) REFERENCES Localisation(coords),
-  FOREIGN KEY (coords_end) REFERENCES Localisation(coords),
+  FOREIGN KEY (coords_end) REFERENCES Localisation(place_id),
+  FOREIGN KEY (coords_end) REFERENCES Localisation(place_id),
   FOREIGN KEY (event_id) REFERENCES Event(event_id)
 );
 

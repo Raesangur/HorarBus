@@ -1,4 +1,4 @@
-package com.horarbus;
+package com.horarbus.resource;
 
 import biweekly.Biweekly;
 import biweekly.ICalendar;
@@ -6,6 +6,7 @@ import biweekly.component.VEvent;
 import biweekly.property.Location;
 import com.horarbus.auth.AuthData;
 
+import com.horarbus.handler.UserHandler;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.web.RoutingContext;
 
