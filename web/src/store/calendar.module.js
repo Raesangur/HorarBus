@@ -9,6 +9,9 @@ export default {
         getEvents({ commit }) {
             CalendarService.getEvents()
                 .then((events) => {
+                    for (let i in events.data.events) {
+                        events.data.events[i].open = false;
+                    }
                     commit("getEvents", events.data.events);
                 })
                 .catch((err) => {
