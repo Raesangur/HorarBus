@@ -8,20 +8,20 @@
 </template>
 
 <script>
-import { mapActions } from "vuex";export default {
+import { mapActions } from "vuex";
+export default {
   data: () => ({}),
   methods: {
-    ...mapActions(["getUser","getEvents"]),
-
+    ...mapActions(["getUser", "getEvents"]),
   },
-  mounted(){
+  mounted() {
     this.getUser();
     this.getEvents();
-  }
+  },
 };
 </script>
 <style>
-body{
+body {
   padding: 0 !important;
 }
 footer {
