@@ -30,7 +30,7 @@
           <b-nav-item-dropdown right class="drop" no-caret>
             <!-- Using 'button-content' slot -->
             <template v-slot:button-content>
-              <a class="nom">{{user.firstname}} {{user.lastname}}</a>
+              <a class="nom">{{ user.firstname }} {{ user.lastname }}</a>
             </template>
             <!--<b-dropdown-item href="/profile"><font-awesome-icon :icon="shoppingCog" /> Profile</b-dropdown-item>-->
             <b-dropdown-item @click="showPref()">
@@ -188,12 +188,8 @@
           </b-col>
         </b-row>
         <b-row>
-          <b-col style="display:flex;justify-content:center">
-            <b-button
-              variant="dark"
-              class="saveButton"
-              @click="sendPref"
-            >
+          <b-col style="display: flex; justify-content: center">
+            <b-button variant="dark" class="saveButton" @click="sendPref">
               Enregistrer les informations
             </b-button>
           </b-col>
@@ -242,31 +238,36 @@
         ref="calendar"
         :events="events"
         :dark="darkMode"
+        :event-color="getEventColor"
         v-model="value"
         color="black"
         locale="fr"
-        event-color="#1867c0"
         @click:event="showEvent"
         :type="type"
         class="calendar"
       >
-        <template v-slot:event="{ event }">
-          <div class="event" @mouseenter="setHeight(event.id)" v-click-outside="dismissEvent" v-if="!event.trajet" :id="event.id">
+        <template v-slot:event="{ event }" :style="{backgroundColor:event.color}">
+          <div
+            class="event"
+            @mouseenter="setHeight(event.id)"
+            v-click-outside="dismissEvent"
+            v-if="!event.trajet"
+            :id="event.id"
+          >
             {{ event.heure }}
             <br />
             <a style="font-weight: 700">{{ event.summary }}</a>
             <br />
             {{ event.location }}
-            
+
             <div v-if="event.open === true">
-              
               <div class="centerBorder"></div>
               {{ event.description1 }}
-              <br>
-              <br>
+              <br />
+              <br />
               {{ event.description2 }}
               <div v-if="event.description3">
-                <br>
+                <br />
                 {{ event.description3 }}
               </div>
               <div class="centerBorder" v-if="event.prof"></div>
@@ -303,7 +304,6 @@
               <a href="#">voir la carte</a>
             </div> -->
           </div>
-          
         </template>
         <template v-slot:day-body="{ date, week }">
           <div
@@ -314,10 +314,7 @@
         </template>
       </v-calendar>
       <div class="calendar-mobile" @load="switchTheme">
-        <Fullcalendar
-          ref="fullCalendar"
-          :options="calendarOptions"
-        />
+        <Fullcalendar ref="fullCalendar" :options="calendarOptions" />
       </div>
     </b-col>
   </b-row>
@@ -345,7 +342,7 @@ export default {
       temps_avance_notification: 0,
     },
     position: "",
-    watchEvent:"",
+    watchEvent: "",
     today: new Date(),
     value: new Date(),
     type: "week",
@@ -355,21 +352,20 @@ export default {
       plugins: [InteractionPlugin, ListPlugin],
       initialView: "listWeek",
       locales: allLocales,
-      //eventClick: this.handleEventClick(),
       eventDidMount: function (arg) {
         let p = document.createElement("p");
-        if(arg.event.extendedProps.description3){
+        if (arg.event.extendedProps.description3) {
           p.innerHTML =
-          arg.event.extendedProps.description1 +
-          "<br><br>" +
-          arg.event.extendedProps.description2
-          +"<br>"+arg.event.extendedProps.description3
-        }
-        else{
+            arg.event.extendedProps.description1 +
+            "<br><br>" +
+            arg.event.extendedProps.description2 +
+            "<br>" +
+            arg.event.extendedProps.description3;
+        } else {
           p.innerHTML =
-          arg.event.extendedProps.description1 +
-          "<br><br>" +
-          arg.event.extendedProps.description2
+            arg.event.extendedProps.description1 +
+            "<br><br>" +
+            arg.event.extendedProps.description2;
         }
         p.setAttribute("style", "margin-top: 15px; margin-bottom:15px");
         let div = document.createElement("div");
@@ -395,6 +391,7 @@ export default {
             "Projet,Conception d'un système informatique distribué,Port du masque de Procédure obligatoire".split(
               ","
             )[0],
+          
           description1:
             "Projet,Conception d'un système informatique distribué,Port du masque de Procédure obligatoire".split(
               ","
@@ -428,28 +425,20 @@ export default {
     ready: false,
     largeur: 0,
     darkMode: false,
-    colors: [
-      "blue",
-      "indigo",
-      "deep-purple",
-      "cyan",
-      "green",
-      "orange",
-      "grey darken-1",
-    ],
     events: [
       {
         id: 0,
         start: "2021-11-01 14:00",
         end: "2021-11-01 16:00",
-        summary: "Projet,Conception d'un système informatique distribué,Port du masque de Procédure obligatoire".split(
-          ","
-        )[0],
+        summary:
+          "Projet,Conception d'un système informatique distribué,Port du masque de Procédure obligatoire".split(
+            ","
+          )[0],
         description1:
           "Projet,Conception d'un système informatique distribué,Port du masque de Procédure obligatoire".split(
             ","
           )[1],
-          description2:
+        description2:
           "Projet,Conception d'un système informatique distribué,Port du masque de Procédure obligatoire".split(
             ","
           )[2],
@@ -461,20 +450,21 @@ export default {
         open: false,
         prof: "Bernie",
         session: "Session 3 génie informatique",
-        trajet:false,
+        trajet: false,
       },
       {
         id: 1,
         start: "2021-11-04 14:00",
         end: "2021-11-04 16:00",
-        summary: "Projet,Conception d'un système informatique distribué,Port du masque de Procédure obligatoire".split(
-          ","
-        )[0],
+        summary:
+          "Projet,Conception d'un système informatique distribué,Port du masque de Procédure obligatoire".split(
+            ","
+          )[0],
         description1:
           "Projet,Conception d'un système informatique distribué,Port du masque de Procédure obligatoire".split(
             ","
           )[1],
-          description2:
+        description2:
           "Projet,Conception d'un système informatique distribué,Port du masque de Procédure obligatoire".split(
             ","
           )[2],
@@ -485,28 +475,29 @@ export default {
         location: "C1-5006",
         open: false,
         prof: "Bernie",
-        trajet:false,
+        trajet: false,
         session: "Session 3 génie informatique",
       },
       {
         id: 2,
         start: "2021-11-04 13:00",
         end: "2021-11-04 13:30",
-        summary: "Départ UdeS,Terminus intersection Blvd - Rue,Autobus #69,Arrive dans 420s".split(
-          ","
-        )[0],
+        summary:
+          "Départ UdeS,Terminus intersection Blvd - Rue,Autobus #69,Arrive dans 420s".split(
+            ","
+          )[0],
         description1:
           "Départ UdeS,Terminus intersection Blvd - Rue,Autobus #69".split(
             ","
           )[1],
         description2:
-        "Départ UdeS,Terminus intersection Blvd - Rue,Autobus #69".split(
-          ","
-        )[2],
+          "Départ UdeS,Terminus intersection Blvd - Rue,Autobus #69".split(
+            ","
+          )[2],
         heureDepart: "2021-11-04 13:00".split(" ")[1],
         heureArrive: "2021-11-04 14:00".split(" ")[1],
         open: false,
-        trajet:true,
+        trajet: true,
       },
     ],
     days: [
@@ -544,41 +535,75 @@ export default {
     navigator.geolocation.watchPosition(successCallback, errorCallback);
   },
   watch: {
-    user(){
+    user() {
       this.getEvents();
     },
-    eventsState(){
-      for(let i in this.eventsState){
+    eventsState() {
+      for (let i in this.eventsState) {
         this.eventsState[i].open = false;
-        let start = new Date(this.eventsState[i].start).toLocaleString().replace(",","");
+        let start = new Date(this.eventsState[i].start)
+          .toLocaleString()
+          .replace(",", "");
         this.eventsState[i].start = start;
-        let end = new Date(this.eventsState[i].end).toLocaleString().replace(",","");
+        let end = new Date(this.eventsState[i].end)
+          .toLocaleString()
+          .replace(",", "");
         this.eventsState[i].end = end;
       }
       this.events = this.eventsState;
       this.calendarOptions.events = this.eventsState;
-      for(let i in this.eventsState){
-        this.events[i].start = this.eventsState[i].start.split(' ')[0].split("/")[2]+"-"+this.eventsState[i].start.split(' ')[0].split("/")[1]+"-"+this.eventsState[i].start.split(' ')[0].split("/")[0]+" "+this.eventsState[i].start.split(' ')[1].split(':')[0] + ":" + this.eventsState[i].start.split(' ')[1].split(':')[1];
-        this.events[i].end = this.eventsState[i].end.split(' ')[0].split("/")[2]+"-"+this.eventsState[i].end.split(' ')[0].split("/")[1]+"-"+this.eventsState[i].end.split(' ')[0].split("/")[0]+" "+ this.eventsState[i].end.split(' ')[1].split(':')[0] + ":" + this.eventsState[i].end.split(' ')[1].split(':')[1];
-        this.events[i].heure = this.events[i].start.split(" ")[1] + " - " + this.events[i].end.split(" ")[1];
+      for (let i in this.eventsState) {
+        this.events[i].start =
+          this.eventsState[i].start.split(" ")[0].split("/")[2] +
+          "-" +
+          this.eventsState[i].start.split(" ")[0].split("/")[1] +
+          "-" +
+          this.eventsState[i].start.split(" ")[0].split("/")[0] +
+          " " +
+          this.eventsState[i].start.split(" ")[1].split(":")[0] +
+          ":" +
+          this.eventsState[i].start.split(" ")[1].split(":")[1];
+        this.events[i].end =
+          this.eventsState[i].end.split(" ")[0].split("/")[2] +
+          "-" +
+          this.eventsState[i].end.split(" ")[0].split("/")[1] +
+          "-" +
+          this.eventsState[i].end.split(" ")[0].split("/")[0] +
+          " " +
+          this.eventsState[i].end.split(" ")[1].split(":")[0] +
+          ":" +
+          this.eventsState[i].end.split(" ")[1].split(":")[1];
+        this.events[i].heure =
+          this.events[i].start.split(" ")[1] +
+          " - " +
+          this.events[i].end.split(" ")[1];
         this.events[i].description1 = this.events[i].description.split("\n")[0];
         this.events[i].description2 = this.events[i].description.split("\n")[2];
-        this.events[i].id = "eventFullWindow"+ i;
-        if(this.events[i].description.split("\n")[3]){
-          this.events[i].description3 = this.events[i].description.split("\n")[3];
+        this.events[i].id = "eventFullWindow" + i;
+        if (this.events[i].description.split("\n")[3]) {
+          this.events[i].description3 =
+            this.events[i].description.split("\n")[3];
         }
+        //this.events[i].style.backgroundColor = this.events[i].color;
         this.calendarOptions.events[i].start = this.events[i].start;
         this.calendarOptions.events[i].end = this.events[i].end;
-        this.calendarOptions.events[i].heure = this.calendarOptions.events[i].start.split(" ")[1] + " - " + this.calendarOptions.events[i].end.split(" ")[1];
-        this.calendarOptions.events[i].title = this.calendarOptions.events[i].summary;
-        this.calendarOptions.events[i].description1 = this.calendarOptions.events[i].description.split("\n")[0];
-        this.calendarOptions.events[i].description2 = this.calendarOptions.events[i].description.split("\n")[2];
-        if(this.calendarOptions.events[i].description.split("\n")[3]){
-          this.calendarOptions.events[i].description3 = this.calendarOptions.events[i].description.split("\n")[3];
+        this.calendarOptions.events[i].heure =
+          this.calendarOptions.events[i].start.split(" ")[1] +
+          " - " +
+          this.calendarOptions.events[i].end.split(" ")[1];
+        this.calendarOptions.events[i].title =
+          this.calendarOptions.events[i].summary;
+        this.calendarOptions.events[i].description1 =
+          this.calendarOptions.events[i].description.split("\n")[0];
+        this.calendarOptions.events[i].description2 =
+          this.calendarOptions.events[i].description.split("\n")[2];
+        if (this.calendarOptions.events[i].description.split("\n")[3]) {
+          this.calendarOptions.events[i].description3 =
+            this.calendarOptions.events[i].description.split("\n")[3];
         }
       }
     },
-    prefState(){
+    prefState() {
       this.pref.transport = this.prefState.transport;
       this.pref.temps_avance = this.prefState.preparation_time;
       this.pref.temps_avance_notification = this.prefState.notification_time;
@@ -588,7 +613,7 @@ export default {
       calendarApi.gotoDate(this.value);
       this.watchEvent = calendarApi.currentData.currentDate;
     },
-    watchEvent(){
+    watchEvent() {
       this.switchTheme();
     },
     darkMode() {
@@ -610,12 +635,12 @@ export default {
     },
   },
   methods: {
-    ...mapActions(["putUser", "putPref", "getMaps","getEvents"]),
+    ...mapActions(["putUser", "putPref", "getMaps", "getEvents"]),
     sendPref() {
       let pref = this.pref;
       pref.darkMode = this.darkMode;
-      console.log(pref)
-      this.hidePref()
+      console.log(pref);
+      this.hidePref();
       //this.putPref(pref);
     },
     onResize() {
@@ -650,7 +675,19 @@ export default {
       setInterval(() => this.cal.updateTimes(), 60 * 1000);
     },
     getEventColor(event) {
-      return event.color;
+      var cvs, ctx;
+      cvs = document.createElement("canvas");
+      cvs.height = 1;
+      cvs.width = 1;
+      ctx = cvs.getContext("2d");
+      if(event.color){
+        ctx.fillStyle = event.color;
+      }
+      else{
+        return "#1867c0";
+      }
+      ctx.fillRect(0, 0, 1, 1);
+      return "rgba("+ctx.getImageData(0, 0, 1, 1).data+")";
     },
     next() {
       if (this.$refs.fullCalendar) {
@@ -672,7 +709,7 @@ export default {
         this.$refs.calendar.prev();
       }
     },
-    switchTheme(){
+    switchTheme() {
       if (this.darkMode == true) {
         for (
           let i = 0;
@@ -721,24 +758,23 @@ export default {
       event.event.open = true;
       event.nativeEvent.target.style.height = "fit-content";
       event.nativeEvent.path[1].style.zIndex = "1000";
-      if(this.eventActive.event === undefined){
+      if (this.eventActive.event === undefined) {
         this.initialHeight = event.nativeEvent.path[1].style.height;
-        console.log(event.nativeEvent.path[1].style.height)
+        console.log(event.nativeEvent.path[1].style.height);
       }
       this.eventActive = event;
       event.nativeEvent.path[1].style.height = "fit-content";
-      if(this.eventActive.event === event.event){
+      if (this.eventActive.event === event.event) {
         document.body.addEventListener(
           "click",
           event.nativeEvent.target.clickOutsideEvent
         );
-      }
-      else{
+      } else {
         this.dismissEvent();
       }
     },
     dismissEvent() {
-      console.log("quit")
+      console.log("quit");
       this.eventActive.event.open = false;
       this.eventActive.nativeEvent.path[1].style.zIndex = "0";
       this.eventActive.nativeEvent.path[1].style.height = this.initialHeight;
@@ -746,10 +782,11 @@ export default {
         "click",
         this.eventActive.nativeEvent.target.clickOutsideEvent
       );
-      this.eventActive ="";
+      this.eventActive = "";
     },
-    setHeight(id){
-      document.getElementById(id).style.height = document.getElementById(id).parentElement.style.height;
+    setHeight(id) {
+      document.getElementById(id).style.height =
+        document.getElementById(id).parentElement.style.height;
     },
     setToday() {
       const now = new Date();
@@ -817,7 +854,7 @@ export default {
 </script>
 
 <style scoped>
-.saveButton{
+.saveButton {
   font-size: 16px;
   text-align: center;
   color: #222222;
@@ -828,7 +865,7 @@ export default {
   font-weight: bold;
 }
 
-.saveButton:hover{
+.saveButton:hover {
   background: transparent;
   color: #ffffff;
   border: 1px solid #ffffff;
