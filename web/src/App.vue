@@ -70,7 +70,7 @@ footer {
   text-decoration: none;
   color: #ffffff !important;
 }
-.horbus {
+.horarbus {
   display: flex;
   justify-content: center;
   width: 186.2px;

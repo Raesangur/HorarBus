@@ -22,7 +22,7 @@ Vue.config.devtools = true;
 let initOptions = {
     url: `https://${window.location.hostname}/auth`,
     realmPublicKey: "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAr5vDexhhB+UG5rfzPMKpO8LFgYSnmRvqDoUio/hIo6G9AbZC6UMc9jVB1s10NNFNNbiEl/hvqWE3oMLMvgdZBkeauEP1H/toB2CQkSO+syMLMHkDKYpXoP7Kyfu3/nxgHhBolbdVnORtUSWBxoku4kmm3dOUGOi8dT8O4UiPPCvtee1KzJwdDL/pwKVbPpjP+K3dB6kFjnRnTABJLQu29olnv6zf/9E1NVDmHDwLXIiN7BjAjaYFfkfiJLjDbGD0jGQNWGFFOkYMlprpqsBaf1WzyPY4PEHzc7W6WkR/u5ODCUpBNPoUdK3iSkgT0dMdjOOvvY/YoAROoM5KTdvsHQIDAQAB",
-    realm: "horbus",
+    realm: "horarbus",
     clientId: "frontend",
     onLoad: "login-required",
 };

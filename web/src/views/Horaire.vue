@@ -15,7 +15,7 @@
           </button>
         </b-navbar-nav>
         <b-navbar-nav class="navbar-menu mx-auto" v-if="largeur >= 768">
-          <div class="horbus nom" style="cursor: default">HorBus</div>
+          <div class="horarbus nom" style="cursor: default">HorarBus</div>
         </b-navbar-nav>
         <b-navbar-toggle
           class="toggle"
@@ -974,7 +974,7 @@ export default {
   text-decoration: none;
   color: #ffffff !important;
 }
-.horbus {
+.horarbus {
   display: flex;
   justify-content: center;
   width: 186.2px;

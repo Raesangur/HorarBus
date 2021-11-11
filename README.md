@@ -1,4 +1,4 @@
-# HorBus
+# HorarBus
 
 Projet UdeS de S3<br>The Council
 
