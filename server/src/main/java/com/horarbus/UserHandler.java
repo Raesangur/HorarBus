@@ -134,7 +134,8 @@ public class UserHandler {
     }
 
     public boolean get_darkmode() {
-        return Boolean.parseBoolean(select_column("dark_mode"));
+        String darkModeStr = select_column("dark_mode");
+        return Boolean.parseBoolean(darkModeStr.trim());
     }
 
     public void set_darkmode(boolean dark_mode) {
