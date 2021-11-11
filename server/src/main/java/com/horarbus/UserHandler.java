@@ -141,6 +141,43 @@ public class UserHandler {
         update_column("transport", transport);
     }
 
+    private boolean string_to_bool(String string) {
+        string = string.toLowerCase();
+
+        if(string.equals("false") {
+            return false;
+        } else if (string.equals("true") {
+            return true;
+        } else {
+            System.out.println("Invalid boolean string: " + string);
+            return true;     // By default
+        }
+    }
+
+    private String bool_to_string(boolean bool) {
+        if (bool == true) {
+            return "true";
+        } else {
+            return "false";
+        }
+    }
+
+    public boolean get_darkmode() {
+        String setting = select_column("dark_mode");
+        return string_to_bool(setting);
+    }
+    public void set_darkmode(boolean dark_mode) {
+       update_column("dark_mode", dark_mode);
+    }
+
+    public boolean_get_notification_enable() {
+        String setting = select_column("notification_enable");
+        return string_to_bool(setting);
+    }
+    public void set_notification_enable(boolean notif) {
+       update_column("notification_enable", notif);
+    }
+
     public JsonObject get_preferences() {
         JsonObject response = new JsonObject();
 
