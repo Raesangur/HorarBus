@@ -6,6 +6,8 @@ CREATE TABLE Student
   ical_key              VARCHAR(128),
   preparation_time      INT,
   notification_time     INT,
+  notification_enable   CHAR(5),
+  dark_mode             CHAR(5),
   transport             VARCHAR(16),
 
   PRIMARY KEY (cip),
@@ -14,7 +16,7 @@ CREATE TABLE Student
 
 CREATE TABLE Clan
 (
-  clan_id              SERIAL      NOT NULL,
+  clan_id               SERIAL      NOT NULL,
   name                  VARCHAR(64) NOT NULL,
 
   PRIMARY KEY (clan_id)

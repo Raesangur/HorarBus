@@ -25,9 +25,8 @@ public class UserHandler {
         this.cip = cip;
         pgh = new PostgresHandler();
 
-        pgh.insert_row("etudiant",
-                        new String[]{"cip", "nom", "prenom"},
-                        new String[]{cip, nom, prenom});
+        pgh.insert_row("etudiant", new String[] {"cip", "nom", "prenom"},
+                new String[] {cip, nom, prenom});
     }
 
     private boolean validate_cip(String cip) {
@@ -37,19 +36,15 @@ public class UserHandler {
         }
 
         cip = cip.toLowerCase().strip();
-        if (cip.length() != 8) {   // cip: abcd1234
+        if (cip.length() != 8) { // cip: abcd1234
             System.out.println("Invalid CIP: Invalid length");
-             return false;
+            return false;
         }
 
-        if (!Character.isLetter(cip.charAt(0)) ||
-                !Character.isLetter(cip.charAt(1)) ||
-                !Character.isLetter(cip.charAt(2)) ||
-                !Character.isLetter(cip.charAt(3)) ||
-                !Character.isDigit(cip.charAt(4))  ||
-                !Character.isDigit(cip.charAt(5))  ||
-                !Character.isDigit(cip.charAt(6))  ||
-                !Character.isDigit(cip.charAt(7))) {
+        if (!Character.isLetter(cip.charAt(0)) || !Character.isLetter(cip.charAt(1))
+                || !Character.isLetter(cip.charAt(2)) || !Character.isLetter(cip.charAt(3))
+                || !Character.isDigit(cip.charAt(4)) || !Character.isDigit(cip.charAt(5))
+                || !Character.isDigit(cip.charAt(6)) || !Character.isDigit(cip.charAt(7))) {
             System.out.println("Invalid CIP: Invalid format");
             return false;
         }
@@ -110,10 +105,12 @@ public class UserHandler {
 
         transport = transport.toUpperCase();
 
-        if (transport.equals("DRIVING") ||
-            transport.equals("WALKING") ||
-            transport.equals("TRANSIT") ||
-            transport.equals("BICYCLING")) {
+        if (transport.equals("BUS")) {
+            transport = "TRANSIT";
+        }
+
+        if (transport.equals("DRIVING") || transport.equals("WALKING")
+                || transport.equals("TRANSIT") || transport.equals("BICYCLING")) {
             return transport;
         } else {
             System.out.println("Invalid transport method: " + transport);
@@ -133,5 +130,36 @@ public class UserHandler {
         }
 
         update_column("transport", transport);
+    }
+
+    private boolean string_to_bool(String string) {
+        string = string.toLowerCase();
+
+        if (string.equals("false")) {
+            return false;
+        } else if (string.equals("true")) {
+            return true;
+        } else {
+            System.out.println("Invalid boolean string: " + string);
+            return true; // By default
+        }
+    }
+
+    public boolean get_darkmode() {
+        String setting = select_column("dark_mode");
+        return string_to_bool(setting);
+    }
+
+    public void set_darkmode(boolean dark_mode) {
+        update_column("dark_mode", Boolean.toString(dark_mode));
+    }
+
+    public boolean get_notification_enable() {
+        String setting = select_column("notification_enable");
+        return string_to_bool(setting);
+    }
+
+    public void set_notification_enable(boolean notif) {
+        update_column("notification_enable", Boolean.toString(notif));
     }
 }
