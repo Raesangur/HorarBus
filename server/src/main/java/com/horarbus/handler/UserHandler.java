@@ -26,8 +26,10 @@ public class UserHandler {
         this.cip = cip;
         pgh = new PostgresHandler();
 
-        pgh.insert_row("etudiant", new String[] {"cip", "nom", "prenom"},
-                new String[] {cip, nom, prenom});
+        pgh.insert_row("Student", new String[] {"cip", "name", "surname"},
+                       new PostgresValue[]{new PostgresValue(cip),
+                                           new PostgresValue(nom),
+                                           new PostgresValue(prenom)});
     }
 
     private boolean validate_cip(String cip) {
@@ -58,15 +60,25 @@ public class UserHandler {
     }
 
     private String select_column(String column) {
-        return pgh.select_column(column, "Student", "cip", cip);
+        return pgh.select_column(column, "Student",
+                                 new String[]{"cip"},
+                                 new PostgresValue[]{new PostgresValue(cip)});
     }
 
     private void update_column(String column, String value) {
-        pgh.update_column(column, "Student", value, "cip", cip);
+        pgh.update_column(column, "Student", new PostgresValue(value),
+                          new String[]{"cip"},
+                          new PostgresValue[]{new PostgresValue(cip)});
     }
 
     private void update_column(String column, int value) {
-        pgh.update_column(column, "Student", value, "cip", cip);
+        pgh.update_column(column, "Student", new PostgresValue(value),
+                          new String[]{"cip"},
+                          new PostgresValue[]{new PostgresValue(cip)});
+    }
+
+    public String get_cip() {
+        return cip;
     }
 
     public String get_ical_key() {

@@ -59,62 +59,105 @@ public class PostgresHandler {
         }
     }
 
-    private PreparedStatement generate_select_query(String column, String table, String conditionColumn) {
-        String query = "SELECT " + column + " FROM " + table;
+    private PreparedStatement generate_select_query(String column, String table, String[] conditionColumns) {
+        StringBuilder query = new StringBuilder("SELECT " + column + " FROM " + table);
         //String query = "SELECT ? FROM ?";
 
-        if (conditionColumn == null) {
-            query += ";";
+        if (conditionColumns == null || conditionColumns.length == 0) {
+            query.append(";");
         } else {
-            query += " WHERE " + conditionColumn + "= ?;";
+            query.append(" WHERE ");
+
+            // Insert condition columns
+            for (int i = 0; i < conditionColumns.length; i++) {
+                query.append(conditionColumns[i]);
+                if (i == conditionColumns.length - 1) {
+                    query.append(" ");
+                } else {
+                    query.append(", ");
+                }
+            }
+
+            // Insert blank values
+            query.append("? ".repeat(conditionColumns.length));
+            query.append(";");
         }
 
-        return generate_prepared_statement(query);
+        return generate_prepared_statement(query.toString());
     }
 
-    private PreparedStatement generate_update_query(String column, String table, String conditionColumn) {
-        String query = "UPDATE " + table +
-                " SET " + column + " = ?" +
-                " WHERE " + conditionColumn + " = ?;";
+    private PreparedStatement generate_update_query(String column, String table, String[] conditionColumns) {
+        StringBuilder query = new StringBuilder("UPDATE " + table +
+                " SET " + column + " = ?" + " WHERE ");
 
-        return generate_prepared_statement(query);
+        if (conditionColumns.length == 1) {
+            query.append(conditionColumns[0]).append(" = ?;");
+        }
+        else {
+            for(int i = 0; i < conditionColumns.length; i++) {
+                query.append(conditionColumns[i]).append(" = ?");
+
+                if (i < conditionColumns.length + 1) {
+                    query.append(" AND ");
+                }
+                else {
+                    query.append(";");
+                }
+            }
+        }
+
+        return generate_prepared_statement(query.toString());
     }
 
     private PreparedStatement generate_insert_query(String table, String[] columns) {
-        String query = "INSERT INTO " + table + " (";
+        StringBuilder query = new StringBuilder("INSERT INTO " + table + " (");
         for (int i = 0; i < columns.length; i++) {
             String col = columns[i];
-            query += col;
+            query.append(col);
 
             if (i != columns.length - 1) {
-                query += ", ";
+                query.append(", ");
             }
         }
-        query += ") " +
-                "VALUES (";
+        query.append(") " + "VALUES (");
         for (int i = 0; i < columns.length; i++) {
-            query += "?";
+            query.append("?");
 
             if (i != columns.length - 1) {
-                query += ", ";
+                query.append(", ");
             }
         }
-        query += ");";
+        query.append(");");
 
-        return generate_prepared_statement(query);
+        return generate_prepared_statement(query.toString());
+    }
+
+    private void insert_query(PreparedStatement query, PostgresValue value, int index) {
+        try {
+            if (value.getType() == PostgresValue.PostgresValueType.integer) {
+                query.setInt(index, value.getInt());
+            }
+            if (value.getType() == PostgresValue.PostgresValueType.string) {
+                query.setString(index, value.getString());
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
     public String select_column(String column,
                                 String table,
-                                String conditionColumn,
-                                String conditionValue) {
-        PreparedStatement query = generate_select_query(column, table, conditionColumn);
+                                String[] conditionColumns,
+                                PostgresValue[] conditionValues) {
+        PreparedStatement query = generate_select_query(column, table, conditionColumns);
         if (query == null) {
             return "";
         }
 
         try {
-            query.setString(1, conditionValue);
+            for(int i = 1; i <= conditionValues.length; i++) {
+                insert_query(query, conditionValues[i - 1], i);
+            }
 
             ResultSet rs = executeQuery(query);
 
@@ -127,30 +170,7 @@ public class PostgresHandler {
         return "";
     }
 
-    public String select_column(String column,
-                                String table,
-                                String conditionColumn,
-                                int conditionValue) {
-        PreparedStatement query = generate_select_query(column, table, conditionColumn);
-        if (query == null) {
-            return "";
-        }
-
-        try {
-            query.setInt(1, conditionValue);
-
-            ResultSet rs = executeQuery(query);
-
-            if (rs.next())  {
-                return String.valueOf(rs.getInt(column));
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return "";
-    }
-
-    public void insert_row(String table, String[] columns, String[] values) {
+    public void insert_row(String table, String[] columns, PostgresValue[] values) {
         if (columns.length != values.length){
             return;
         }
@@ -160,126 +180,34 @@ public class PostgresHandler {
             return;
         }
 
-        try {
-            for (int i = 1; i <= values.length; i++) {
-                query.setString(i, values[i - 1]);
-            }
-
-            executeQuery(query);
-        } catch (SQLException e) {
-            e.printStackTrace();
+        for (int i = 1; i <= values.length; i++) {
+            insert_query(query, values[i - 1], i);
         }
+
+        executeQuery(query);
     }
 
     public void update_column(String column,
                               String table,
-                              String value,
-                              String conditionColumn,
-                              String conditionValue) {
-        PreparedStatement query = generate_update_query(column, table, conditionColumn);
+                              PostgresValue value,
+                              String[] conditionColumns,
+                              PostgresValue[] conditionValues) {
+        if (conditionColumns.length != conditionValues.length) {
+            return;
+        }
+
+        PreparedStatement query = generate_update_query(column, table, conditionColumns);
         if (query == null) {
             return;
         }
 
-        try {
-            query.setString(1, value);
-            query.setString(2, conditionValue);
+        insert_query(query, value, 1);
 
-            executeQuery(query);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
-    public void update_column(String column,
-                              String table,
-                              String value,
-                              String conditionColumn,
-                              int conditionValue) {
-        PreparedStatement query = generate_update_query(column, table, conditionColumn);
-        if (query == null) {
-            return;
+        for (int i = 2; i <= conditionValues.length + 1; i++) {
+            insert_query(query, conditionValues[i - 2], i);
         }
 
-        try {
-            query.setString(1, value);
-            query.setInt(2, conditionValue);
-
-            executeQuery(query);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
-    public void update_column(String column,
-                              String table,
-                              int value,
-                              String conditionColumn,
-                              String conditionValue) {
-        PreparedStatement query = generate_update_query(column, table, conditionColumn);
-        if (query == null) {
-            return;
-        }
-
-        try {
-            query.setInt(1, value);
-            query.setString(2, conditionValue);
-            executeQuery(query);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
-    public void update_column(String column,
-                              String table,
-                              int value,
-                              String conditionColumn,
-                              int conditionValue) {
-        PreparedStatement query = generate_update_query(column, table, conditionColumn);
-        if (query == null) {
-            return;
-        }
-
-        try {
-            query.setInt(1, value);
-            query.setInt(2, conditionValue);
-            executeQuery(query);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
-    public void update_column(String column,
-                              String table,
-                              long value,
-                              String conditionColumn,
-                              String conditionValue) {
-        PreparedStatement query = generate_update_query(column, table, conditionColumn);
-        if (query == null) {
-            return;
-        }
-
-        try {
-            query.setTimestamp(1, new Timestamp(value));
-            query.setString(2, conditionValue);
-            executeQuery(query);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
-    public void update_column(String column,
-                              String table,
-                              long value,
-                              String conditionColumn,
-                              int conditionValue) {
-        PreparedStatement query = generate_update_query(column, table, conditionColumn);
-        if (query == null) {
-            return;
-        }
-
-        try {
-            query.setTimestamp(1, new Timestamp(value));
-            query.setInt(2, conditionValue);
-            executeQuery(query);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+        executeQuery(query);
     }
 
     private Statement setup_postgres_connection() {
