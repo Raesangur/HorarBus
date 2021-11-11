@@ -13,9 +13,6 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
-import java.io.StringWriter;
-import java.io.Writer;
-
 import java.io.IOException;
 import java.net.URL;
 import java.util.List;
@@ -26,12 +23,16 @@ public class CalendarResource {
 
     // Get the ical file
     // https://stackoverflow.com/a/13632114
-    private ICalendar generateICal(String ical_url) throws IOException{
-        Scanner scanner = new Scanner(new URL(ical_url).openStream(), "UTF-8");
-        String raw = scanner.useDelimiter("\\A").next();
-        scanner.close();
+    private ICalendar generateICal(String ical_url) {
+        try {
+            Scanner scanner = new Scanner(new URL(ical_url).openStream(), "UTF-8");
+            String raw = scanner.useDelimiter("\\A").next();
+            scanner.close();
 
-        return Biweekly.parse(raw).first();
+            return Biweekly.parse(raw).first();
+        } catch (IOException ex) {
+            return new ICalendar();
+        }
     }
 
     @GET
@@ -41,18 +42,24 @@ public class CalendarResource {
         AuthData authData = context.get("authData");
         UserHandler user = new UserHandler(authData.getCip());
 
-        if (user.is_valid()) {
-            ICalendar ical = generateICal(user.get_ical_key());
-            return formatEventData(ical);
+        if (!user.is_valid()) {
+            return invalidCIP();
         }
-        return invalidCIP();
+
+        String icalKey = user.get_ical_key();
+        if (icalKey == null || icalKey.isEmpty()) {
+            return missingIcal();
+        }
+
+        ICalendar ical = generateICal(icalKey);
+        return formatEventData(ical);
     }
 
-    private String formatEventData(ICalendar iCal) throws IOException{    
+    private String formatEventData(ICalendar iCal) throws IOException {
         List<VEvent> events = iCal.getEvents();
-        
+
         JsonObject[] eventsJson = new JsonObject[events.size()];
-        for (int i = 0; i < events.size(); i ++){
+        for (int i = 0; i < events.size(); i++) {
             eventsJson[i] = parseEvent(events.get(i));
         }
 
@@ -61,7 +68,7 @@ public class CalendarResource {
         return outputJson.toString();
     }
 
-    private JsonObject parseEvent(VEvent event){
+    private JsonObject parseEvent(VEvent event) {
         JsonObject json = new JsonObject();
 
         json.put("description", event.getDescription().getValue());
@@ -70,16 +77,24 @@ public class CalendarResource {
         json.put("end", event.getDateEnd().getValue());
 
         Location location = event.getLocation();
-        if(location != null){
+        if (location != null) {
             json.put("location", location.getValue());
-        }        
+        }
 
         return json;
     }
 
-    private String invalidCIP(){
+    private String missingIcal() {
+        return sendError("No iCal key associated with the current user.");
+    }
+
+    private String invalidCIP() {
+        return sendError("Invalid CIP associated with the current user.");
+    }
+
+    private String sendError(String errorMessage) {
         JsonObject errorResponse = new JsonObject();
-        errorResponse.put("error", "Invalid CIP associated with the current user.");
+        errorResponse.put("error", errorMessage);
         return errorResponse.toString();
     }
 }
