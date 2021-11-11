@@ -512,13 +512,13 @@ export default {
   }),
 
   mounted() {
+    this.getEvents();
     this.resize();
     this.$refs.calendar.checkChange();
     this.ready = true;
     this.scrollToTime();
     this.updateTime();
     this.getToday();
-    this.darkMode = true;
     const successCallback = (position) => {
       // if(position.coords.accuracy >= 1000){
       //   let infoPosition = prompt("Entrer votre addresse", "");
@@ -606,7 +606,10 @@ export default {
     prefState() {
       this.pref.transport = this.prefState.transport;
       this.pref.temps_avance = this.prefState.preparation_time;
-      this.pref.temps_avance_notification = this.prefState.notification_time;
+      this.pref.temps_avance_notification = this.prefState.notification.time;
+      this.pref.notification_enable = this.prefState.notification.enabled;
+      this.pref.adresse_maison = this.prefState.local_address;
+      this.darkMode = this.prefState.dark_mode;
     },
     value() {
       let calendarApi = this.$refs.fullCalendar.getApi();
@@ -637,11 +640,27 @@ export default {
   methods: {
     ...mapActions(["putUser", "putPref", "getMaps", "getEvents"]),
     sendPref() {
-      let pref = this.pref;
-      pref.darkMode = this.darkMode;
+      let pref = {
+        "preparation_time": "",
+        "transport":"",
+        "notification":{
+          "time":"",
+          "enabled":""
+        },
+        "dark_mode":""
+      };
+      pref.preparation_time = this.pref.temps_avance;
+      pref.transport = this.pref.transport;
+      pref.local_address = this.pref.adresse_maison;
+      pref.notification = {
+        "time": this.pref.temps_avance_notification,
+        "enabled": this.pref.notification_enable
+      }
+      pref.dark_mode = this.darkMode;
       console.log(pref);
+      this.putUser(pref);
       this.hidePref();
-      //this.putPref(pref);
+      
     },
     onResize() {
       this.resize();
@@ -760,7 +779,6 @@ export default {
       event.nativeEvent.path[1].style.zIndex = "1000";
       if (this.eventActive.event === undefined) {
         this.initialHeight = event.nativeEvent.path[1].style.height;
-        console.log(event.nativeEvent.path[1].style.height);
       }
       this.eventActive = event;
       event.nativeEvent.path[1].style.height = "fit-content";
@@ -774,7 +792,6 @@ export default {
       }
     },
     dismissEvent() {
-      console.log("quit");
       this.eventActive.event.open = false;
       this.eventActive.nativeEvent.path[1].style.zIndex = "0";
       this.eventActive.nativeEvent.path[1].style.height = this.initialHeight;

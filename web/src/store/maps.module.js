@@ -1,25 +1,26 @@
 import MapsService from "@/services/maps";
 
 export default {
-  namespaced: false,
-  state: {
-    mapsSettings: {},
-  },
-  actions: {
-    async getMaps({ commit }) {
-      try {
-        const maps = await MapsService.getDefault();
-        commit("getMaps", maps);
-      } catch (err) {
-        console.log(err);
-      }
+    namespaced: false,
+    state: {
+        mapsSettings: {},
     },
-  },
+    actions: {
+        async getMaps({ commit }) {
+            MapsService.getDefault()
+                .then((maps) => {
+                    commit("getMaps", maps);
+                })
+                .catch((err) => {
+                    console.log(err.response);
+                });
+        },
+    },
 
-  getters: {},
-  mutations: {
-    getMaps(state, payload) {
-      state.mapsSettings = payload.data;
+    getters: {},
+    mutations: {
+        getMaps(state, payload) {
+            state.mapsSettings = payload.data;
+        },
     },
-  },
 };
