@@ -162,4 +162,13 @@ public class UserHandler {
     public void set_notification_enable(boolean notif) {
         update_column("notification_enable", Boolean.toString(notif));
     }
+
+    public String get_default_address() {
+        // TODO
+        return "";
+    }
+
+    public void set_default_address(String address) {
+        // TODO
+    }
 }

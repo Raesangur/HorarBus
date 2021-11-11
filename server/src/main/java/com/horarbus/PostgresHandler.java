@@ -45,7 +45,7 @@ public class PostgresHandler {
         try {
             return query.executeQuery();
         } catch (SQLException e) {
-            e.printStackTrace();
+            // e.printStackTrace();
             return null;
         }
     }

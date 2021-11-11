@@ -15,11 +15,10 @@ public class UserPrefs {
         preparationTime = handler.get_preparation_time();
         notificationTime = handler.get_notification_time();
         transport = handler.get_transport();
-        // TODO
-        // localAddress = handler.get_addr();
+        localAddress = handler.get_default_address();
 
-        // notificationEnabled = handler.getNotif();
-        // isDarkMode = handler.getDarkMode();
+        notificationEnabled = handler.get_notification_enable();
+        isDarkMode = handler.get_darkmode();
     }
 
     public UserPrefs(JsonObject json) throws Exception {
@@ -38,7 +37,12 @@ public class UserPrefs {
     }
 
     public void saveData(UserHandler handler) {
-        // TODO
+        handler.set_preparation_time(preparationTime);
+        handler.set_notification_time(notificationTime);
+        handler.set_transport(transport);
+        handler.set_darkmode(isDarkMode);
+        handler.set_notification_enable(notificationEnabled);
+        handler.set_default_address(localAddress);
     }
 
     public JsonObject toJson() {
