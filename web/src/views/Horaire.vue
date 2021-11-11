@@ -257,7 +257,6 @@
             <a style="font-weight: 700">{{ event.summary }}</a>
             <br />
             {{ event.location }}
-            {{event.open}}
             
             <div v-if="event.open === true">
               
