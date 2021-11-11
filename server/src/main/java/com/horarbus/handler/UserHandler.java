@@ -1,4 +1,4 @@
-package com.horarbus;
+package com.horarbus.handler;
 
 public class UserHandler {
     private static final int DEFAULT_PREPARATION_TIME = 15;

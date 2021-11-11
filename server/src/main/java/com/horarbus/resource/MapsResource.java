@@ -1,4 +1,4 @@
-package com.horarbus;
+package com.horarbus.resource;
 
 import com.horarbus.config.Config;
 import com.horarbus.config.ConfigException;

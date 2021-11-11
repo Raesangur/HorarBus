@@ -1,4 +1,4 @@
-package com.horarbus;
+package com.horarbus.handler;
 
 import java.sql.*;
 import java.util.Properties;

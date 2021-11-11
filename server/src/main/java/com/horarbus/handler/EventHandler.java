@@ -1,5 +1,6 @@
-package com.horarbus;
+package com.horarbus.handler;
 
+import com.horarbus.Utils;
 import io.vertx.core.json.JsonObject;
 
 public class EventHandler {
