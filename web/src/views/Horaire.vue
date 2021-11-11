@@ -197,6 +197,128 @@
       </b-modal>
 
       <b-modal
+        ref="mapsSetting"
+        hide-footer
+        hide-header
+        :centered="true"
+        body-class="preference"
+      >
+        <b-row>
+          <b-col cols="10" class="title"> TITRE </b-col>
+          <b-col cols="2" class="zoneClose">
+            <button @click="hideMapsSetting()" class="close">x</button>
+          </b-col>
+        </b-row>
+
+        <!--Mode de transport-->
+        <b-row>
+          <b-col cols="12" class="sectionPref"> Mode de transport </b-col>
+        </b-row>
+        <b-form-group v-slot="{ ariaDescribedby }">
+          <b-form-radio
+            v-model="pref.transport"
+            :aria-describedby="ariaDescribedby"
+            name="some-radios"
+            value="WALKING"
+            button
+            class="buttonTransport"
+            ><img :src="require('../assets/walk.png')"
+          /></b-form-radio>
+          <b-form-radio
+            v-model="pref.transport"
+            :aria-describedby="ariaDescribedby"
+            name="some-radios"
+            value="BICYCLING"
+            button
+            class="buttonTransport"
+            ><img :src="require('../assets/bike.png')"
+          /></b-form-radio>
+          <b-form-radio
+            v-model="pref.transport"
+            :aria-describedby="ariaDescribedby"
+            name="some-radios"
+            value="TRANSIT"
+            button
+            class="buttonTransport"
+            ><img :src="require('../assets/bus.png')"
+          /></b-form-radio>
+          <b-form-radio
+            v-model="pref.transport"
+            :aria-describedby="ariaDescribedby"
+            name="some-radios"
+            value="DRIVING"
+            button
+            class="buttonTransport"
+            ><img :src="require('../assets/car.png')"
+          /></b-form-radio>
+        </b-form-group>
+
+        <!--Notification-->
+        <b-row>
+          <b-col cols="12" class="sectionPref">
+            Notifications
+            <b-row style="margin: 0">
+              <b-form-checkbox
+                v-model="pref.notification_enable"
+                name="check-button"
+                class="checkboxNotification"
+              >
+              </b-form-checkbox>
+              <b-col>
+                <input
+                  v-model.number="pref.temps_avance_notification"
+                  id="timenotif"
+                  :disabled="!pref.notification_enable"
+                  type="number"
+                  class="tempsSelect"
+                />
+              </b-col>
+            </b-row>
+            <div style="font-size: 12px">
+              Entrer le temps avant le départ pour recevoir une notification.
+            </div>
+          </b-col>
+        </b-row>
+
+        <!--Temps d'avance minimum-->
+        <b-row>
+          <b-col cols="12" class="sectionPref">
+            Temps d'avance désirer
+            <br />
+            <input
+              v-model.number="pref.temps_avance"
+              type="number"
+              class="tempsSelect"
+            />
+          </b-col>
+        </b-row>      
+
+        <b-row>
+          <b-col style="display: flex; justify-content: center">
+            <b-button variant="dark" class="saveButton" @click="sendMaps">
+              Enregistrer les informations
+            </b-button>
+          </b-col>
+        </b-row>
+      </b-modal>
+
+      <b-modal
+        ref="maps"
+        hide-footer
+        hide-header
+        :centered="true"
+        body-class="preference"
+      >
+        <b-row>
+          <b-col cols="10" class="title"> TITRE </b-col>
+          <b-col cols="2" class="zoneClose">
+            <button @click="hideMaps()" class="close">x</button>
+          </b-col>
+        </b-row>
+        <Maps />
+      </b-modal>
+
+      <b-modal
         ref="chooseDate"
         hide-footer
         hide-header
@@ -326,11 +448,13 @@ import Fullcalendar from "@fullcalendar/vue";
 import InteractionPlugin from "@fullcalendar/interaction";
 import ListPlugin from "@fullcalendar/list";
 import allLocales from "@fullcalendar/core/locales-all";
+import Maps from "@/components/Maps"
 import { mapState, mapActions } from "vuex";
 
 export default {
   components: {
     Fullcalendar,
+    Maps,
   },
 
   data: () => ({
@@ -673,6 +797,18 @@ export default {
     },
     hidePref() {
       this.$refs["pref"].hide();
+    },
+    showMaps() {
+      this.$refs["maps"].show();
+    },
+    hideMaps() {
+      this.$refs["maps"].hide();
+    },
+    showMapsSetting() {
+      this.$refs["mapsSetting"].show();
+    },
+    hideMapSetting() {
+      this.$refs["mapsSetting"].hide();
     },
     showChoseDate() {
       this.$refs["chooseDate"].show();
