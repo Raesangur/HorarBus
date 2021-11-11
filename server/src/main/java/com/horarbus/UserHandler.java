@@ -4,6 +4,7 @@ public class UserHandler {
     private static final int DEFAULT_PREPARATION_TIME = 15;
     private static final int DEFAULT_NOTIFICATION_TIME = 15;
     private static final String DEFAULT_TRANSPORT = "TRANSIT";
+    private static String DEFAULT_ADDRESS = "Université de Sherbrooke";
 
     private PostgresHandler pgh = null;
     private String cip = null;
@@ -132,22 +133,8 @@ public class UserHandler {
         update_column("transport", transport);
     }
 
-    private boolean string_to_bool(String string) {
-        string = string.toLowerCase();
-
-        if (string.equals("false")) {
-            return false;
-        } else if (string.equals("true")) {
-            return true;
-        } else {
-            System.out.println("Invalid boolean string: " + string);
-            return true; // By default
-        }
-    }
-
     public boolean get_darkmode() {
-        String setting = select_column("dark_mode");
-        return string_to_bool(setting);
+        return Boolean.parseBoolean(select_column("dark_mode"));
     }
 
     public void set_darkmode(boolean dark_mode) {
@@ -155,8 +142,7 @@ public class UserHandler {
     }
 
     public boolean get_notification_enable() {
-        String setting = select_column("notification_enable");
-        return string_to_bool(setting);
+        return Boolean.parseBoolean(select_column("notification_enable"));
     }
 
     public void set_notification_enable(boolean notif) {
@@ -165,7 +151,7 @@ public class UserHandler {
 
     public String get_default_address() {
         // TODO
-        return "";
+        return DEFAULT_ADDRESS;
     }
 
     public void set_default_address(String address) {
