@@ -102,6 +102,10 @@ public class UserHandler {
 
         transport = transport.toUpperCase();
 
+        if (transport.equals("BUS")) {
+            transport = "TRANSIT";
+        }
+
         if (transport.equals("DRIVING") ||
             transport.equals("WALKING") ||
             transport.equals("TRANSIT") ||
