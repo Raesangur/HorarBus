@@ -2,7 +2,7 @@
 # Script d'ajout des usagers d'administration du serveur
 
 /opt/jboss/keycloak/bin/add-user-keycloak.sh -u admin  -p admin
-/opt/jboss/keycloak/bin/add-user.sh -u admin  -p admin
+/opt/jboss/keycloak/bin/add-user.sh -u admin  -p !Council1
 
 # Appel du processus d'attente du démarrage de keycloak et ajout des usagers
 

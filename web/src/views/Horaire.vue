@@ -550,12 +550,16 @@ export default {
     eventsState(){
       for(let i in this.eventsState){
         this.eventsState[i].open = false;
+        let start = new Date(this.eventsState[i].start).toLocaleString().replace(",","");
+        this.eventsState[i].start = start;
+        let end = new Date(this.eventsState[i].end).toLocaleString().replace(",","");
+        this.eventsState[i].end = end;
       }
       this.events = this.eventsState;
       this.calendarOptions.events = this.eventsState;
       for(let i in this.eventsState){
-        this.events[i].start = this.eventsState[i].start.replace("T"," ").split(':')[0]+":"+this.eventsState[i].start.replace("T"," ").split(':')[1];
-        this.events[i].end = this.eventsState[i].end.replace("T"," ").split(':')[0]+":"+this.eventsState[i].end.replace("T"," ").split(':')[1];
+        this.events[i].start = this.eventsState[i].start.split(' ')[0].split("/")[2]+"-"+this.eventsState[i].start.split(' ')[0].split("/")[1]+"-"+this.eventsState[i].start.split(' ')[0].split("/")[0]+" "+this.eventsState[i].start.split(' ')[1].split(':')[0] + ":" + this.eventsState[i].start.split(' ')[1].split(':')[1];
+        this.events[i].end = this.eventsState[i].end.split(' ')[0].split("/")[2]+"-"+this.eventsState[i].end.split(' ')[0].split("/")[1]+"-"+this.eventsState[i].end.split(' ')[0].split("/")[0]+" "+ this.eventsState[i].end.split(' ')[1].split(':')[0] + ":" + this.eventsState[i].end.split(' ')[1].split(':')[1];
         this.events[i].heure = this.events[i].start.split(" ")[1] + " - " + this.events[i].end.split(" ")[1];
         this.events[i].description1 = this.events[i].description.split("\n")[0];
         this.events[i].description2 = this.events[i].description.split("\n")[2];
@@ -563,14 +567,14 @@ export default {
         if(this.events[i].description.split("\n")[3]){
           this.events[i].description3 = this.events[i].description.split("\n")[3];
         }
-        this.calendarOptions.events[i].start = this.eventsState[i].start.replace("T"," ").split(':')[0]+":"+this.eventsState[i].start.replace("T"," ").split(':')[1];
-        this.calendarOptions.events[i].end = this.eventsState[i].end.replace("T"," ").split(':')[0]+":"+this.eventsState[i].end.replace("T"," ").split(':')[1];
-        this.calendarOptions.events[i].heure = this.calendarOptions.events[i].start.split(" ")[1] + " - " + this.events[i].end.split(" ")[1];
+        this.calendarOptions.events[i].start = this.events[i].start;
+        this.calendarOptions.events[i].end = this.events[i].end;
+        this.calendarOptions.events[i].heure = this.calendarOptions.events[i].start.split(" ")[1] + " - " + this.calendarOptions.events[i].end.split(" ")[1];
         this.calendarOptions.events[i].title = this.calendarOptions.events[i].summary;
         this.calendarOptions.events[i].description1 = this.calendarOptions.events[i].description.split("\n")[0];
         this.calendarOptions.events[i].description2 = this.calendarOptions.events[i].description.split("\n")[2];
         if(this.calendarOptions.events[i].description.split("\n")[3]){
-          this.calendarOptions.events[i].description3 = this.events[i].description.split("\n")[3];
+          this.calendarOptions.events[i].description3 = this.calendarOptions.events[i].description.split("\n")[3];
         }
       }
     },
@@ -669,7 +673,6 @@ export default {
       }
     },
     switchTheme(){
-      console.log("DARK")
       if (this.darkMode == true) {
         for (
           let i = 0;
@@ -715,7 +718,6 @@ export default {
       }
     },
     showEvent(event) {
-      console.log(event)
       event.event.open = true;
       event.nativeEvent.target.style.height = "fit-content";
       event.nativeEvent.path[1].style.zIndex = "1000";
