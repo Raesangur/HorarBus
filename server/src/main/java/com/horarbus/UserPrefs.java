@@ -1,5 +1,6 @@
 package com.horarbus;
 
+import com.horarbus.handler.UserHandler;
 import io.vertx.core.json.JsonObject;
 
 public class UserPrefs {
