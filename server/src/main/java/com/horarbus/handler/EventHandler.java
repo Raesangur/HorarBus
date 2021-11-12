@@ -5,24 +5,37 @@ import io.vertx.core.json.JsonObject;
 
 public class EventHandler {
     private PostgresHandler pgh = null;
-    private int event_id = 0;
+    private PostgresValue event_id = null;
 
     EventHandler(int event_id) {
-        this.event_id = event_id;
+        this.event_id = new PostgresValue(event_id);
         pgh = new PostgresHandler();
     }
 
     private String select_column(String column) {
-        return pgh.select_column(column, "Event", "event_id", event_id);
+        return pgh.select_column(column, "Event",
+                                 new String[]{"event_id"},
+                                 new PostgresValue[]{event_id});
     }
     private void update_column(String column, String value) {
-        pgh.update_column(column, "Event", value, "event_id", event_id);
+        pgh.update_column(column, "Event", new PostgresValue(value),
+                          new String[]{"event_id"},
+                          new PostgresValue[]{event_id});
     }
     private void update_column(String column, int value) {
-        pgh.update_column(column, "Event", value, "event_id", event_id);
+        pgh.update_column(column, "Event", new PostgresValue(value),
+                          new String[]{"event_id"},
+                          new PostgresValue[]{event_id});
     }
     private void update_column(String column, long value) {
-        pgh.update_column(column, "Event", value, "event_id", event_id);
+        pgh.update_column(column, "Event",
+                          new PostgresValue(value),
+                          new String[]{"event_id"},
+                          new PostgresValue[]{event_id});
+    }
+
+    public int get_id() {
+        return event_id.getInt();
     }
 
     private String get_start() {

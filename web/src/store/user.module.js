@@ -10,7 +10,6 @@ export default {
         getUser({ commit }) {
             UserService.getUser()
                 .then((user) => {
-                    console.log(user.data)
                     commit("getUser", user.data);
                     commit("getPref", user.data.preferences);
                 })

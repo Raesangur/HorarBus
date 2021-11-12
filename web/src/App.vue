@@ -12,9 +12,10 @@ import { mapActions } from "vuex";
 export default {
   data: () => ({}),
   methods: {
-    ...mapActions(["getUser", "getEvents"]),
+    ...mapActions(["getUser", "getEvents","getMaps"]),
   },
   mounted() {
+    this.getMaps();
     this.getUser();
     this.getEvents();
   },
