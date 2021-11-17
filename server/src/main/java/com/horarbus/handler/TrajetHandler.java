@@ -9,7 +9,7 @@ public class TrajetHandler {
     public TrajetHandler(String cip, int event_id) {
         this.user = new UserHandler(cip);
         this.event = new EventHandler(event_id);
-
+        
         pgh = new PostgresHandler();
     }
 
