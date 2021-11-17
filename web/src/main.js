@@ -19,7 +19,6 @@ Vue.use(BootstrapVue);
 Vue.use(IconsPlugin);
 Vue.config.productionTip = false;
 Vue.config.devtools = true;
-console.log(process.env.VUE_APP_API_KEY);
 Vue.use(VueGoogleMaps, {
     load: {
         key: process.env.VUE_APP_API_KEY,
