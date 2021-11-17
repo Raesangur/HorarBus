@@ -307,7 +307,8 @@
         hide-footer
         hide-header
         :centered="true"
-        body-class="preference"
+        body-class="maps"
+        dialog-class="modal-maps"
       >
         <b-row>
           <b-col cols="10" class="title"> Maps </b-col>
@@ -660,6 +661,7 @@ export default {
       //   this.position = position;
       // }
       console.log(position);
+      this.setGeo(position);
     };
     const errorCallback = (error) => {
       console.error(error);
@@ -770,7 +772,7 @@ export default {
     },
   },
   methods: {
-    ...mapActions(["putUser", "putPref", "getEvents"]),
+    ...mapActions(["putUser", "putPref", "getEvents","setGeo"]),
     sendPref() {
       let pref = {
         preparation_time: "",
@@ -1273,6 +1275,16 @@ nav {
   border-radius: 11px;
   color: #ffffff;
 }
+
+/deep/.modal-open .modal{
+  overflow-y: unset !important;
+}
+/deep/.maps {
+  background: #222222;
+  border-radius: 11px;
+  color: #ffffff;
+  width: 100%;
+}
 /deep/.modal-calendar {
   background: #222222;
   border-radius: 11px;
@@ -1371,6 +1383,10 @@ nav {
 }
 /deep/.modal-left {
   margin-left: 0px;
+}
+/deep/.modal-maps  {
+  width: 100%;
+  max-width: none;
 }
 /deep/.b-calendar-grid {
   background: none;

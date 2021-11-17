@@ -3,21 +3,26 @@
     <GmapMap
       :center='center'
       :zoom='zoom'
-      style='width:100%;  height: 400px;'
+      style='width:100%;  height: 80vh;'
     />
   </div>
 </template>
 <script>
-import { mapActions, mapState } from "vuex";
+import { mapState } from "vuex";
 export default {
   computed: {
     ...mapState({
       mapsSettings: (state) => state.maps.mapsSettings,
+      geolocation: (state) => state.maps.geolocation,
     }),
   },
+  watch:{
+  },
   mounted() {
-    this.getMaps();
-    this.geolocate();
+    this.center = {
+      lat: this.geolocation.lat,
+      lng: this.geolocation.lng,
+    };
     // if(this.mapsSettings.latitude){
     //   this.center.lat = parseInt(this.mapsSettings.latitude);
     // }
@@ -34,21 +39,6 @@ export default {
       currentPlace: null,
       zoom: 15,
     }
-  },
-  methods: {
-    ...mapActions(["getMaps"]),
-    setPlace(place) {
-      this.currentPlace = place;
-    },
-    geolocate() {
-      navigator.geolocation.getCurrentPosition(position => {
-      console.log(position)
-        this.center = {
-          lat: position.coords.latitude,
-          lng: position.coords.longitude,
-        };
-      });
-    },
   },
 };
 </script>
