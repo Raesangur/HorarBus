@@ -15,6 +15,7 @@
           </button>
         </b-navbar-nav>
         <b-navbar-nav class="navbar-menu mx-auto" v-if="largeur >= 768">
+          <!-- <img src="@/assets/Horarbus_Esquisse.png" class="logo"> -->
           <div class="horarbus nom" style="cursor: default">HorarBus</div>
         </b-navbar-nav>
         <b-navbar-toggle
@@ -216,7 +217,7 @@
         </b-row>
         <b-form-group v-slot="{ ariaDescribedby }">
           <b-form-radio
-            v-model="pref.transport"
+            v-model="map.transport"
             :aria-describedby="ariaDescribedby"
             name="some-radios"
             value="WALKING"
@@ -225,7 +226,7 @@
             ><img :src="require('../assets/walk.png')"
           /></b-form-radio>
           <b-form-radio
-            v-model="pref.transport"
+            v-model="map.transport"
             :aria-describedby="ariaDescribedby"
             name="some-radios"
             value="BICYCLING"
@@ -234,7 +235,7 @@
             ><img :src="require('../assets/bike.png')"
           /></b-form-radio>
           <b-form-radio
-            v-model="pref.transport"
+            v-model="map.transport"
             :aria-describedby="ariaDescribedby"
             name="some-radios"
             value="TRANSIT"
@@ -243,7 +244,7 @@
             ><img :src="require('../assets/bus.png')"
           /></b-form-radio>
           <b-form-radio
-            v-model="pref.transport"
+            v-model="map.transport"
             :aria-describedby="ariaDescribedby"
             name="some-radios"
             value="DRIVING"
@@ -259,16 +260,16 @@
             Notifications
             <b-row style="margin: 0">
               <b-form-checkbox
-                v-model="pref.notification_enable"
+                v-model="map.notification_enable"
                 name="check-button"
                 class="checkboxNotification"
               >
               </b-form-checkbox>
               <b-col>
                 <input
-                  v-model.number="pref.temps_avance_notification"
+                  v-model.number="map.temps_avance_notification"
                   id="timenotif"
-                  :disabled="!pref.notification_enable"
+                  :disabled="!map.notification_enable"
                   type="number"
                   class="tempsSelect"
                 />
@@ -286,7 +287,7 @@
             Temps d'avance désirer
             <br />
             <input
-              v-model.number="pref.temps_avance"
+              v-model.number="map.temps_avance"
               type="number"
               class="tempsSelect"
             />
@@ -309,6 +310,7 @@
         :centered="true"
         body-class="maps"
         dialog-class="modal-maps"
+        style="padding-right:0"
       >
         <b-row>
           <b-col cols="10" class="title"> Maps </b-col>
@@ -468,6 +470,12 @@ export default {
   data: () => ({
     pref: {
       adresse_maison: "",
+      temps_avance: 0,
+      transport: "TRANSIT",
+      notification_enable: false,
+      temps_avance_notification: 0,
+    },
+    map: {
       temps_avance: 0,
       transport: "TRANSIT",
       notification_enable: false,
@@ -645,6 +653,7 @@ export default {
   }),
 
   mounted() {
+    this.getUser();
     this.getEvents();
     this.resize();
     this.$refs.calendar.checkChange();
@@ -772,7 +781,7 @@ export default {
     },
   },
   methods: {
-    ...mapActions(["putUser", "putPref", "getEvents","setGeo"]),
+    ...mapActions(["putUser", "putPref", "getEvents","setGeo","getUser"]),
     sendPref() {
       let pref = {
         preparation_time: "",
@@ -791,7 +800,6 @@ export default {
         enabled: this.pref.notification_enable,
       };
       pref.dark_mode = this.darkMode;
-      console.log(pref);
       this.putUser(pref);
       this.hidePref();
     },
@@ -804,7 +812,12 @@ export default {
           enabled: "",
         },
       };
-      map.preparation_time = this.pref.temps_avance;
+      map.preparation_time = this.map.temps_avance;
+      map.transport = this.map.transport;
+      map.notification = {
+        time: this.map.temps_avance_notification,
+        enabled: this.map.notification_enable,
+      };
       console.log(map);
       //this.putMaps(pref);
       this.hideMaps();
@@ -1029,6 +1042,9 @@ export default {
 </script>
 
 <style scoped>
+.logo{
+  height: 56px !important;
+}
 .saveButton {
   font-size: 16px;
   text-align: center;
@@ -1274,6 +1290,9 @@ nav {
   background: #222222;
   border-radius: 11px;
   color: #ffffff;
+}
+/deep/.modal{
+  padding-right: 0px !important;
 }
 
 /deep/.modal-open .modal{
