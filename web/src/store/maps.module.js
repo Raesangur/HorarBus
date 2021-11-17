@@ -9,7 +9,6 @@ export default {
         async getMaps({ commit }) {
             MapsService.getDefault()
                 .then((maps) => {
-                    console.log(maps)
                     commit("getMaps", maps);
                 })
                 .catch((err) => {

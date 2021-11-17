@@ -204,7 +204,7 @@
         body-class="preference"
       >
         <b-row>
-          <b-col cols="10" class="title"> TITRE </b-col>
+          <b-col cols="10" class="title"> Trajet </b-col>
           <b-col cols="2" class="zoneClose">
             <button @click="hideMapsSetting()" class="close">x</button>
           </b-col>
@@ -291,7 +291,7 @@
               class="tempsSelect"
             />
           </b-col>
-        </b-row>      
+        </b-row>
 
         <b-row>
           <b-col style="display: flex; justify-content: center">
@@ -310,7 +310,7 @@
         body-class="preference"
       >
         <b-row>
-          <b-col cols="10" class="title"> TITRE </b-col>
+          <b-col cols="10" class="title"> Maps </b-col>
           <b-col cols="2" class="zoneClose">
             <button @click="hideMaps()" class="close">x</button>
           </b-col>
@@ -368,7 +368,10 @@
         :type="type"
         class="calendar"
       >
-        <template v-slot:event="{ event }" :style="{backgroundColor:event.color}">
+        <template
+          v-slot:event="{ event }"
+          :style="{ backgroundColor: event.color }"
+        >
           <div
             class="event"
             @mouseenter="setHeight(event.id)"
@@ -398,33 +401,37 @@
               <a :href="event.url">{{ event.session }}</a>
             </div>
           </div>
-          <div class="event" v-click-outside="dismissEvent" v-else>
-            <!-- {{ event.heureDepart }} - <a style="font-weight: 700">{{ event.summary }}</a>
+          <div
+            class="event"
+            v-click-outside="dismissEvent"
+            @mouseenter="setHeight(event.id)"
+            :id="event.id"
+            v-else
+          >
+            {{ event.heureDepart }} -
+            <a style="font-weight: 700">{{ event.summary }}</a>
+            <button class="editButton" @click="showMapsSetting">
+              <b-icon-pencil></b-icon-pencil>
+            </button>
             <br />
-            Arrivé prévue à {{ event.heureArrive }}
-            <div class="centerBorder" v-if="event.session"></div>
-            
-            <br />
-            <div v-if="event.location">
-              {{ event.location }}
-            </div>
             
             <div v-if="event.open">
+              <div v-if="event.heureArrive">
+                Arrivé prévue à {{ event.heureArrive }}
+              </div>
               <div class="centerBorder"></div>
-              {{ event.description1 }}
-              <div class="centerBorder" v-if="event.prof"></div>
-              {{ event.prof }}
-              <div class="centerBorder" v-if="event.session"></div>
-              <a :href="event.url">{{ event.session }}</a>
+              <div v-if="event.description1">
+                {{ event.description1 }}
+              </div>
+              <div v-if="event.description2">
+                {{ event.description2 }}
+              </div>
+              <div v-if="event.description3">
+                {{ event.description3 }}
+              </div>
+              <div class="centerBorder"></div>
+              <a @click="showMaps" class="link">voir la carte</a>
             </div>
-            <div v-if="event.open">
-              <div class="centerBorder"></div>
-              {{ event.description2 }}
-              <div class="centerBorder" v-if="event.prof"></div>
-              {{ event.prof }}
-              <div class="centerBorder"></div>
-              <a href="#">voir la carte</a>
-            </div> -->
           </div>
         </template>
         <template v-slot:day-body="{ date, week }">
@@ -448,7 +455,7 @@ import Fullcalendar from "@fullcalendar/vue";
 import InteractionPlugin from "@fullcalendar/interaction";
 import ListPlugin from "@fullcalendar/list";
 import allLocales from "@fullcalendar/core/locales-all";
-import Maps from "@/components/Maps"
+import Maps from "@/components/Maps";
 import { mapState, mapActions } from "vuex";
 
 export default {
@@ -515,7 +522,7 @@ export default {
             "Projet,Conception d'un système informatique distribué,Port du masque de Procédure obligatoire".split(
               ","
             )[0],
-          
+
           description1:
             "Projet,Conception d'un système informatique distribué,Port du masque de Procédure obligatoire".split(
               ","
@@ -618,6 +625,7 @@ export default {
           "Départ UdeS,Terminus intersection Blvd - Rue,Autobus #69".split(
             ","
           )[2],
+        color: "orange",
         heureDepart: "2021-11-04 13:00".split(" ")[1],
         heureArrive: "2021-11-04 14:00".split(" ")[1],
         open: false,
@@ -762,29 +770,42 @@ export default {
     },
   },
   methods: {
-    ...mapActions(["putUser", "putPref", "getMaps", "getEvents"]),
+    ...mapActions(["putUser", "putPref", "getEvents"]),
     sendPref() {
       let pref = {
-        "preparation_time": "",
-        "transport":"",
-        "notification":{
-          "time":"",
-          "enabled":""
+        preparation_time: "",
+        transport: "",
+        notification: {
+          time: "",
+          enabled: "",
         },
-        "dark_mode":""
+        dark_mode: "",
       };
       pref.preparation_time = this.pref.temps_avance;
       pref.transport = this.pref.transport;
       pref.local_address = this.pref.adresse_maison;
       pref.notification = {
-        "time": this.pref.temps_avance_notification,
-        "enabled": this.pref.notification_enable
-      }
+        time: this.pref.temps_avance_notification,
+        enabled: this.pref.notification_enable,
+      };
       pref.dark_mode = this.darkMode;
       console.log(pref);
       this.putUser(pref);
       this.hidePref();
-      
+    },
+    sendMaps() {
+      let map = {
+        preparation_time: "",
+        transport: "",
+        notification: {
+          time: "",
+          enabled: "",
+        },
+      };
+      map.preparation_time = this.pref.temps_avance;
+      console.log(map);
+      //this.putMaps(pref);
+      this.hideMaps();
     },
     onResize() {
       this.resize();
@@ -807,7 +828,7 @@ export default {
     showMapsSetting() {
       this.$refs["mapsSetting"].show();
     },
-    hideMapSetting() {
+    hideMapsSetting() {
       this.$refs["mapsSetting"].hide();
     },
     showChoseDate() {
@@ -835,14 +856,13 @@ export default {
       cvs.height = 1;
       cvs.width = 1;
       ctx = cvs.getContext("2d");
-      if(event.color){
+      if (event.color) {
         ctx.fillStyle = event.color;
-      }
-      else{
+      } else {
         return "#1867c0";
       }
       ctx.fillRect(0, 0, 1, 1);
-      return "rgba("+ctx.getImageData(0, 0, 1, 1).data+")";
+      return "rgba(" + ctx.getImageData(0, 0, 1, 1).data + ")";
     },
     next() {
       if (this.$refs.fullCalendar) {
@@ -1017,7 +1037,13 @@ export default {
   border-radius: 10px;
   font-weight: bold;
 }
-
+.editButton {
+  border-radius: 100%;
+  background-color: #ffbf5f;
+  width: 20px;
+  height: 20px;
+  float: right;
+}
 .saveButton:hover {
   background: transparent;
   color: #ffffff;
@@ -1124,6 +1150,10 @@ export default {
   border-radius: 50%;
   margin-top: -5px;
   margin-left: -6.5px;
+}
+
+.link{
+  color: inherit;
 }
 
 .navbar-dark .navbar-nav .nav-link:hover {
