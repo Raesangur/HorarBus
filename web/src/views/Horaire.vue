@@ -367,7 +367,6 @@
         v-model="value"
         color="black"
         locale="fr"
-        @click:event="showEvent"
         :type="type"
         class="calendar"
       >
@@ -381,6 +380,8 @@
             v-click-outside="dismissEvent"
             v-if="!event.trajet"
             :id="event.id"
+            v-on:click="showEvent"
+            @click="openEvent(event)"
           >
             {{ event.heure }}
             <br />
@@ -410,6 +411,8 @@
             @mouseenter="setHeight(event.id)"
             :id="event.id"
             v-else
+            v-on:click="showEvent"
+            @click="openEvent(event)"
           >
             {{ event.heureDepart }} -
             <a style="font-weight: 700">{{ event.summary }}</a>
@@ -939,31 +942,60 @@ export default {
         document.getElementsByTagName("footer")[0].style.color = "#000000";
       }
     },
+    openEvent(event){
+      event.open= true;
+    },
     showEvent(event) {
-      event.event.open = true;
-      event.nativeEvent.target.style.height = "fit-content";
-      event.nativeEvent.path[1].style.zIndex = "1000";
+      console.log(event)
+      event.target.style.height = "fit-content";
+      if(event.path){
+        event.path[1].style.zIndex = "1000";
+      }
+      if(event.target.offsetParent){
+        event.target.offsetParent.style.zIndex = "1000";
+      }
+      event.target.style.zIndex = "1000";
       if (this.eventActive.event === undefined) {
-        this.initialHeight = event.nativeEvent.path[1].style.height;
+        if(event.path){
+          this.initialHeight = event.path[1].style.height;
+        }
+        if(event.target.offsetParent){
+          this.initialHeight = event.target.offsetParent.style.height;
+        }
+        
       }
       this.eventActive = event;
-      event.nativeEvent.path[1].style.height = "fit-content";
-      if (this.eventActive.event === event.event) {
+      if(event.path){
+        event.path[1].style.height = "fit-content";
+      }
+      if(event.target.offsetParent){
+        event.target.offsetParent.style.height = "fit-content";
+      }
+      if (this.eventActive === event) {
         document.body.addEventListener(
           "click",
-          event.nativeEvent.target.clickOutsideEvent
+          event.target.clickOutsideEvent
         );
       } else {
         this.dismissEvent();
       }
     },
     dismissEvent() {
-      this.eventActive.event.open = false;
-      this.eventActive.nativeEvent.path[1].style.zIndex = "0";
-      this.eventActive.nativeEvent.path[1].style.height = this.initialHeight;
+      for(let i in this.events){
+        this.events[i].open = false;
+      }
+      //this.eventActive.event.open = false;
+      if(this.eventActive.path){
+        this.eventActive.path[1].style.zIndex = "0";
+        this.eventActive.path[1].style.height = this.initialHeight;
+      }
+      if(this.eventActive.target.offsetParent){
+        this.eventActive.target.offsetParent.style.zIndex = "0";
+        this.eventActive.target.offsetParent.style.height = this.initialHeight;
+      }
       document.body.removeEventListener(
         "click",
-        this.eventActive.nativeEvent.target.clickOutsideEvent
+        this.eventActive.target.clickOutsideEvent
       );
       this.eventActive = "";
     },
