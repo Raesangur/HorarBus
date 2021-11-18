@@ -561,6 +561,28 @@ export default {
             )[2],
           location: "C1-5014",
         },
+        {
+        id: 2,
+        start: "2021-11-04 13:00",
+        end: "2021-11-04 13:30",
+        summary:
+          "Départ UdeS,Terminus intersection Blvd - Rue,Autobus #69,Arrive dans 420s".split(
+            ","
+          )[0],
+        description1:
+          "Départ UdeS,Terminus intersection Blvd - Rue,Autobus #69".split(
+            ","
+          )[1],
+        description2:
+          "Départ UdeS,Terminus intersection Blvd - Rue,Autobus #69".split(
+            ","
+          )[2],
+        color: "orange",
+        heureDepart: "2021-11-04 13:00".split(" ")[1],
+        heureArrive: "2021-11-04 14:00".split(" ")[1],
+        open: false,
+        trajet: true,
+      },
       ],
       eventColor: "#1867c0",
     },
