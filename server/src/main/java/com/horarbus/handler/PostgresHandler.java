@@ -160,10 +160,6 @@ public class PostgresHandler {
             }
             ResultSet rs = executeQuery(query);
 
-            if (rs == null) {
-                return "";
-            }
-
             if (rs.next())  {
                 return rs.getString(column);
             }

@@ -16,10 +16,6 @@ public class UserHandler {
 
         this.cip = cip;
         pgh = new PostgresHandler();
-
-        if (select_column("cip") == "") {
-            Thread.dumpStack();
-        }
     }
 
     public UserHandler(String cip, String nom, String prenom) {
@@ -30,12 +26,10 @@ public class UserHandler {
         this.cip = cip;
         pgh = new PostgresHandler();
 
-        if (select_column("cip" == "")) {
         pgh.insert_row("Student", new String[] {"cip", "name", "surname"},
                        new PostgresValue[]{new PostgresValue(cip),
                                            new PostgresValue(nom),
                                            new PostgresValue(prenom)});
-        }
     }
 
     private boolean validate_cip(String cip) {
@@ -116,13 +110,34 @@ public class UserHandler {
         update_column("notification_time", notif_time);
     }
 
+    private String sanitizeTransport(String transport) {
+        if (transport == null || transport.equals("")) {
+            System.out.println("Invalid transport method");
+            return null;
+        }
+
+        transport = transport.toUpperCase();
+
+        if (transport.equals("BUS")) {
+            transport = "TRANSIT";
+        }
+
+        if (transport.equals("DRIVING") || transport.equals("WALKING")
+                || transport.equals("TRANSIT") || transport.equals("BICYCLING")) {
+            return transport;
+        } else {
+            System.out.println("Invalid transport method: " + transport);
+            return null;
+        }
+    }
+
     public String get_transport() {
         String transport = select_column("transport");
         return transport != null ? transport : DEFAULT_TRANSPORT;
     }
 
     public void set_transport(String transport) {
-        transport = Utils.sanitizeTransport(transport);
+        transport = sanitizeTransport(transport);
         if (transport == null) {
             return;
         }
