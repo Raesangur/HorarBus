@@ -70,7 +70,7 @@ public class PostgresHandler {
 
             // Insert condition columns
             for (int i = 0; i < conditionColumns.length; i++) {
-                query.append(conditionColumns[i]+"=");
+                query.append(conditionColumns[i] + "=");
                 if (i == conditionColumns.length - 1) {
                     query.append(" ");
                 } else {

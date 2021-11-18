@@ -27,6 +27,7 @@ public class AuthFilter implements ContainerRequestFilter {
     public void filter(ContainerRequestContext requestContext) throws IOException {
         try {
             String token = getAuthToken(requestContext);
+            System.out.println(token + " : " + keycloakValidationEndpoint.get());
             AuthData authData = readAuthDataFromToken(token);
             requestContext.setProperty("authData", authData);
         } catch (AuthException ex) {
@@ -48,7 +49,16 @@ public class AuthFilter implements ContainerRequestFilter {
         if (connection == null) {
             throw new AuthException("Connection failed.");
         }
+
         if (connection.getResponseCode() < 200 || connection.getResponseCode() >= 300) {
+            BufferedReader reader =
+                    new BufferedReader(new InputStreamReader(connection.getInputStream()));
+
+            String line;
+            while ((line = reader.readLine()) != null) {
+                System.out.println(line);
+            }
+            reader.close();
             throw new AuthException("Request refused by auth server.");
         }
 
@@ -64,6 +74,7 @@ public class AuthFilter implements ContainerRequestFilter {
             SSLContext.setDefault(ctx);
 
             URL url = new URL(keycloakValidationEndpoint.get());
+            System.out.println(url.toString());
             connection = (HttpsURLConnection) url.openConnection();
             connection.setRequestMethod("GET");
 
