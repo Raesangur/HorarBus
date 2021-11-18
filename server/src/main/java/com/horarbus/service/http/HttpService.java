@@ -28,23 +28,17 @@ public class HttpService implements IHttpService {
         if (isRequestMethodValid(method)) {
             this.requestMethod = method;
         } else {
-            throw new HttpException("Invalid request method.");
+            throw new Exception("Invalid request method.");
         }
     }
 
     private boolean isRequestMethodValid(String method) {
         String[] validMethods = new String[] {"GET", "POST", "PUT", "DELETE", "OPTIONS"};
-
-        if (method == null || method.isEmpty()) {
-            return false;
-        }
-
         for (String potentialMethod : validMethods) {
             if (method.toUpperCase().trim().equals(potentialMethod)) {
                 return true;
             }
         }
-
         return false;
     }
 
@@ -52,42 +46,20 @@ public class HttpService implements IHttpService {
         if (token != null) {
             this.authToken = token;
         } else {
-            throw new HttpException("No token has been passed on.");
+            throw new Exception("No token has been passed on.");
         }
     }
 
     public String executeRequest() throws Exception {
         if (url == null) {
-            throw new HttpException("Cannot execute a request if there is no endpoint url.");
+            throw new Exception("Cannot execute a request if there is no endpoint url.");
         }
 
-        URLConnection connection = connect();
-        if (connection == null) {
-            throw new HttpException("Connection failed.");
-        }
-        if (((HttpURLConnection) connection).getResponseCode() < 200
-                || ((HttpURLConnection) connection).getResponseCode() >= 300) {
-            throw new HttpException("Request refused by auth server.");
-        }
-
-        String response = readConnectionResponse(connection);
+        URLConnection builtConnection = buildConnection();
+        URLConnection completedConnection = completeConnection(builtConnection);
+        String response = readConnectionResponse(completedConnection);
 
         return response;
-    }
-
-    private URLConnection connect() {
-        URLConnection connection = null;
-        try {
-            connection = buildConnection();
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        } finally {
-            if (connection != null) {
-                ((HttpURLConnection) connection).disconnect();
-            }
-        }
-
-        return connection;
     }
 
     protected URLConnection buildConnection() throws IOException, Exception {
@@ -103,6 +75,20 @@ public class HttpService implements IHttpService {
 
         connection.setUseCaches(false);
         connection.setDoOutput(true);
+
+        return connection;
+    }
+
+    private URLConnection completeConnection(URLConnection connection) {
+        try {
+            connection = buildConnection();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        } finally {
+            if (connection != null) {
+                ((HttpURLConnection) connection).disconnect();
+            }
+        }
 
         return connection;
     }

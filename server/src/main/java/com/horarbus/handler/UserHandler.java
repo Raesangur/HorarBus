@@ -16,6 +16,9 @@ public class UserHandler {
 
         this.cip = cip;
         pgh = new PostgresHandler();
+
+        pgh.insert_row("Student", new String[] {"cip"},
+                       new PostgresValue[]{new PostgresValue(cip));
     }
 
     public UserHandler(String cip, String nom, String prenom) {
@@ -147,9 +150,6 @@ public class UserHandler {
 
     public boolean get_darkmode() {
         String darkModeStr = select_column("dark_mode");
-        if(darkModeStr == null){
-            darkModeStr = "false";
-        }
         return Boolean.parseBoolean(darkModeStr.trim());
     }
 

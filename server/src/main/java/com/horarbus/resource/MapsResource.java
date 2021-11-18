@@ -22,10 +22,30 @@ public class MapsResource {
     public String getSettings() {
         JsonObject requestedData = new JsonObject();
 
+        requestedData.put("key", readFrontendKey());
         requestedData.put("latitude", DEFAULT_LATITUDE);
         requestedData.put("longitude", DEFAULT_LONGITUDE);
         requestedData.put("zoom", DEFAULT_ZOOM);
 
         return requestedData.toString();
     }
+
+    private String readFrontendKey() {
+        try {
+            return Config.getConfig("googleApiKey-frontend");
+        } catch (ConfigException e) {
+            e.printStackTrace();
+            return "undefined";
+        }
+    }
+
+    private String readBackendKey() {
+        try {
+            return Config.getConfig("googleApiKey-backend");
+        } catch (ConfigException e) {
+            e.printStackTrace();
+            return "undefined";
+        }
+    }
+
 }
