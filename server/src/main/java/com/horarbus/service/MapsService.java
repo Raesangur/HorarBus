@@ -7,6 +7,20 @@ import com.horarbus.service.http.HttpService;
 
 public class MapsService {
 
+    private static final String API_BASE = "https://maps.googleapis.com/maps/api/";
+    private static final String FROM_ADDRESS_URL = API_BASE + "geocode/json?address=";
+    private static final String FROM_PLACE_ID_URL = API_BASE + "place/details/json?place_id=";
+
+    public static String getPlaceDataFromAddress(String address) throws Exception {
+        String endpointStr = MapsService.FROM_ADDRESS_URL + URLEncoder.encode(address, "UTF-8");
+        return MapsService.doRequest(generateEndpoint(endpointStr));
+    }
+
+    public static String getPlaceDataFromId(String placeId) throws Exception {
+        String endpointStr = MapsService.FROM_PLACE_ID_URL + URLEncoder.encode(placeId, "UTF-8");
+        return MapsService.doRequest(generateEndpoint(endpointStr));
+    }
+
     private static String ApiKey() {
         try {
             return Config.getConfig("googleApiKey");
@@ -24,25 +38,6 @@ public class MapsService {
         service.setRequestMethod("GET");
         service.setURL(endpointUrl);
         return service.executeRequest();
-    }
-
-    public static String getPlaceDataFromAddress(String address) throws Exception {
-        String url = generateEndpoint("https://maps.googleapis.com/maps/api/geocode/json?address="
-                + URLEncoder.encode(address, "UTF-8"));
-        return MapsService.doRequest(url);
-    }
-
-    public static String getPlaceData(String placeId) {
-        return "";
-    }
-
-    public static String foo() {
-        try {
-            return MapsService.getPlaceDataFromAddress("Faculté de génie Sherbrooke");
-        } catch (Exception ex) {
-            ex.printStackTrace();
-            return "An error occured when requesting maps data.";
-        }
     }
 
 }

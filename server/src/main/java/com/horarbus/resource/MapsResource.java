@@ -1,7 +1,5 @@
 package com.horarbus.resource;
 
-import com.horarbus.config.Config;
-import com.horarbus.config.ConfigException;
 import io.vertx.core.json.JsonObject;
 
 import javax.ws.rs.GET;
