@@ -86,6 +86,18 @@ public class UserHandler {
         return cip;
     }
 
+    public EventHandler[] get_events() {
+        String[] event_ids = pgh.select_column("event_id", "Attendance",
+                                               new String[]{"cip"},
+                                               new PostgresValue[]{new PostgresValue(cip)});
+        
+        EventHandler[] events = new EventHandler[event_ids.length];
+        for (int i = 0; i < event_ids.length; i++) {
+            events[i] = new EventHandler(Integer.parseInt(event_ids[i]));
+        }
+        return events;
+    }
+
     public String get_ical_key() {
         String key = select_column("ical_key");
         return key != null ? key : "";
