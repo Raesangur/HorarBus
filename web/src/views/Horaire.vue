@@ -411,6 +411,8 @@
             @mouseenter="setHeight(event.id)"
             :id="event.id"
             v-else
+            v-on:click="showEvent"
+            @click="openEvent(event)"
           >
             {{ event.heureDepart }} -
             <a style="font-weight: 700">{{ event.summary }}</a>
@@ -946,12 +948,29 @@ export default {
     showEvent(event) {
       console.log(event)
       event.target.style.height = "fit-content";
-      event.path[1].style.zIndex = "1000";
+      if(event.path){
+        event.path[1].style.zIndex = "1000";
+      }
+      if(event.target.offsetParent){
+        event.target.offsetParent.style.zIndex = "1000";
+      }
+      event.target.style.zIndex = "1000";
       if (this.eventActive.event === undefined) {
-        this.initialHeight = event.path[1].style.height;
+        if(event.path){
+          this.initialHeight = event.path[1].style.height;
+        }
+        if(event.target.offsetParent){
+          this.initialHeight = event.target.offsetParent.style.height;
+        }
+        
       }
       this.eventActive = event;
-      event.path[1].style.height = "fit-content";
+      if(event.path){
+        event.path[1].style.height = "fit-content";
+      }
+      if(event.target.offsetParent){
+        event.target.offsetParent.style.height = "fit-content";
+      }
       if (this.eventActive === event) {
         document.body.addEventListener(
           "click",
@@ -966,8 +985,14 @@ export default {
         this.events[i].open = false;
       }
       //this.eventActive.event.open = false;
-      this.eventActive.path[1].style.zIndex = "0";
-      this.eventActive.path[1].style.height = this.initialHeight;
+      if(this.eventActive.path){
+        this.eventActive.path[1].style.zIndex = "0";
+        this.eventActive.path[1].style.height = this.initialHeight;
+      }
+      if(this.eventActive.target.offsetParent){
+        this.eventActive.target.offsetParent.style.zIndex = "0";
+        this.eventActive.target.offsetParent.style.height = this.initialHeight;
+      }
       document.body.removeEventListener(
         "click",
         this.eventActive.target.clickOutsideEvent
