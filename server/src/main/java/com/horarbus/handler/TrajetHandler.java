@@ -1,5 +1,7 @@
 package com.horarbus.handler;
 
+import com.horarbus.Utils;
+
 public class TrajetHandler {
     private UserHandler user;
     private EventHandler event;
@@ -27,7 +29,6 @@ public class TrajetHandler {
                                            new PostgresValue(start.get_id()),
                                            new PostgresValue(end.get_id()),
                                            new PostgresValue(arrival_time)});
-        }
     }
 
     private String select_column(String column) {
@@ -37,10 +38,18 @@ public class TrajetHandler {
                                                      new PostgresValue(event.get_id())});
     }
     private void update_column(String column, String value) {
-        pgh.update_column(column, "Event",
+        pgh.update_column(column, "Traject",
                           new PostgresValue(value),
-                          new String[]{"event_id"},
-                          new PostgresValue[]{new PostgresValue(event.get_id())});
+                          new String[]{"cip", "event_id"},
+                          new PostgresValue[]{new PostgresValue(user.get_cip()),
+                                              new PostgresValue(event.get_id())});
+    }
+    private void update_column(String column, long value) {
+        pgh.update_column(column, "Traject",
+                          new PostgresValue(value),
+                          new String[]{"cip", "event_id"},
+                          new PostgresValue[]{new PostgresValue(user.get_cip()),
+                                              new PostgresValue(event.get_id())});
     }
 
     public UserHandler get_user() {
@@ -115,10 +124,10 @@ public class TrajetHandler {
     }
 
     private int get_preparation_time() {
-        return select_column("preparation_time");
+        return Integer.parseInt(select_column("preparation_time"));
     }
     private void set_preparation_time(int prep) {
         prep = prep >= 0 ? prep : -prep;
-        return update_column("preparation_time", prep);
+        update_column("preparation_time", prep);
     }
 }

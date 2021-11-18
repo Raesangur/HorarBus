@@ -10,7 +10,9 @@ public class LocationHandler {
         pgh = new PostgresHandler();
 
         if (select_column("place_id") == "") {
-            insert_row("Location", "place_id", place_id);
+            pgh.insert_row("Location",
+                           new String[]{"place_id"},
+                           new PostgresValue[]{new PostgresValue(place_id)});
         }
     }
 

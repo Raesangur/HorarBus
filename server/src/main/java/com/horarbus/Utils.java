@@ -20,7 +20,7 @@ public class Utils {
         }
     }
 
-    private static String sanitizeTransport(String transport) {
+    public static String sanitizeTransport(String transport) {
         if (transport == null || transport.equals("")) {
             System.out.println("Invalid transport method");
             return null;
