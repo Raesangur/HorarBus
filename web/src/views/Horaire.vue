@@ -684,38 +684,34 @@ export default {
     eventsState() {
       for (let i in this.eventsState) {
         this.eventsState[i].open = false;
+        let now = new Date();
+        var offset = now.getTimezoneOffset() / 60;
         let start = new Date(this.eventsState[i].start)
-          .toLocaleString()
-          .replace(",", "");
+        start.setHours(start.getHours() - offset);
+        start = start.toISOString();
+        console.log(start);
         this.eventsState[i].start = start;
-        let end = new Date(this.eventsState[i].end)
-          .toLocaleString()
-          .replace(",", "");
+        let end = new Date(this.eventsState[i].end);
+        end.setHours(end.getHours() - offset);
+        end = end.toISOString();
         this.eventsState[i].end = end;
       }
       this.events = this.eventsState;
       this.calendarOptions.events = this.eventsState;
       for (let i in this.eventsState) {
         this.events[i].start =
-          this.eventsState[i].start.split(" ")[0].split("/")[2] +
-          "-" +
-          this.eventsState[i].start.split(" ")[0].split("/")[1] +
-          "-" +
-          this.eventsState[i].start.split(" ")[0].split("/")[0] +
+          this.eventsState[i].start.split("T")[0] + 
           " " +
-          this.eventsState[i].start.split(" ")[1].split(":")[0] +
+          this.eventsState[i].start.split("T")[1].split(":")[0] +
           ":" +
-          this.eventsState[i].start.split(" ")[1].split(":")[1];
+          this.eventsState[i].start.split("T")[1].split(":")[1];
         this.events[i].end =
-          this.eventsState[i].end.split(" ")[0].split("/")[2] +
-          "-" +
-          this.eventsState[i].end.split(" ")[0].split("/")[1] +
-          "-" +
-          this.eventsState[i].end.split(" ")[0].split("/")[0] +
+          this.eventsState[i].end.split("T")[0] + 
           " " +
-          this.eventsState[i].end.split(" ")[1].split(":")[0] +
+          this.eventsState[i].end.split("T")[1].split(":")[0] +
           ":" +
-          this.eventsState[i].end.split(" ")[1].split(":")[1];
+          this.eventsState[i].end.split("T")[1].split(":")[1];
+        
         this.events[i].heure =
           this.events[i].start.split(" ")[1] +
           " - " +
