@@ -488,6 +488,7 @@ export default {
       temps_avance_notification: 0,
     },
     position: "",
+    watchEvent: "",
     today: new Date(),
     value: new Date(),
     type: "week",
@@ -759,6 +760,10 @@ export default {
     value() {
       let calendarApi = this.$refs.fullCalendar.getApi();
       calendarApi.gotoDate(this.value);
+      this.watchEvent = calendarApi.currentData.currentDate;
+    },
+    watchEvent() {
+      this.switchTheme();
     },
     darkMode() {
       this.switchTheme();
@@ -881,6 +886,7 @@ export default {
       if (this.$refs.fullCalendar) {
         let calendarApi = this.$refs.fullCalendar.getApi();
         calendarApi.next();
+        this.watchEvent = calendarApi.currentData.currentDate;
       }
       if (this.$refs.calendar) {
         this.$refs.calendar.next();
@@ -890,6 +896,7 @@ export default {
       if (this.$refs.fullCalendar) {
         let calendarApi = this.$refs.fullCalendar.getApi();
         calendarApi.prev();
+        this.watchEvent = calendarApi.currentData.currentDate;
       }
       if (this.$refs.calendar) {
         this.$refs.calendar.prev();
