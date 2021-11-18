@@ -1,6 +1,8 @@
 package com.horarbus.handler;
 
 public class LocationHandler {
+    private String place_id;
+    private PostgresHandler pgh;
 
     public LocationHandler(String place_id) {
         this.place_id = place_id;
