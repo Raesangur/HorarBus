@@ -38,8 +38,31 @@ export default {
     // },
   },
   mounted() {
+<<<<<<< Updated upstream
     this.getMaps();
     this.initMap();
+=======
+    this.center = {
+      lat: this.geolocation.lat,
+      lng: this.geolocation.lng,
+    };
+    if(this.mapsSettings.latitude){
+      this.center.lat = parseInt(this.mapsSettings.latitude);
+    }
+    if(this.mapsSettings.longitude){
+      this.center.longitude = parseInt(this.mapsSettings.longitude);
+    }
+    if(this.mapsSettings.zoom){
+      this.zoom = parseInt(this.mapsSettings.zoom);
+    }
+  },
+  data() {
+    return {
+      center: { lat: 0, lng: 0 },
+      currentPlace: null,
+      zoom: 15,
+    }
+>>>>>>> Stashed changes
   },
 };
 </script>
