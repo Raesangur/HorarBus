@@ -64,9 +64,10 @@ public class UserHandler {
     }
 
     private String select_column(String column) {
-        return pgh.select_column(column, "Student",
-                                 new String[]{"cip"},
-                                 new PostgresValue[]{new PostgresValue(cip)});
+        String[] result = pgh.select_column(column, "Student",
+                                            new String[]{"cip"},
+                                            new PostgresValue[]{new PostgresValue(cip)});
+        return result == null ? "" : result[0];
     }
 
     private void update_column(String column, String value) {

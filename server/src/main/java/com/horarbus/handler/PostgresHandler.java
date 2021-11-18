@@ -2,6 +2,7 @@ package com.horarbus.handler;
 
 import java.sql.*;
 import java.util.Properties;
+import java.util.ArrayList;
 
 public class PostgresHandler {
 
@@ -145,13 +146,13 @@ public class PostgresHandler {
         }
     }
 
-    public String select_column(String column,
-                                String table,
-                                String[] conditionColumns,
-                                PostgresValue[] conditionValues) {
+    public String[] select_column(String column,
+                                  String table,
+                                  String[] conditionColumns,
+                                  PostgresValue[] conditionValues) {
         PreparedStatement query = generate_select_query(column, table, conditionColumns);
         if (query == null) {
-            return "";
+            return null;
         }
 
         try {
@@ -160,13 +161,17 @@ public class PostgresHandler {
             }
             ResultSet rs = executeQuery(query);
 
-            if (rs.next())  {
-                return rs.getString(column);
+            ArrayList<String> result = new ArrayList<String>();
+            while(rs.next())  {
+                result.add(rs.getString(column));
             }
+            String[] results = new String[result.size()];
+            result.toArray(results);
+            return results;
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return "";
+        return null;
     }
 
     public void insert_row(String table, String[] columns, PostgresValue[] values) {

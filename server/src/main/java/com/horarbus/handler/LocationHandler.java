@@ -17,9 +17,11 @@ public class LocationHandler {
     }
 
     private String select_column(String column) {
-        return pgh.select_column(column, "Location",
-                                 new String[]{"place_id"},
-                                 new PostgresValue[]{new PostgresValue(place_id)});
+        String[] result = pgh.select_column(column, "Location",
+                                            new String[]{"place_id"},
+                                            new PostgresValue[]{new PostgresValue(place_id)});
+
+        return result == null ? "" : result[0];
     }
     private void update_column(String column, String value) {
         pgh.update_column(column, "Location",
