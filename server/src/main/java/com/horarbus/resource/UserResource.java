@@ -51,7 +51,7 @@ public class UserResource {
 
         EventHandler[] events = user.get_events();
 
-        String result = new String;
+        String result = new String();
         for (EventHandler event : events) {
             result += event.get_id() + " " + event.get_name() + " : \n";
         }

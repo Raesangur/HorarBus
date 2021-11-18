@@ -84,10 +84,10 @@ public class TrajetHandler {
         update_column("coords_end", coords.get_id());
     }
 
-    private String get_arrival_time() {
+    public String get_arrival_time() {
         return select_column("arrival_time");
     }
-    private void set_arrival_time(String timestamp) {
+    public void set_arrival_time(String timestamp) {
         long tmstmp = Utils.string_to_unix_milli(timestamp);
         if (tmstmp == 0) {
             return;
@@ -112,10 +112,10 @@ public class TrajetHandler {
         update_column("transport", transport);
     }
 
-    private String get_begin_time() {
+    public String get_begin_time() {
         return select_column("begin_time");
     }
-    private void set_begin_time(String timestamp) {
+    public void set_begin_time(String timestamp) {
         long tmstmp = Utils.string_to_unix_milli(timestamp);
         if (tmstmp == 0) {
             return;
@@ -124,10 +124,10 @@ public class TrajetHandler {
         update_column("begin_time", tmstmp);
     }
 
-    private int get_preparation_time() {
+    public int get_preparation_time() {
         return Integer.parseInt(select_column("preparation_time"));
     }
-    private void set_preparation_time(int prep) {
+    public void set_preparation_time(int prep) {
         prep = prep >= 0 ? prep : -prep;
         update_column("preparation_time", prep);
     }
