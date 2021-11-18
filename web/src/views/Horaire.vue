@@ -15,7 +15,6 @@
           </button>
         </b-navbar-nav>
         <b-navbar-nav class="navbar-menu mx-auto" v-if="largeur >= 768">
-          <!-- <img src="@/assets/Horarbus_Esquisse.png" class="logo"> -->
           <div class="horarbus nom" style="cursor: default">HorarBus</div>
         </b-navbar-nav>
         <b-navbar-toggle
@@ -205,7 +204,7 @@
         body-class="preference"
       >
         <b-row>
-          <b-col cols="10" class="title"> Trajet </b-col>
+          <b-col cols="10" class="title"> TITRE </b-col>
           <b-col cols="2" class="zoneClose">
             <button @click="hideMapsSetting()" class="close">x</button>
           </b-col>
@@ -217,7 +216,7 @@
         </b-row>
         <b-form-group v-slot="{ ariaDescribedby }">
           <b-form-radio
-            v-model="map.transport"
+            v-model="pref.transport"
             :aria-describedby="ariaDescribedby"
             name="some-radios"
             value="WALKING"
@@ -226,7 +225,7 @@
             ><img :src="require('../assets/walk.png')"
           /></b-form-radio>
           <b-form-radio
-            v-model="map.transport"
+            v-model="pref.transport"
             :aria-describedby="ariaDescribedby"
             name="some-radios"
             value="BICYCLING"
@@ -235,7 +234,7 @@
             ><img :src="require('../assets/bike.png')"
           /></b-form-radio>
           <b-form-radio
-            v-model="map.transport"
+            v-model="pref.transport"
             :aria-describedby="ariaDescribedby"
             name="some-radios"
             value="TRANSIT"
@@ -244,7 +243,7 @@
             ><img :src="require('../assets/bus.png')"
           /></b-form-radio>
           <b-form-radio
-            v-model="map.transport"
+            v-model="pref.transport"
             :aria-describedby="ariaDescribedby"
             name="some-radios"
             value="DRIVING"
@@ -260,16 +259,16 @@
             Notifications
             <b-row style="margin: 0">
               <b-form-checkbox
-                v-model="map.notification_enable"
+                v-model="pref.notification_enable"
                 name="check-button"
                 class="checkboxNotification"
               >
               </b-form-checkbox>
               <b-col>
                 <input
-                  v-model.number="map.temps_avance_notification"
+                  v-model.number="pref.temps_avance_notification"
                   id="timenotif"
-                  :disabled="!map.notification_enable"
+                  :disabled="!pref.notification_enable"
                   type="number"
                   class="tempsSelect"
                 />
@@ -287,12 +286,12 @@
             Temps d'avance désirer
             <br />
             <input
-              v-model.number="map.temps_avance"
+              v-model.number="pref.temps_avance"
               type="number"
               class="tempsSelect"
             />
           </b-col>
-        </b-row>
+        </b-row>      
 
         <b-row>
           <b-col style="display: flex; justify-content: center">
@@ -308,12 +307,10 @@
         hide-footer
         hide-header
         :centered="true"
-        body-class="maps"
-        dialog-class="modal-maps"
-        style="padding-right:0"
+        body-class="preference"
       >
         <b-row>
-          <b-col cols="10" class="title"> Maps </b-col>
+          <b-col cols="10" class="title"> TITRE </b-col>
           <b-col cols="2" class="zoneClose">
             <button @click="hideMaps()" class="close">x</button>
           </b-col>
@@ -367,21 +364,17 @@
         v-model="value"
         color="black"
         locale="fr"
+        @click:event="showEvent"
         :type="type"
         class="calendar"
       >
-        <template
-          v-slot:event="{ event }"
-          :style="{ backgroundColor: event.color }"
-        >
+        <template v-slot:event="{ event }" :style="{backgroundColor:event.color}">
           <div
             class="event"
             @mouseenter="setHeight(event.id)"
             v-click-outside="dismissEvent"
             v-if="!event.trajet"
             :id="event.id"
-            v-on:click="showEvent"
-            @click="openEvent(event)"
           >
             {{ event.heure }}
             <br />
@@ -405,39 +398,33 @@
               <a :href="event.url">{{ event.session }}</a>
             </div>
           </div>
-          <div
-            class="event"
-            v-click-outside="dismissEvent"
-            @mouseenter="setHeight(event.id)"
-            :id="event.id"
-            v-else
-            v-on:click="showEvent"
-            @click="openEvent(event)"
-          >
-            {{ event.heureDepart }} -
-            <a style="font-weight: 700">{{ event.summary }}</a>
-            <button class="editButton" @click="showMapsSetting">
-              <b-icon-pencil></b-icon-pencil>
-            </button>
+          <div class="event" v-click-outside="dismissEvent" v-else>
+            <!-- {{ event.heureDepart }} - <a style="font-weight: 700">{{ event.summary }}</a>
             <br />
+            Arrivé prévue à {{ event.heureArrive }}
+            <div class="centerBorder" v-if="event.session"></div>
+            
+            <br />
+            <div v-if="event.location">
+              {{ event.location }}
+            </div>
             
             <div v-if="event.open">
-              <div v-if="event.heureArrive">
-                Arrivé prévue à {{ event.heureArrive }}
-              </div>
               <div class="centerBorder"></div>
-              <div v-if="event.description1">
-                {{ event.description1 }}
-              </div>
-              <div v-if="event.description2">
-                {{ event.description2 }}
-              </div>
-              <div v-if="event.description3">
-                {{ event.description3 }}
-              </div>
-              <div class="centerBorder"></div>
-              <a @click="showMaps" class="link">voir la carte</a>
+              {{ event.description1 }}
+              <div class="centerBorder" v-if="event.prof"></div>
+              {{ event.prof }}
+              <div class="centerBorder" v-if="event.session"></div>
+              <a :href="event.url">{{ event.session }}</a>
             </div>
+            <div v-if="event.open">
+              <div class="centerBorder"></div>
+              {{ event.description2 }}
+              <div class="centerBorder" v-if="event.prof"></div>
+              {{ event.prof }}
+              <div class="centerBorder"></div>
+              <a href="#">voir la carte</a>
+            </div> -->
           </div>
         </template>
         <template v-slot:day-body="{ date, week }">
@@ -461,7 +448,7 @@ import Fullcalendar from "@fullcalendar/vue";
 import InteractionPlugin from "@fullcalendar/interaction";
 import ListPlugin from "@fullcalendar/list";
 import allLocales from "@fullcalendar/core/locales-all";
-import Maps from "@/components/Maps";
+import Maps from "@/components/Maps"
 import { mapState, mapActions } from "vuex";
 
 export default {
@@ -473,12 +460,6 @@ export default {
   data: () => ({
     pref: {
       adresse_maison: "",
-      temps_avance: 0,
-      transport: "TRANSIT",
-      notification_enable: false,
-      temps_avance_notification: 0,
-    },
-    map: {
       temps_avance: 0,
       transport: "TRANSIT",
       notification_enable: false,
@@ -533,7 +514,7 @@ export default {
             "Projet,Conception d'un système informatique distribué,Port du masque de Procédure obligatoire".split(
               ","
             )[0],
-
+          
           description1:
             "Projet,Conception d'un système informatique distribué,Port du masque de Procédure obligatoire".split(
               ","
@@ -636,7 +617,6 @@ export default {
           "Départ UdeS,Terminus intersection Blvd - Rue,Autobus #69".split(
             ","
           )[2],
-        color: "orange",
         heureDepart: "2021-11-04 13:00".split(" ")[1],
         heureArrive: "2021-11-04 14:00".split(" ")[1],
         open: false,
@@ -657,7 +637,6 @@ export default {
     this.switchTheme();
   },
   mounted() {
-    this.getUser();
     this.getEvents();
     this.resize();
     this.$refs.calendar.checkChange();
@@ -674,7 +653,6 @@ export default {
       //   this.position = position;
       // }
       console.log(position);
-      this.setGeo(position);
     };
     const errorCallback = (error) => {
       console.error(error);
@@ -688,33 +666,38 @@ export default {
     eventsState() {
       for (let i in this.eventsState) {
         this.eventsState[i].open = false;
-        let now = new Date();
-        var offset = now.getTimezoneOffset() / 60;
         let start = new Date(this.eventsState[i].start)
-        start.setHours(start.getHours() - offset);
-        start = start.toISOString();
+          .toLocaleString()
+          .replace(",", "");
         this.eventsState[i].start = start;
-        let end = new Date(this.eventsState[i].end);
-        end.setHours(end.getHours() - offset);
-        end = end.toISOString();
+        let end = new Date(this.eventsState[i].end)
+          .toLocaleString()
+          .replace(",", "");
         this.eventsState[i].end = end;
       }
       this.events = this.eventsState;
       this.calendarOptions.events = this.eventsState;
       for (let i in this.eventsState) {
         this.events[i].start =
-          this.eventsState[i].start.split("T")[0] + 
+          this.eventsState[i].start.split(" ")[0].split("/")[2] +
+          "-" +
+          this.eventsState[i].start.split(" ")[0].split("/")[1] +
+          "-" +
+          this.eventsState[i].start.split(" ")[0].split("/")[0] +
           " " +
-          this.eventsState[i].start.split("T")[1].split(":")[0] +
+          this.eventsState[i].start.split(" ")[1].split(":")[0] +
           ":" +
-          this.eventsState[i].start.split("T")[1].split(":")[1];
+          this.eventsState[i].start.split(" ")[1].split(":")[1];
         this.events[i].end =
-          this.eventsState[i].end.split("T")[0] + 
+          this.eventsState[i].end.split(" ")[0].split("/")[2] +
+          "-" +
+          this.eventsState[i].end.split(" ")[0].split("/")[1] +
+          "-" +
+          this.eventsState[i].end.split(" ")[0].split("/")[0] +
           " " +
-          this.eventsState[i].end.split("T")[1].split(":")[0] +
+          this.eventsState[i].end.split(" ")[1].split(":")[0] +
           ":" +
-          this.eventsState[i].end.split("T")[1].split(":")[1];
-        
+          this.eventsState[i].end.split(" ")[1].split(":")[1];
         this.events[i].heure =
           this.events[i].start.split(" ")[1] +
           " - " +
@@ -776,46 +759,29 @@ export default {
     },
   },
   methods: {
-    ...mapActions(["putUser", "putPref", "getEvents","setGeo","getUser"]),
+    ...mapActions(["putUser", "putPref", "getMaps", "getEvents"]),
     sendPref() {
       let pref = {
-        preparation_time: "",
-        transport: "",
-        notification: {
-          time: "",
-          enabled: "",
+        "preparation_time": "",
+        "transport":"",
+        "notification":{
+          "time":"",
+          "enabled":""
         },
-        dark_mode: "",
+        "dark_mode":""
       };
       pref.preparation_time = this.pref.temps_avance;
       pref.transport = this.pref.transport;
       pref.local_address = this.pref.adresse_maison;
       pref.notification = {
-        time: this.pref.temps_avance_notification,
-        enabled: this.pref.notification_enable,
-      };
+        "time": this.pref.temps_avance_notification,
+        "enabled": this.pref.notification_enable
+      }
       pref.dark_mode = this.darkMode;
+      console.log(pref);
       this.putUser(pref);
       this.hidePref();
-    },
-    sendMaps() {
-      let map = {
-        preparation_time: "",
-        transport: "",
-        notification: {
-          time: "",
-          enabled: "",
-        },
-      };
-      map.preparation_time = this.map.temps_avance;
-      map.transport = this.map.transport;
-      map.notification = {
-        time: this.map.temps_avance_notification,
-        enabled: this.map.notification_enable,
-      };
-      console.log(map);
-      //this.putMaps(pref);
-      this.hideMaps();
+      
     },
     onResize() {
       this.resize();
@@ -838,7 +804,7 @@ export default {
     showMapsSetting() {
       this.$refs["mapsSetting"].show();
     },
-    hideMapsSetting() {
+    hideMapSetting() {
       this.$refs["mapsSetting"].hide();
     },
     showChoseDate() {
@@ -866,13 +832,14 @@ export default {
       cvs.height = 1;
       cvs.width = 1;
       ctx = cvs.getContext("2d");
-      if (event.color) {
+      if(event.color){
         ctx.fillStyle = event.color;
-      } else {
+      }
+      else{
         return "#1867c0";
       }
       ctx.fillRect(0, 0, 1, 1);
-      return "rgba(" + ctx.getImageData(0, 0, 1, 1).data + ")";
+      return "rgba("+ctx.getImageData(0, 0, 1, 1).data+")";
     },
     next() {
       if (this.$refs.fullCalendar) {
@@ -937,9 +904,6 @@ export default {
         document.getElementsByTagName("footer")[0].style.color = "#000000";
       }
     },
-    openEvent(event){
-      event.open= true;
-    },
     showEvent(event) {
       event.target.style.height = "fit-content";
       if(event.path){
@@ -950,46 +914,26 @@ export default {
       }
       event.target.style.zIndex = "1000";
       if (this.eventActive.event === undefined) {
-        if(event.path){
-          this.initialHeight = event.path[1].style.height;
-        }
-        if(event.target.offsetParent){
-          this.initialHeight = event.target.offsetParent.style.height;
-        }
-        
+        this.initialHeight = event.nativeEvent.path[1].style.height;
       }
       this.eventActive = event;
-      if(event.path){
-        event.path[1].style.height = "fit-content";
-      }
-      if(event.target.offsetParent){
-        event.target.offsetParent.style.height = "fit-content";
-      }
-      if (this.eventActive === event) {
+      event.nativeEvent.path[1].style.height = "fit-content";
+      if (this.eventActive.event === event.event) {
         document.body.addEventListener(
           "click",
-          event.target.clickOutsideEvent
+          event.nativeEvent.target.clickOutsideEvent
         );
       } else {
         this.dismissEvent();
       }
     },
     dismissEvent() {
-      for(let i in this.events){
-        this.events[i].open = false;
-      }
-      //this.eventActive.event.open = false;
-      if(this.eventActive.path){
-        this.eventActive.path[1].style.zIndex = "0";
-        this.eventActive.path[1].style.height = this.initialHeight;
-      }
-      if(this.eventActive.target.offsetParent){
-        this.eventActive.target.offsetParent.style.zIndex = "0";
-        this.eventActive.target.offsetParent.style.height = this.initialHeight;
-      }
+      this.eventActive.event.open = false;
+      this.eventActive.nativeEvent.path[1].style.zIndex = "0";
+      this.eventActive.nativeEvent.path[1].style.height = this.initialHeight;
       document.body.removeEventListener(
         "click",
-        this.eventActive.target.clickOutsideEvent
+        this.eventActive.nativeEvent.target.clickOutsideEvent
       );
       this.eventActive = "";
     },
@@ -1063,9 +1007,6 @@ export default {
 </script>
 
 <style scoped>
-.logo{
-  height: 56px !important;
-}
 .saveButton {
   font-size: 16px;
   text-align: center;
@@ -1076,13 +1017,7 @@ export default {
   border-radius: 10px;
   font-weight: bold;
 }
-.editButton {
-  border-radius: 100%;
-  background-color: #ffbf5f;
-  width: 20px;
-  height: 20px;
-  float: right;
-}
+
 .saveButton:hover {
   background: transparent;
   color: #ffffff;
@@ -1189,10 +1124,6 @@ export default {
   border-radius: 50%;
   margin-top: -5px;
   margin-left: -6.5px;
-}
-
-.link{
-  color: inherit;
 }
 
 .navbar-dark .navbar-nav .nav-link:hover {
@@ -1312,19 +1243,6 @@ nav {
   border-radius: 11px;
   color: #ffffff;
 }
-/deep/.modal{
-  padding-right: 0px !important;
-}
-
-/deep/.modal-open .modal{
-  overflow-y: unset !important;
-}
-/deep/.maps {
-  background: #222222;
-  border-radius: 11px;
-  color: #ffffff;
-  width: 100%;
-}
 /deep/.modal-calendar {
   background: #222222;
   border-radius: 11px;
@@ -1423,10 +1341,6 @@ nav {
 }
 /deep/.modal-left {
   margin-left: 0px;
-}
-/deep/.modal-maps  {
-  width: 100%;
-  max-width: none;
 }
 /deep/.b-calendar-grid {
   background: none;
