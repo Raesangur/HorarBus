@@ -70,9 +70,7 @@ public class HttpService implements IHttpService {
             throw new HttpException("Request refused by auth server.");
         }
 
-        String response = readConnectionResponse(connection);
-
-        return response;
+        return readConnectionResponse(connection);
     }
 
     private URLConnection connect() {
