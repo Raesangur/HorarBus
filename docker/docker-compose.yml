@@ -18,9 +18,11 @@ services:
     ports:
       - 8080
       - 9990:9990
+    restart: always
     volumes:
       - ./../keycloak/utils:/var/tmp
       - ./../keycloak/startup-scripts:/opt/jboss/startup-scripts
+      - keycloak-data:/opt/jboss/keycloak/standalone/data
     command:
       - -b=0.0.0.0
       - -bmanagement=0.0.0.0
@@ -44,3 +46,4 @@ services:
 
 volumes:
   postgres-data:
+  keycloak-data:
