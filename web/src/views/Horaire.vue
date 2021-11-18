@@ -367,7 +367,6 @@
         v-model="value"
         color="black"
         locale="fr"
-        @click:event="showEvent"
         :type="type"
         class="calendar"
       >
@@ -381,6 +380,8 @@
             v-click-outside="dismissEvent"
             v-if="!event.trajet"
             :id="event.id"
+            v-on:click="showEvent"
+            @click="openEvent(event)"
           >
             {{ event.heure }}
             <br />
@@ -939,31 +940,37 @@ export default {
         document.getElementsByTagName("footer")[0].style.color = "#000000";
       }
     },
+    openEvent(event){
+      event.open= true;
+    },
     showEvent(event) {
-      event.event.open = true;
-      event.nativeEvent.target.style.height = "fit-content";
-      event.nativeEvent.path[1].style.zIndex = "1000";
+      console.log(event)
+      event.target.style.height = "fit-content";
+      event.path[1].style.zIndex = "1000";
       if (this.eventActive.event === undefined) {
-        this.initialHeight = event.nativeEvent.path[1].style.height;
+        this.initialHeight = event.path[1].style.height;
       }
       this.eventActive = event;
-      event.nativeEvent.path[1].style.height = "fit-content";
-      if (this.eventActive.event === event.event) {
+      event.path[1].style.height = "fit-content";
+      if (this.eventActive === event) {
         document.body.addEventListener(
           "click",
-          event.nativeEvent.target.clickOutsideEvent
+          event.target.clickOutsideEvent
         );
       } else {
         this.dismissEvent();
       }
     },
     dismissEvent() {
-      this.eventActive.event.open = false;
-      this.eventActive.nativeEvent.path[1].style.zIndex = "0";
-      this.eventActive.nativeEvent.path[1].style.height = this.initialHeight;
+      for(let i in this.events){
+        this.events[i].open = false;
+      }
+      //this.eventActive.event.open = false;
+      this.eventActive.path[1].style.zIndex = "0";
+      this.eventActive.path[1].style.height = this.initialHeight;
       document.body.removeEventListener(
         "click",
-        this.eventActive.nativeEvent.target.clickOutsideEvent
+        this.eventActive.target.clickOutsideEvent
       );
       this.eventActive = "";
     },
