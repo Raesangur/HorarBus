@@ -448,7 +448,7 @@
           ></div>
         </template>
       </v-calendar>
-      <div class="calendar-mobile" @load="switchTheme">
+      <div class="calendar-mobile" v-touch:swipe.left="next" v-touch:swipe.right="prev">
         <Fullcalendar ref="fullCalendar" :options="calendarOptions" />
       </div>
     </b-col>
@@ -485,7 +485,6 @@ export default {
       temps_avance_notification: 0,
     },
     position: "",
-    watchEvent: "",
     today: new Date(),
     value: new Date(),
     type: "week",
@@ -654,7 +653,9 @@ export default {
       "Samedi",
     ],
   }),
-
+  updated(){
+    this.switchTheme();
+  },
   mounted() {
     this.getUser();
     this.getEvents();
@@ -755,10 +756,6 @@ export default {
     value() {
       let calendarApi = this.$refs.fullCalendar.getApi();
       calendarApi.gotoDate(this.value);
-      this.watchEvent = calendarApi.currentData.currentDate;
-    },
-    watchEvent() {
-      this.switchTheme();
     },
     darkMode() {
       this.switchTheme();
@@ -881,7 +878,6 @@ export default {
       if (this.$refs.fullCalendar) {
         let calendarApi = this.$refs.fullCalendar.getApi();
         calendarApi.next();
-        this.watchEvent = calendarApi.currentData.currentDate;
       }
       if (this.$refs.calendar) {
         this.$refs.calendar.next();
@@ -891,7 +887,6 @@ export default {
       if (this.$refs.fullCalendar) {
         let calendarApi = this.$refs.fullCalendar.getApi();
         calendarApi.prev();
-        this.watchEvent = calendarApi.currentData.currentDate;
       }
       if (this.$refs.calendar) {
         this.$refs.calendar.prev();
@@ -946,7 +941,6 @@ export default {
       event.open= true;
     },
     showEvent(event) {
-      console.log(event)
       event.target.style.height = "fit-content";
       if(event.path){
         event.path[1].style.zIndex = "1000";
