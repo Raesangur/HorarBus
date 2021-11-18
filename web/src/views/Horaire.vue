@@ -689,7 +689,6 @@ export default {
         let start = new Date(this.eventsState[i].start)
         start.setHours(start.getHours() - offset);
         start = start.toISOString();
-        console.log(start);
         this.eventsState[i].start = start;
         let end = new Date(this.eventsState[i].end);
         end.setHours(end.getHours() - offset);
