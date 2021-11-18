@@ -448,7 +448,7 @@
           ></div>
         </template>
       </v-calendar>
-      <div class="calendar-mobile" @load="switchTheme">
+      <div class="calendar-mobile" v-touch:swipe.left="next" v-touch:swipe.right="prev">
         <Fullcalendar ref="fullCalendar" :options="calendarOptions" />
       </div>
     </b-col>
@@ -946,7 +946,6 @@ export default {
       event.open= true;
     },
     showEvent(event) {
-      console.log(event)
       event.target.style.height = "fit-content";
       if(event.path){
         event.path[1].style.zIndex = "1000";
