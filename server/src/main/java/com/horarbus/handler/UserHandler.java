@@ -1,5 +1,7 @@
 package com.horarbus.handler;
 
+import com.horarbus.Utils;
+
 public class UserHandler {
     private static final int DEFAULT_PREPARATION_TIME = 15;
     private static final int DEFAULT_NOTIFICATION_TIME = 15;
@@ -26,10 +28,12 @@ public class UserHandler {
         this.cip = cip;
         pgh = new PostgresHandler();
 
-        pgh.insert_row("Student", new String[] {"cip", "name", "surname"},
-                       new PostgresValue[]{new PostgresValue(cip),
-                                           new PostgresValue(nom),
-                                           new PostgresValue(prenom)});
+        if (select_column("cip") == "") {
+            pgh.insert_row("Student", new String[] {"cip", "name", "surname"},
+                        new PostgresValue[]{new PostgresValue(cip),
+                                            new PostgresValue(nom),
+                                            new PostgresValue(prenom)});
+        }
     }
 
     private boolean validate_cip(String cip) {
