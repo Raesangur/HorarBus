@@ -6,6 +6,8 @@ import store from "./store";
 import Keycloak from "keycloak-js";
 import vuetify from "@/plugins/vuetify";
 import { BootstrapVue, IconsPlugin } from "bootstrap-vue";
+import Vue2TouchEvents from 'vue2-touch-events'
+
 
 import "bootstrap/dist/css/bootstrap.css";
 import "bootstrap-vue/dist/bootstrap-vue.css";
@@ -16,6 +18,7 @@ import "./assets/style/fuckup.css";
 Vue.use(BootstrapVue);
 // Optionally install the BootstrapVue icon components plugin
 Vue.use(IconsPlugin);
+Vue.use(Vue2TouchEvents)
 Vue.config.productionTip = false;
 Vue.config.devtools = true;
 

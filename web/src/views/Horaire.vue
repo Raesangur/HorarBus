@@ -435,7 +435,7 @@
           ></div>
         </template>
       </v-calendar>
-      <div class="calendar-mobile" @load="switchTheme">
+      <div class="calendar-mobile" v-touch:swipe.left="next" v-touch:swipe.right="prev">
         <Fullcalendar ref="fullCalendar" :options="calendarOptions" />
       </div>
     </b-col>
@@ -466,7 +466,6 @@ export default {
       temps_avance_notification: 0,
     },
     position: "",
-    watchEvent: "",
     today: new Date(),
     value: new Date(),
     type: "week",
@@ -634,7 +633,9 @@ export default {
       "Samedi",
     ],
   }),
-
+  updated(){
+    this.switchTheme();
+  },
   mounted() {
     this.getEvents();
     this.resize();
@@ -738,10 +739,6 @@ export default {
     value() {
       let calendarApi = this.$refs.fullCalendar.getApi();
       calendarApi.gotoDate(this.value);
-      this.watchEvent = calendarApi.currentData.currentDate;
-    },
-    watchEvent() {
-      this.switchTheme();
     },
     darkMode() {
       this.switchTheme();
@@ -848,7 +845,6 @@ export default {
       if (this.$refs.fullCalendar) {
         let calendarApi = this.$refs.fullCalendar.getApi();
         calendarApi.next();
-        this.watchEvent = calendarApi.currentData.currentDate;
       }
       if (this.$refs.calendar) {
         this.$refs.calendar.next();
@@ -858,7 +854,6 @@ export default {
       if (this.$refs.fullCalendar) {
         let calendarApi = this.$refs.fullCalendar.getApi();
         calendarApi.prev();
-        this.watchEvent = calendarApi.currentData.currentDate;
       }
       if (this.$refs.calendar) {
         this.$refs.calendar.prev();
@@ -910,9 +905,14 @@ export default {
       }
     },
     showEvent(event) {
-      event.event.open = true;
-      event.nativeEvent.target.style.height = "fit-content";
-      event.nativeEvent.path[1].style.zIndex = "1000";
+      event.target.style.height = "fit-content";
+      if(event.path){
+        event.path[1].style.zIndex = "1000";
+      }
+      if(event.target.offsetParent){
+        event.target.offsetParent.style.zIndex = "1000";
+      }
+      event.target.style.zIndex = "1000";
       if (this.eventActive.event === undefined) {
         this.initialHeight = event.nativeEvent.path[1].style.height;
       }
