@@ -838,7 +838,7 @@ export default {
     },
   },
   methods: {
-    ...mapActions(["putUser", "putPref", "getEvents","setGeo","getUser","getItinerary","getPlace"]),
+    ...mapActions(["putUser", "getEvents","setGeo","getUser","getItinerary","getPlace"]),
     sendPref() {
       let pref = {
         preparation_time: "",
@@ -852,12 +852,14 @@ export default {
       };
       pref.preparation_time = this.pref.temps_avance;
       pref.transport = this.pref.transport;
+      pref.Ical = this.pref.Ical;
       pref.local_address = this.pref.adresse_maison;
       pref.notification = {
         time: this.pref.temps_avance_notification,
         enabled: this.pref.notification_enable,
       };
       pref.dark_mode = this.darkMode;
+      
       this.putUser(pref);
       this.hidePref();
     },
