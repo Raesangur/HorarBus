@@ -30,7 +30,7 @@ public class UserPrefs {
             preparationTime = json.getInteger("preparation_time");
             notificationTime = notificationJson.getInteger("time");
             notificationEnabled = notificationJson.getBoolean("enabled");
-            icalKey = notificationJson.getString("Ical");
+            icalKey = json.getString("Ical");
             transport = json.getString("transport");
             localAddress = json.getString("local_address");
             isDarkMode = json.getBoolean("dark_mode");
@@ -46,7 +46,9 @@ public class UserPrefs {
         handler.set_darkmode(isDarkMode);
         handler.set_notification_enable(notificationEnabled);
         handler.set_default_address(localAddress);
-        handler.set_ical_key(icalKey);
+        if (icalKey != null) {
+            handler.set_ical_key(icalKey);
+        }
     }
 
     public JsonObject toJson() {
