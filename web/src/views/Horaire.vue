@@ -188,6 +188,14 @@
             ></b-form-checkbox>
           </b-col>
         </b-row>
+        
+        <b-row>
+          <b-col cols="12" class="sectionPref">
+            Changez votre clé Ical
+            <br>
+            <button @click="showIcal" class="icalBtn">ICAL</button>
+          </b-col>
+        </b-row>
         <b-row>
           <b-col style="display: flex; justify-content: center">
             <b-button variant="dark" class="saveButton" @click="sendPref">
@@ -319,6 +327,32 @@
           </b-col>
         </b-row>
         <Maps />
+      </b-modal>
+
+
+      <b-modal
+        ref="Ical"
+        hide-footer
+        hide-header
+        :centered="true"
+        body-class="preference"
+      >
+        
+        <b-row>
+          <b-col cols="10" class="title"> Ical </b-col>
+          <b-col cols="2" class="zoneClose">
+            <button @click="hideIcal()" class="close">x</button>
+          </b-col>
+        </b-row>
+        <b-row>
+          <b-col cols="12" class="sectionPref">
+            Entrez votre clé Ical
+          </b-col>
+          <br>
+          <b-col cols="12">
+            <b-form-input v-model="pref.Ical" placeholder="Entrer votre Ical"></b-form-input>
+          </b-col>
+        </b-row>
       </b-modal>
 
       <b-modal
@@ -477,6 +511,7 @@ export default {
       transport: "TRANSIT",
       notification_enable: false,
       temps_avance_notification: 0,
+      Ical: null,
     },
     map: {
       temps_avance: 0,
@@ -708,6 +743,9 @@ export default {
       this.getEvents();
     },
     eventsState() {
+      if(!this.eventsState){
+        this.showIcal();
+      }
       for (let i in this.eventsState) {
         this.eventsState[i].open = false;
         let now = new Date();
@@ -741,6 +779,7 @@ export default {
           this.events[i].start.split(" ")[1] +
           " - " +
           this.events[i].end.split(" ")[1];
+        
         this.events[i].description1 = this.events[i].description.split("\n")[0];
         this.events[i].description2 = this.events[i].description.split("\n")[2];
         this.events[i].id = "eventFullWindow" + i;
@@ -773,6 +812,7 @@ export default {
       this.pref.temps_avance_notification = this.prefState.notification.time;
       this.pref.notification_enable = this.prefState.notification.enabled;
       this.pref.adresse_maison = this.prefState.local_address;
+      this.pref.Ical = this.prefState.Ical;
       this.darkMode = this.prefState.dark_mode;
     },
     value() {
@@ -798,7 +838,7 @@ export default {
     },
   },
   methods: {
-    ...mapActions(["putUser", "putPref", "getEvents","setGeo","getUser"]),
+    ...mapActions(["putUser", "putPref", "getEvents","setGeo","getUser","getItinerary","getPlace"]),
     sendPref() {
       let pref = {
         preparation_time: "",
@@ -808,6 +848,7 @@ export default {
           enabled: "",
         },
         dark_mode: "",
+        Ical: null,
       };
       pref.preparation_time = this.pref.temps_avance;
       pref.transport = this.pref.transport;
@@ -868,6 +909,12 @@ export default {
     },
     hideChoseDate() {
       this.$refs["chooseDate"].hide();
+    },
+    showIcal() {
+      this.$refs["Ical"].show();
+    },
+    hideIcal() {
+      this.$refs["Ical"].hide();
     },
     getCurrentTime() {
       return this.cal
@@ -1085,6 +1132,17 @@ export default {
 </script>
 
 <style scoped>
+.icalBtn{
+  border: 1px solid #ffffff;
+  padding: 5px;
+  
+}
+.icalBtn:hover{
+  border: 1px solid #222222;
+  background-color: #ffffff;
+  color: #222222;
+  
+}
 .logo{
   height: 56px !important;
 }

@@ -16,7 +16,7 @@ public class ItineraryResource {
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    @Consumes(MediaType.APPLICATION_JSON)
+    //@Consumes(MediaType.APPLICATION_JSON)
     @Path("/")
     public String getUserData(JsonObject body) {
         String departureAddress = null, arrivalAddress = null, transportMode = null;
@@ -59,7 +59,7 @@ public class ItineraryResource {
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    @Consumes(MediaType.APPLICATION_JSON)
+    //@Consumes(MediaType.APPLICATION_JSON)
     @Path("/place")
     public String getPlaceInfo(JsonObject body) {
         String placeId = null;
