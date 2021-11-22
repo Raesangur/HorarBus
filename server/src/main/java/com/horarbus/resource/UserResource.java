@@ -62,7 +62,7 @@ public class UserResource {
     @PUT
     @Consumes(MediaType.APPLICATION_JSON)
     @Path("/")
-    public Response setUserData(@Context RoutingContext context, JsonObject sentData) {
+    public Response setUserData(@Context RoutingContext context, JsonObject body) {
         AuthData authData = context.get("authData");
 
         UserHandler userHandler = new UserHandler(authData.getCip());
@@ -71,7 +71,7 @@ public class UserResource {
         }
 
         try {
-            UserPrefs prefs = new UserPrefs(sentData);
+            UserPrefs prefs = new UserPrefs(body);
             prefs.saveData(userHandler);
         } catch (Exception ex) {
             return Response.status(400).entity(invalidJson()).build();
