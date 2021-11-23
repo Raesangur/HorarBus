@@ -1,93 +1,78 @@
-CREATE TABLE Student
-(
-  cip                   CHAR(8)       NOT NULL,
-  name                  VARCHAR(32)   NOT NULL,
-  surname               VARCHAR(32)   NOT NULL,
-  ical_key              VARCHAR(128),
-  preparation_time      INT,
-  notification_time     INT,
-  notification_enable   CHAR(5),
-  dark_mode             CHAR(5),
-  transport             VARCHAR(16),
-
-  PRIMARY KEY (cip),
-  UNIQUE (ical_key)
-);
-
-CREATE TABLE Clan
-(
-  clan_id               SERIAL      NOT NULL,
-  name                  VARCHAR(64) NOT NULL,
-
-  PRIMARY KEY (clan_id)
-);
+DROP SCHEMA IF EXISTS public CASCADE;
+CREATE SCHEMA public;
 
 CREATE TABLE Localisation
 (
-  place_id              VARCHAR(256) NOT NULL,
-
+  place_id VARCHAR(64) NOT NULL,
+  coords VARCHAR(64) NOT NULL,
+  address VARCHAR(512) NOT NULL,
   PRIMARY KEY (place_id)
 );
 
-CREATE TABLE Clan_Member
+CREATE TABLE Student
 (
-  role                  INT,
-  cip                   CHAR(8)      NOT NULL,
-  clan_id               SERIAL       NOT NULL,
-
-  PRIMARY KEY (cip, clan_id),
-  FOREIGN KEY (cip) REFERENCES Student(cip),
-  FOREIGN KEY (clan_id) REFERENCES Clan(clan_id)
+  cip CHAR(8) NOT NULL,
+  name VARCHAR(64) NOT NULL,
+  surname VARCHAR(64) NOT NULL,
+  ical_key VARCHAR(128) NOT NULL,
+  PRIMARY KEY (cip)
 );
 
-CREATE TABLE Address
+CREATE TABLE Transport
 (
-  cip                   CHAR(8)      NOT NULL,
-  place_id              VARCHAR(256) NOT NULL,
-
-  PRIMARY KEY (cip, place_id),
-  FOREIGN KEY (cip) REFERENCES Student(cip),
-  FOREIGN KEY (place_id) REFERENCES Localisation(place_id)
+  transport_name VARCHAR(12) NOT NULL,
+  PRIMARY KEY (transport_name)
 );
 
 CREATE TABLE Event
 (
-  event_id              SERIAL        NOT NULL,
-  time_start            TIMESTAMP     NOT NULL,
-  time_end              TIMESTAMP     NOT NULL,
-  name                  VARCHAR(64)   NOT NULL,
-  summary               VARCHAR(128),
-  description           VARCHAR(128),
-  place_id              VARCHAR(256),
-  ical_id               INT,
-
+  start_time TIMESTAMP NOT NULL,
+  end_time TIMESTAMP NOT NULL,
+  name VARCHAR(128) NOT NULL,
+  description VARCHAR(512) NOT NULL,
+  summary VARCHAR(256) NOT NULL,
+  ical_id VARCHAR(64) NOT NULL,
+  event_id INT NOT NULL,
+  place_id VARCHAR(64) NOT NULL,
   PRIMARY KEY (event_id),
   FOREIGN KEY (place_id) REFERENCES Localisation(place_id)
 );
 
+CREATE TABLE Preferences
+(
+  preparation_time TIMESTAMP NOT NULL,
+  notification_time TIMESTAMP NOT NULL,
+  dark_mode INT NOT NULL,
+  transport_name VARCHAR(12) NOT NULL,
+  cip CHAR(8) NOT NULL,
+  PRIMARY KEY (cip),
+  FOREIGN KEY (transport_name) REFERENCES Transport(transport_name),
+  FOREIGN KEY (cip) REFERENCES Student(cip)
+);
+
 CREATE TABLE Traject
 (
-  cip                   CHAR(8)       NOT NULL,
-  event_id              SERIAL        NOT NULL,
-  coords_start          VARCHAR(256)  NOT NULL,
-  coords_end            VARCHAR(256)  NOT NULL,
-  arrival_time          TIMESTAMP     NOT NULL,
-  transport             VARCHAR(16),
-  begin_time            TIMESTAMP,
-  preparation_time      INT,
-
-  PRIMARY KEY (cip, event_id),
-  FOREIGN KEY (coords_end) REFERENCES Localisation(place_id),
-  FOREIGN KEY (coords_end) REFERENCES Localisation(place_id),
-  FOREIGN KEY (event_id) REFERENCES Event(event_id)
+  begin_time TIMESTAMP NOT NULL,
+  end_time TIMESTAMP NOT NULL,
+  transport_name VARCHAR(12) NOT NULL,
+  start_place_id VARCHAR(64) NOT NULL,
+  end_place_id VARCHAR(64) NOT NULL,
+  PRIMARY KEY (begin_time, end_time, transport_name, start_place_id, end_place_id),
+  FOREIGN KEY (transport_name) REFERENCES Transport(transport_name),
+  FOREIGN KEY (start_place_id) REFERENCES Localisation(place_id),
+  FOREIGN KEY (end_place_id) REFERENCES Localisation(place_id)
 );
 
 CREATE TABLE Attendance
 (
-  cip                   CHAR(8) NOT NULL,
-  event_id              SERIAL  NOT NULL,
-
+  cip CHAR(8) NOT NULL,
+  event_id INT NOT NULL,
   PRIMARY KEY (cip, event_id),
   FOREIGN KEY (cip) REFERENCES Student(cip),
   FOREIGN KEY (event_id) REFERENCES Event(event_id)
 );
+
+INSERT INTO Transport VALUES ('BICYCLING');
+INSERT INTO Transport VALUES ('DRIVING');
+INSERT INTO Transport VALUES ('TRANSIT');
+INSERT INTO Transport VALUES ('WALKING');
