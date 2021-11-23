@@ -12,7 +12,7 @@ import { mapActions } from "vuex";
 export default {
   data: () => ({}),
   methods: {
-    ...mapActions(["getUser", "getEvents","getMaps"]),
+    ...mapActions(["getUser", "getEvents", "getMaps"]),
   },
   mounted() {
     this.getMaps();
