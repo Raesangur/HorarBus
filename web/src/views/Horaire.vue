@@ -199,7 +199,6 @@
         </b-row>
       </b-modal>
 
-
       <b-modal
         ref="maps"
         hide-footer
@@ -210,7 +209,8 @@
         style="padding-right: 0"
       >
         <b-row>
-          <b-col cols="10" class="title"> Maps </b-col>
+          <b-col cols="2" class="title"> Maps </b-col>
+          <b-col cols="8" class="title" style="text-align:center"><a class="link" :href="'http://maps.google.ca/maps?daddr='+trajetActif.trajet.addresseDestinataire+'&amp;ll='" target="_blank">Ouvrir Google Maps</a></b-col>
           <b-col cols="2" class="zoneClose">
             <button @click="hideMaps()" class="close">x</button>
           </b-col>
@@ -303,7 +303,7 @@
           >
             {{ event.heure }}
             <br />
-            <a style="font-weight: 700">{{ event.summary }}</a>
+            {{ event.summary }}
             <br />
             {{ event.location }}
 
@@ -332,8 +332,7 @@
             v-on:click="showEvent"
             @click="openEvent(event)"
           >
-            {{ event.heureDepart }} -
-            <a style="font-weight: 700">{{ event.summary }}</a>
+            {{ event.heureDepart }} - {{ event.summary }}
             <button class="editButton" @click="showMapsSetting">
               <b-icon-pencil></b-icon-pencil>
             </button>
@@ -459,6 +458,8 @@
                 </b-col>
               </b-row>
             </b-modal>
+
+            
           </div>
         </template>
         <template v-slot:day-body="{ date, week }">
@@ -509,6 +510,11 @@ export default {
     today: new Date(),
     value: new Date(),
     type: "week",
+    trajetActif:{
+      trajet:{
+        addresseDestinataire:"universite de sherbrooke",
+      },
+    },
     initialHeight: "",
     eventActive: "",
     calendarOptions: {
@@ -517,13 +523,14 @@ export default {
       locales: allLocales,
       eventClick: function (info) {
         if (info.event.extendedProps.trajet) {
+          console.log(navigator)
           if( (navigator.platform.indexOf("iPhone") != -1) 
           || (navigator.platform.indexOf("iPod") != -1)
           || (navigator.platform.indexOf("iPad") != -1)){
-            window.open("maps://maps.google.com/maps?daddr=lat,long&amp;ll=");
+            window.open("maps://maps.google.ca/maps?daddr="+info.event.extendedProps.trajet.addresseDestinataire+"&amp;ll=");
           }
           else{
-            window.open("http://maps.google.com/maps?daddr=lat,long&amp;ll=");
+            window.open("http://maps.google.ca/maps?daddr="+info.event.extendedProps.trajet.addresseDestinataire+"&amp;ll=");
           }
         }
       },
@@ -626,6 +633,7 @@ export default {
             transport: "TRANSIT",
             notification_enable: false,
             temps_avance_notification: 0,
+            addresseDestinataire: "université de Sherbrooke",
           },
         },
       ],
@@ -712,6 +720,7 @@ export default {
           transport: "TRANSIT",
           notification_enable: false,
           temps_avance_notification: 0,
+          addresseDestinataire: "université de Sherbrooke",
         },
       },
     ],
@@ -1032,6 +1041,7 @@ export default {
     },
     openEvent(event) {
       event.open = true;
+      this.trajetActif = event;
     },
     showEvent(event) {
       console.log(event)
@@ -1435,6 +1445,7 @@ nav {
 .zoneClose {
   vertical-align: middle;
   margin-top: 5px;
+  float: right;
 }
 .close {
   vertical-align: middle;
@@ -1451,6 +1462,7 @@ nav {
   border: none;
   background: transparent;
   text-align: center;
+  float: right;
 }
 /deep/.modal-body {
   background: #222222;

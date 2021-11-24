@@ -2,7 +2,6 @@
   <div id="app">
     <router-view />
     <footer>
-      {{navigator}}
       © The Council - Tous droits réservés 2021 / Mise à jour 2021-10-21
     </footer>
   </div>
