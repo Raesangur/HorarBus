@@ -26,13 +26,13 @@ CREATE TABLE Transport
 
 CREATE TABLE Event
 (
+  event_id INT NOT NULL,
   start_time TIMESTAMP NOT NULL,
   end_time TIMESTAMP NOT NULL,
   name VARCHAR(128) NOT NULL,
   description VARCHAR(512) NOT NULL,
   summary VARCHAR(256) NOT NULL,
-  ical_id VARCHAR(64) NOT NULL,
-  event_id INT NOT NULL,
+  color VARCHAR(64) NOT NULL DEFAULT '#FFFFFF',
   place_id VARCHAR(64) NOT NULL,
   PRIMARY KEY (event_id),
   FOREIGN KEY (place_id) REFERENCES Localisation(place_id)
@@ -83,13 +83,13 @@ INSERT INTO student VALUES ('rouj1615','Six','Julien','https://www.gel.usherbroo
 INSERT INTO student VALUES ('stla0801','22','Anthony','https://www.gel.usherbrooke.ca/horarius/icalendar?key=9761bc19-4df0-4db3-bd43-03831e35275a');
 INSERT INTO student VALUES ('pera3307','AL','Alisée','');
 
+INSERT INTO Localisation VALUES ('ChIJywfUkEyzt0wRPYYdc8CzfbU','2500 Bd de lUniversité, Sherbrooke','Faculté de génie');
+
 DROP VIEW IF EXISTS StudentData;
 CREATE VIEW StudentData AS
 SELECT student.cip, name, surname, ical_key, preparation_time, notification_time, dark_mode, transport_name
 FROM Student
 LEFT JOIN Preferences ON Preferences.cip = Student.cip;
-
-
 
 CREATE OR REPLACE FUNCTION onStudentDataChange() RETURNS TRIGGER AS
 $$
@@ -124,3 +124,17 @@ CREATE TRIGGER studentDataTrigger INSTEAD OF UPDATE ON StudentData
 FOR EACH ROW
 EXECUTE PROCEDURE onStudentDataChange();
 
+CREATE OR REPLACE FUNCTION beforeEventInsert() RETURNS TRIGGER AS
+$$
+BEGIN
+IF EXISTS (SELECT event_id FROM event WHERE event_id = NEW.event_id) THEN
+UPDATE event SET name=NEW.name, summary=NEW.summary, description=NEW.description, start_time=NEW.start_time, end_time=NEW.end_time, place_id=NEW.place_id WHERE event_id=NEW.event_id;
+RETURN NULL;
+END IF;
+RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER eventBeforeInsertTrigger BEFORE INSERT ON event
+FOR EACH ROW
+EXECUTE PROCEDURE beforeEventInsert();
