@@ -210,7 +210,7 @@
       >
         <b-row>
           <b-col cols="2" class="title"> Maps </b-col>
-          <b-col cols="8" class="title" style="text-align:center"><a class="link" :href="'http://maps.google.ca/maps?daddr='+trajetActif.trajet.addresseDestinataire+'&amp;ll='" target="_blank">Ouvrir Google Maps</a></b-col>
+          <b-col cols="8" class="title" style="text-align:center"><a class="link" :href="'http://maps.google.ca/maps?daddr='+trajetActif.trajet.addresseDestinataire+'&saddr='+trajetActif.trajet.addresseInitial+'&dirflg='+trajetActif.trajet.transport+'&amp;ll='" target="_blank">Ouvrir Google Maps</a></b-col>
           <b-col cols="2" class="zoneClose">
             <button @click="hideMaps()" class="close">x</button>
           </b-col>
@@ -512,7 +512,9 @@ export default {
     type: "week",
     trajetActif:{
       trajet:{
-        addresseDestinataire:"universite de sherbrooke",
+        addresseDestinataire:"pub le willard",
+        addresseInitial:"universite de sherbrooke",
+        transport:"r",
       },
     },
     initialHeight: "",
@@ -523,14 +525,14 @@ export default {
       locales: allLocales,
       eventClick: function (info) {
         if (info.event.extendedProps.trajet) {
-          console.log(navigator)
           if( (navigator.platform.indexOf("iPhone") != -1) 
           || (navigator.platform.indexOf("iPod") != -1)
           || (navigator.platform.indexOf("iPad") != -1)){
-            window.open("maps://maps.google.ca/maps?daddr="+info.event.extendedProps.trajet.addresseDestinataire+"&amp;ll=");
+            window.open("maps://maps.google.ca/maps?daddr="+info.event.extendedProps.trajet.addresseDestinataire+"&saddr="+info.event.extendedProps.trajet.addresseInitial+"&dirflg="+info.event.extendedProps.trajet.transport+"&amp;ll=");
+            
           }
           else{
-            window.open("http://maps.google.ca/maps?daddr="+info.event.extendedProps.trajet.addresseDestinataire+"&amp;ll=");
+            window.open("http://maps.google.ca/maps?daddr="+info.event.extendedProps.trajet.addresseDestinataire+"&saddr="+info.event.extendedProps.trajet.addresseInitial+"&dirflg="+info.event.extendedProps.trajet.transport+"&amp;ll=");
           }
         }
       },
@@ -630,10 +632,11 @@ export default {
           open: false,
           trajet: {
             temps_avance: 0,
-            transport: "TRANSIT",
+            transport: "r",
             notification_enable: false,
             temps_avance_notification: 0,
-            addresseDestinataire: "université de Sherbrooke",
+            addresseDestinataire: "pub le willard",
+            addresseInitial: "universite de sherbrooke"
           },
         },
       ],
@@ -720,7 +723,8 @@ export default {
           transport: "TRANSIT",
           notification_enable: false,
           temps_avance_notification: 0,
-          addresseDestinataire: "université de Sherbrooke",
+          addresseDestinataire: "pub le willard",
+          addresseInitial: "universite de sherbrooke"
         },
       },
     ],
@@ -786,6 +790,25 @@ export default {
       this.events = this.eventsState;
       this.calendarOptions.events = this.eventsState;
       for (let i in this.eventsState) {
+        if(this.calendarOptions.events.trajet){
+          switch (this.calendarOptions.events.trajet.transport) {
+            case "TRANSIT":
+                this.calendarOptions.events.trajet.transport = "r";
+              break;
+            case "WALKING":
+                this.calendarOptions.events.trajet.transport = "w";
+              break;
+            case "BICYCLING":
+                this.calendarOptions.events.trajet.transport = "b";
+              break;
+            case "DRIVING":
+                this.calendarOptions.events.trajet.transport = "d";
+              break;
+            default:
+              break;
+          }
+        }
+        
         this.events[i].start =
           this.eventsState[i].start.split("T")[0] +
           " " +
@@ -1042,6 +1065,24 @@ export default {
     openEvent(event) {
       event.open = true;
       this.trajetActif = event;
+
+      switch (event.trajet.transport) {
+        case "TRANSIT":
+            this.trajetActif.trajet.transport = "r";
+          break;
+        case "WALKING":
+            this.trajetActif.trajet.transport = "w";
+          break;
+        case "BICYCLING":
+            this.trajetActif.trajet.transport = "b";
+          break;
+        case "DRIVING":
+            this.trajetActif.trajet.transport = "d";
+          break;
+        default:
+          break;
+      }
+      
     },
     showEvent(event) {
       console.log(event)
