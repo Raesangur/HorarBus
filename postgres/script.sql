@@ -40,10 +40,10 @@ CREATE TABLE Event
 
 CREATE TABLE Preferences
 (
-  preparation_time TIMESTAMP NOT NULL,
-  notification_time TIMESTAMP NOT NULL,
-  dark_mode INT NOT NULL,
-  transport_name VARCHAR(12) NOT NULL,
+  preparation_time INT NOT NULL DEFAULT 15,
+  notification_time INT NOT NULL DEFAULT 15,
+  dark_mode CHAR(5) NOT NULL DEFAULT 'FALSE',
+  transport_name VARCHAR(12) NOT NULL DEFAULT 'TRANSIT',
   cip CHAR(8) NOT NULL,
   PRIMARY KEY (cip),
   FOREIGN KEY (transport_name) REFERENCES Transport(transport_name),
@@ -76,3 +76,51 @@ INSERT INTO Transport VALUES ('BICYCLING');
 INSERT INTO Transport VALUES ('DRIVING');
 INSERT INTO Transport VALUES ('TRANSIT');
 INSERT INTO Transport VALUES ('WALKING');
+
+INSERT INTO student VALUES ('bera1107','Blond','Alexandre','https://www.gel.usherbrooke.ca/horarius/icalendar?key=bcb2d410-7b36-4ff3-bd0c-57c29c489261');
+INSERT INTO student VALUES ('lacp3102','Petit','Pascal','https://www.gel.usherbrooke.ca/horarius/icalendar?key=67a822b8-32c3-4f87-b074-b01295f0c665');
+INSERT INTO student VALUES ('rouj1615','Six','Julien','https://www.gel.usherbrooke.ca/horarius/icalendar?key=c754875d-2930-4ceb-9827-f90741d44338');
+INSERT INTO student VALUES ('stla0801','22','Anthony','https://www.gel.usherbrooke.ca/horarius/icalendar?key=9761bc19-4df0-4db3-bd43-03831e35275a');
+INSERT INTO student VALUES ('pera3307','AL','Alisée','');
+
+DROP VIEW IF EXISTS StudentData;
+CREATE VIEW StudentData AS
+SELECT student.cip, name, surname, ical_key, preparation_time, notification_time, dark_mode, transport_name
+FROM Student
+LEFT JOIN Preferences ON Preferences.cip = Student.cip;
+
+
+
+CREATE OR REPLACE FUNCTION onStudentDataChange() RETURNS TRIGGER AS
+$$
+BEGIN
+UPDATE student SET name=NEW.name, surname=NEW.surname WHERE cip=OLD.cip;
+
+IF NOT EXISTS (SELECT cip FROM preferences WHERE cip=OLD.cip) THEN
+INSERT INTO preferences (cip) VALUES (OLD.cip);
+END IF;
+
+IF NOT NEW.preparation_time IS NULL THEN
+UPDATE preferences SET preparation_time=NEW.preparation_time WHERE cip=OLD.cip;
+END IF;
+
+IF NOT NEW.notification_time IS NULL THEN
+UPDATE preferences SET notification_time=NEW.notification_time WHERE cip=OLD.cip;
+END IF;
+
+IF NOT NEW.dark_mode IS NULL THEN
+UPDATE preferences SET dark_mode=NEW.dark_mode WHERE cip=OLD.cip;
+END IF;
+
+IF NOT NEW.transport_name IS NULL THEN
+UPDATE preferences SET transport_name=NEW.transport_name WHERE cip=OLD.cip;
+END IF;
+
+RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER studentDataTrigger INSTEAD OF UPDATE ON StudentData
+FOR EACH ROW
+EXECUTE PROCEDURE onStudentDataChange();
+

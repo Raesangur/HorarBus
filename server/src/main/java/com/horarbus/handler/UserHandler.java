@@ -1,8 +1,8 @@
 package com.horarbus.handler;
 
-import com.horarbus.Utils;
-
 public class UserHandler {
+    private static final String TABLE_NAME = "studentData";
+
     private static final int DEFAULT_PREPARATION_TIME = 15;
     private static final int DEFAULT_NOTIFICATION_TIME = 15;
     private static final String DEFAULT_TRANSPORT = "TRANSIT";
@@ -29,10 +29,9 @@ public class UserHandler {
         pgh = new PostgresHandler();
 
         if (select_column("cip") == "") {
-            pgh.insert_row("Student", new String[] {"cip", "name", "surname"},
-                        new PostgresValue[]{new PostgresValue(cip),
-                                            new PostgresValue(nom),
-                                            new PostgresValue(prenom)});
+            pgh.insert_row(TABLE_NAME, new String[] {"cip", "name", "surname"},
+                    new PostgresValue[] {new PostgresValue(cip), new PostgresValue(nom),
+                            new PostgresValue(prenom)});
         }
     }
 
@@ -64,22 +63,19 @@ public class UserHandler {
     }
 
     private String select_column(String column) {
-        String[] result = pgh.select_column(column, "Student",
-                                            new String[]{"cip"},
-                                            new PostgresValue[]{new PostgresValue(cip)});
+        String[] result = pgh.select_column(column, TABLE_NAME, new String[] {"cip"},
+                new PostgresValue[] {new PostgresValue(cip)});
         return result == null ? "" : result[0];
     }
 
     private void update_column(String column, String value) {
-        pgh.update_column(column, "Student", new PostgresValue(value),
-                          new String[]{"cip"},
-                          new PostgresValue[]{new PostgresValue(cip)});
+        pgh.update_column(column, TABLE_NAME, new PostgresValue(value), new String[] {"cip"},
+                new PostgresValue[] {new PostgresValue(cip)});
     }
 
     private void update_column(String column, int value) {
-        pgh.update_column(column, "Student", new PostgresValue(value),
-                          new String[]{"cip"},
-                          new PostgresValue[]{new PostgresValue(cip)});
+        pgh.update_column(column, TABLE_NAME, new PostgresValue(value), new String[] {"cip"},
+                new PostgresValue[] {new PostgresValue(cip)});
     }
 
     public String get_cip() {
@@ -87,10 +83,9 @@ public class UserHandler {
     }
 
     public EventHandler[] get_events() {
-        String[] event_ids = pgh.select_column("event_id", "Attendance",
-                                               new String[]{"cip"},
-                                               new PostgresValue[]{new PostgresValue(cip)});
-        
+        String[] event_ids = pgh.select_column("event_id", "Attendance", new String[] {"cip"},
+                new PostgresValue[] {new PostgresValue(cip)});
+
         EventHandler[] events = new EventHandler[event_ids.length];
         for (int i = 0; i < event_ids.length; i++) {
             events[i] = new EventHandler(Integer.parseInt(event_ids[i]));
@@ -149,7 +144,7 @@ public class UserHandler {
     }
 
     public String get_transport() {
-        String transport = select_column("transport");
+        String transport = select_column("transport_name");
         return transport != null ? transport : DEFAULT_TRANSPORT;
     }
 
@@ -164,7 +159,7 @@ public class UserHandler {
 
     public boolean get_darkmode() {
         String darkModeStr = select_column("dark_mode");
-        if(darkModeStr == null){
+        if (darkModeStr == null) {
             darkModeStr = "false";
         }
         return Boolean.parseBoolean(darkModeStr.trim());
@@ -175,11 +170,13 @@ public class UserHandler {
     }
 
     public boolean get_notification_enable() {
-        return Boolean.parseBoolean(select_column("notification_enable"));
+        return false;
+        // return Boolean.parseBoolean(select_column("notification_enable"));
     }
 
     public void set_notification_enable(boolean notif) {
-        update_column("notification_enable", Boolean.toString(notif));
+        // TODO
+        // update_column("notification_enable", Boolean.toString(notif));
     }
 
     public String get_default_address() {
