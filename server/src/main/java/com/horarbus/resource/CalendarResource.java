@@ -2,10 +2,13 @@ package com.horarbus.resource;
 
 import biweekly.ICalendar;
 import biweekly.component.VEvent;
+
 import com.horarbus.auth.AuthData;
-import com.horarbus.handler.EventHandler;
+import com.horarbus.handler.CalendarHandler;
 import com.horarbus.handler.UserHandler;
 import com.horarbus.service.CalendarService;
+
+import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.web.RoutingContext;
 
@@ -41,15 +44,23 @@ public class CalendarResource {
 
         ICalendar ical = CalendarService.parseCalendarFromICal(icalKey);
         cacheEventData(ical.getEvents());
-        return "nothing lol";
-        // return formatEventData(ical);
+        return fetchCalendarData().toString();
     }
 
     private void cacheEventData(List<VEvent> events) {
+        CalendarHandler handler = new CalendarHandler();
         for (int i = 0; i < events.size(); i++) {
-            EventHandler handler = new EventHandler(events.get(i));
-            handler.cacheData();
+            handler.cacheData(events.get(i));
         }
+    }
+
+    private JsonObject fetchCalendarData(){
+        CalendarHandler handler = new CalendarHandler();
+        JsonArray events = handler.getAllEvents();
+
+        JsonObject eventJson = new JsonObject();
+        eventJson.put("events", events);
+        return eventJson;
     }
 
     // private String formatEventData(ICalendar iCal) throws IOException {

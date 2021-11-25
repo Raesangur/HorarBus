@@ -1,8 +1,13 @@
 package com.horarbus;
 
+import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
+import java.util.Locale;
 
 public class Utils {
     public static long string_to_unix_milli(String timestamp){
@@ -18,6 +23,14 @@ public class Utils {
         } catch(ParseException e) {
             return 0;
         }
+    }
+
+    public static Timestamp getTimeFromString(String str) {
+        DateTimeFormatter formatter =
+                DateTimeFormatter.ofPattern("EEE MMM dd kk:mm:ss z yyyy", Locale.ENGLISH);
+        // -5 -> heure normale de l'est
+        return Timestamp
+                .from(LocalDateTime.parse(str, formatter).toInstant(ZoneOffset.ofHours(-5)));
     }
 
     public static String sanitizeTransport(String transport) {
