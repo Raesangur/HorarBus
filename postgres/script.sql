@@ -29,10 +29,10 @@ CREATE TABLE Event
   event_id INT NOT NULL,
   start_time TIMESTAMP NOT NULL,
   end_time TIMESTAMP NOT NULL,
-  name VARCHAR(128) NOT NULL,
   description VARCHAR(512) NOT NULL,
   summary VARCHAR(256) NOT NULL,
   color VARCHAR(64) NOT NULL DEFAULT '#FFFFFF',
+  local VARCHAR(32),
   PRIMARY KEY (event_id)
 );
 
@@ -90,7 +90,7 @@ INSERT INTO student VALUES ('rouj1615','Six','Julien','https://www.gel.usherbroo
 INSERT INTO student VALUES ('stla0801','22','Anthony','https://www.gel.usherbrooke.ca/horarius/icalendar?key=9761bc19-4df0-4db3-bd43-03831e35275a');
 INSERT INTO student VALUES ('pera3307','AL','Alisée','');
 
-INSERT INTO Localisation VALUES ('ChIJywfUkEyzt0wRPYYdc8CzfbU','2500 Bd de lUniversité, Sherbrooke','Faculté de génie');
+INSERT INTO Localisation VALUES ('ChIJywfUkEyzt0wRPYYdc8CzfbU','45.3783275,-71.9284194','Faculté de génie, 2500 Bd de lUniversité, Sherbrooke');
 
 DROP VIEW IF EXISTS StudentData;
 CREATE VIEW StudentData AS
@@ -101,7 +101,7 @@ LEFT JOIN Preferences ON Preferences.cip = Student.cip;
 CREATE OR REPLACE FUNCTION onStudentDataChange() RETURNS TRIGGER AS
 $$
 BEGIN
-UPDATE student SET name=NEW.name, surname=NEW.surname WHERE cip=OLD.cip;
+UPDATE student SET surname=NEW.surname WHERE cip=OLD.cip;
 
 IF NOT EXISTS (SELECT cip FROM preferences WHERE cip=OLD.cip) THEN
 INSERT INTO preferences (cip) VALUES (OLD.cip);
@@ -135,7 +135,10 @@ CREATE OR REPLACE FUNCTION beforeEventInsert() RETURNS TRIGGER AS
 $$
 BEGIN
 IF EXISTS (SELECT event_id FROM event WHERE event_id = NEW.event_id) THEN
-UPDATE event SET name=NEW.name, summary=NEW.summary, description=NEW.description, start_time=NEW.start_time, end_time=NEW.end_time WHERE event_id=NEW.event_id;
+UPDATE event SET summary=NEW.summary, description=NEW.description, start_time=NEW.start_time, end_time=NEW.end_time WHERE event_id=NEW.event_id;
+IF NOT NEW.local IS NULL THEN
+UPDATE event SET local=NEW.local WHERE event_id=NEW.event_id;
+END IF;
 RETURN NULL;
 END IF;
 RETURN NEW;
@@ -170,9 +173,12 @@ $$
 BEGIN
 
 IF NEW.place_id IS NULL THEN
-  INSERT INTO event (event_id, name, summary, description, start_time, end_time) VALUES (NEW.event_id, NEW.name, NEW.summary, NEW.description, NEW.start_time, NEW.end_time);
+  INSERT INTO event (event_id, summary, description, start_time, end_time) VALUES (NEW.event_id, NEW.summary, NEW.description, NEW.start_time, NEW.end_time);
   IF NOT NEW.color IS NULL THEN
     UPDATE event SET color = NEW.color WHERE event_id = NEW.event_id;
+  END IF;
+  IF NOT NEW.local IS NULL THEN
+    UPDATE event SET local = NEW.local WHERE event_id = NEW.event_id;
   END IF;
   RETURN NEW;
 ELSE 
@@ -181,9 +187,12 @@ ELSE
   END IF;
 END IF;
 
-INSERT INTO event (event_id, name, summary, description, start_time, end_time) VALUES (NEW.event_id, NEW.name, NEW.summary, NEW.description, NEW.start_time, NEW.end_time);
+INSERT INTO event (event_id, summary, description, start_time, end_time) VALUES (NEW.event_id, NEW.summary, NEW.description, NEW.start_time, NEW.end_time);
 IF NOT NEW.color IS NULL THEN
   UPDATE event SET color = NEW.color WHERE event_id = NEW.event_id;
+END IF;
+IF NOT NEW.local IS NULL THEN
+  UPDATE event SET local = NEW.local WHERE event_id = NEW.event_id;
 END IF;
 
 IF NOT NEW.place_id IS NULL THEN

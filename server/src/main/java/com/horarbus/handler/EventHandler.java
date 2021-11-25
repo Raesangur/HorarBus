@@ -1,11 +1,6 @@
 package com.horarbus.handler;
 
-import java.lang.reflect.Array;
-import java.sql.Date;
 import java.sql.Timestamp;
-import java.text.DateFormat;
-import java.time.Instant;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
@@ -55,8 +50,8 @@ public class EventHandler {
             Pattern pattern = Pattern.compile("[a-zA-Z]{1}[1-2]{1}-[0-9]+");
 
             if(pattern.matcher(location).matches()){
-                // columns.add("local");
-                // values.add(new PostgresValue(location));
+                columns.add("local");
+                values.add(new PostgresValue(location));
                 columns.add("place_id");
                 // Faculté de Génie, UdeS
                 values.add(new PostgresValue("ChIJywfUkEyzt0wRPYYdc8CzfbU"));
