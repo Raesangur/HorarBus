@@ -1,6 +1,6 @@
 <template>
   <b-row style="margin-top: 0">
-    <b-col style="padding: 0">
+    <b-col style="padding: 0" @mousemove="setHeight">
       <b-navbar toggleable="md" sticky type="dark" class="navbar">
         <b-navbar-nav class="navbar-menu mx-auto dateZone">
           <button class="caret" @click="prev()">
@@ -517,11 +517,9 @@
         locale="fr"
         :type="type"
         class="calendar"
-        @mouseover="setHeight"
       >
         <template
           v-slot:event="{ event }"
-          :style="{ backgroundColor: event.color }"
         >
           <div
             class="event"
@@ -1160,7 +1158,6 @@ export default {
           document.getElementById(this.events[i].id).style.height =
           document.getElementById(this.events[i].id).parentElement.style.height;
         }
-        
       }
       
     },
