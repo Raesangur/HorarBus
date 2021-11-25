@@ -517,6 +517,7 @@
         locale="fr"
         :type="type"
         class="calendar"
+        @mouseover="setHeight"
       >
         <template
           v-slot:event="{ event }"
@@ -524,7 +525,7 @@
         >
           <div
             class="event"
-            @mouseenter="setHeight(event.id)"
+            @mouseenter="setHeight"
             v-click-outside="dismissEvent"
             v-if="!event.trajet"
             :id="event.id"
@@ -556,7 +557,7 @@
           <div
             class="event"
             v-click-outside="dismissEvent"
-            @mouseenter="setHeight(event.id)"
+            @mouseenter="setHeight"
             :id="event.id"
             v-else
             v-on:click="showEvent"
@@ -647,7 +648,7 @@ export default {
     value: new Date(),
     type: "week",
     initialHeight: "",
-    eventActive: "",
+    eventActive: undefined,
     calendarOptions: {
       plugins: [InteractionPlugin, ListPlugin],
       initialView: "listWeek",
@@ -1127,57 +1128,41 @@ export default {
       event.open = true;
     },
     showEvent(event) {
-      event.target.style.height = "fit-content";
-      if (event.path) {
-        event.path[1].style.zIndex = "1000";
-      }
-      if (event.target.offsetParent) {
-        event.target.offsetParent.style.zIndex = "1000";
-      }
-      event.target.style.zIndex = "1000";
-      if (this.eventActive.event === undefined) {
-        if (event.path) {
-          this.initialHeight = event.path[1].style.height;
-        }
-        if (event.target.offsetParent) {
-          this.initialHeight = event.target.offsetParent.style.height;
-        }
-      }
-      this.eventActive = event;
-      if (event.path) {
-        event.path[1].style.height = "fit-content";
-      }
-      if (event.target.offsetParent) {
-        event.target.offsetParent.style.height = "fit-content";
-      }
-      if (this.eventActive === event) {
-        document.body.addEventListener("click", event.target.clickOutsideEvent);
-      } else {
+      if (this.eventActive && this.eventActive !== event) {
         this.dismissEvent();
       }
+      event.target.style.height = "fit-content";
+      event.target.offsetParent.style.zIndex = "1000";
+      event.target.style.zIndex = "1000";
+      if (this.eventActive === undefined) {
+        this.initialHeight = event.target.offsetParent.style.height;
+      }
+      this.eventActive = event;
+      document.body.addEventListener("click", event.target.clickOutsideEvent);
+      event.target.offsetParent.style.height = "fit-content";
     },
     dismissEvent() {
       for (let i in this.events) {
         this.events[i].open = false;
       }
-      //this.eventActive.event.open = false;
-      if (this.eventActive.path) {
-        this.eventActive.path[1].style.zIndex = "0";
-        this.eventActive.path[1].style.height = this.initialHeight;
-      }
-      if (this.eventActive.target.offsetParent) {
-        this.eventActive.target.offsetParent.style.zIndex = "0";
-        this.eventActive.target.offsetParent.style.height = this.initialHeight;
-      }
+      this.eventActive.target.offsetParent.style.zIndex = "0";
+      this.eventActive.target.style.zIndex = "0";
+      this.eventActive.target.offsetParent.style.height = this.initialHeight;
       document.body.removeEventListener(
         "click",
         this.eventActive.target.clickOutsideEvent
       );
-      this.eventActive = "";
+      this.eventActive = undefined;
     },
-    setHeight(id) {
-      document.getElementById(id).style.height =
-        document.getElementById(id).parentElement.style.height;
+    setHeight() {
+      for(let i in this.events){
+        if(document.getElementById(this.events[i].id)){
+          document.getElementById(this.events[i].id).style.height =
+          document.getElementById(this.events[i].id).parentElement.style.height;
+        }
+        
+      }
+      
     },
     setToday() {
       const now = new Date();
