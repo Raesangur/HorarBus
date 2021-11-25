@@ -206,3 +206,9 @@ $$ LANGUAGE plpgsql;
 CREATE TRIGGER beforeCalendarEventInsertTrigger INSTEAD OF INSERT ON CalendarEvent
 FOR EACH ROW
 EXECUTE PROCEDURE beforeCalendarEventInsert();
+
+DROP VIEW IF EXISTS CalendarAttendance;
+CREATE VIEW CalendarAttendance AS
+SELECT cip, calendarevent.*
+FROM calendarevent
+JOIN attendance ON attendance.event_id = calendarevent.event_id;
