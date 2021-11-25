@@ -37,6 +37,7 @@
             <b-dropdown-item @click="showPref()">
               Mes paramètres
             </b-dropdown-item>
+            <b-dropdown-item @click="showFAQ()"> FAQ </b-dropdown-item>
             <b-dropdown-item @click="logout">Se déconnecter</b-dropdown-item>
           </b-nav-item-dropdown>
         </b-navbar-nav>
@@ -196,6 +197,86 @@
           </b-col>
         </b-row>
       </b-modal>
+
+      <b-modal
+        ref="faq"
+        hide-footer
+        hide-header
+        :centered="true"
+        body-class="preference"
+      >
+        <b-row>
+          <b-col cols="10" class="title"> Foire aux questions </b-col>
+          <b-col cols="2" class="zoneClose">
+            <button @click="hideFAQ()" class="close">x</button>
+          </b-col>
+        </b-row>
+
+        <b-row>
+            <b-col cols="12" @click="question1 = !question1" class="titreTexteFAQ">
+                <strong>HorarBus &#x3a; qu’est-ce que c’est?</strong>
+            </b-col> <br />
+            <b-col cols="12" class="texteFAQ" v-if="question1">
+                HorarBus est une application construite pour la communauté étudiante de l’Université de Sherbrooke en génie et a comme mission de faire sauver du temps aux étudiants en prévoyant pour eux leurs déplacements. L’application affiche principalement un calendrier qui comprend l’horaire de l’usager ainsi que ces déplacements. HorarBus ajoute automatiquement toutes les plages horaires nécessaires pour le transport en se basant sur l’emplacement de l’évènement, l’adresse au domicile de l’étudiant et le type de transport par défaut. Plusieurs paramètres peuvent être ajustés pour convenir à tous les étudiants. Pour être certain que l’usager ne manque aucun cours, il est possible de paramétrer une notification qui l’empêcherait de passer tout droit.
+            </b-col>
+
+            <br /><br />
+            <b-col cols="12" @click="question2 = !question2" class="titreTexteFAQ">
+                <strong>Sur quel type d’appareil peut-on utiliser l’application?</strong> <br />
+            </b-col> <br />
+            <b-col cols="12" class="texteFAQ" v-if="question2">
+                HorarBus sur site web est accessible sur tous les appareils, que ce soit sur ordinateur Windows, MacOS et Linux, ainsi que sur téléphone Android et Apple. Par contre, l’application pour téléphone est seulement accessible sur Android.
+            </b-col>
+
+            <br /><br />
+            <b-col cols="12" @click="question3 = !question3" class="titreTexteFAQ">
+                <strong>Quel calendrier apparait dans HorarBus?</strong> <br />
+            </b-col> <br />
+            <b-col cols="12" class="texteFAQ" v-if="question3">
+                Vous verrez apparaitre dans HorarBus l'horaire à laquelle votre clé iCal correspond. Tous les évènements de votre calendrier qui sont reliés à votre clé iCal seront affichés. Par contre, il n’est pas possible d’inclure d’autre calendrier. Vous pouvez fournir seulement une clé iCal.
+            </b-col>
+
+            <!--tuto clé ical-->
+            <br /><br />
+            <b-col cols="12" @click="question4 = !question4" class="titreTexteFAQ">
+                <strong>Où trouver ma clé iCal?</strong> <br />
+            </b-col> <br />
+            <b-col cols="12" class="texteFAQ" v-if="question4">
+                Rendez-vous sur Horarius, puis cliquez sur l’icône iCal qui est à gauche de votre nom. L'image suivante représente l'icône sur laquelle vous devez cliquer. <br />
+            </b-col>
+            <b-col cols="12" class="text-center" v-if="question4">
+                <!-- <img :src="require('../assets/icone-ical.png')" /> -->
+            </b-col>
+            <b-col cols="12" class="texteFAQ" v-if="question4">
+                Vous devriez voir apparaitre une fenêtre contenant votre clé iCal (voir l'image qui suit). Vous pouvez simplement appuyer sur le bouton “COPIER” et nous fournir le résultat.
+            </b-col>
+            <b-col cols="12" class="text-center" v-if="question4">
+                <!-- <img :src="require('../assets/cle-ical.png')" class="text-center" /> -->
+            </b-col>
+
+            <br /><br />
+            <b-col cols="12" @click="question5 = !question5" class="titreTexteFAQ">
+                <strong>Puis-je modifier mes préférences?</strong> <br />
+            </b-col> <br />
+                     <b-col cols="12" class="texteFAQ" v-if="question5">
+                         Il est possible que chaque utilisateur ait ses propres préférences. Pour les modifier, il faut simplement cliquer sur votre nom, puis sur "Mes préférences". Une fois que vous avez fini de modifier vos préférences, il faut absolument peser sur le bouton "Enregistrer les informations", sinon vous perdrez votre sélection.<br /><br />
+                         <strong> Puis-je modifier le moyen de transport pour un évènement en particulier? </strong><br />
+                         Oui, même si vous avez un mode de transport par défaut, il est possible de modifier le mode de transport individuel de chaque évènement. <br /><br />
+                         <strong> À quoi servent les notifications </strong><br />
+                         Les notifications peuvent se faire entendre quelques minutes avant votre départ pour s’assurer que vous ne passiez pas tout droit. C’est une des grandes forces de l’application HorarBus. Même si vous avez complètement oublié un évènement, HorarBus vous le rappellera, mais surtout, il vous permettra de ne pas arriver en retard. Il est également possible de choisir combien de temps d’avance vous souhaitez recevoir les notifications.<br /><br />
+                         <strong> Que signifie avance minimum? </strong><br />
+                         Ce paramètre sert à décider combien de temps d’avance vous voulez arriver à vos évènements. Par défaut, il est fixé à 0 minute. En fonction de ce paramètre, HorarBus vous fera partir plus ou moins tôt.<br /><br />
+                         <strong> Pourquoi me demande-t-on mon adresse au domicile? </strong><br />
+                         Vous avez l’opportunité de mettre votre adresse au domicile, ou non. Si jamais vous décidez de la mettre, HorarBus s’en servira pour prévoir votre retour à la maison à la fin de vos évènements.
+                     </b-col>
+
+
+
+
+            <b-col></b-col>
+        </b-row>
+      </b-modal>
+
 
       <b-modal
         ref="mapsSetting"
@@ -471,6 +552,12 @@ export default {
   },
 
   data: () => ({
+    question1: false,
+    question2: false,
+    question3: false,
+    question4: false,
+    question5: false,
+    question6: false,
     pref: {
       adresse_maison: "",
       temps_avance: 0,
