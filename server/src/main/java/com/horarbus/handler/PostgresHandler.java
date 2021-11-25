@@ -2,6 +2,9 @@ package com.horarbus.handler;
 
 import java.sql.*;
 import java.util.Properties;
+
+import com.horarbus.handler.PostgresValue.PostgresValueType;
+
 import java.util.ArrayList;
 
 public class PostgresHandler {
@@ -140,6 +143,9 @@ public class PostgresHandler {
             }
             if (value.getType() == PostgresValue.PostgresValueType.string) {
                 query.setString(index, value.getString());
+            }
+            if(value.getType() == PostgresValueType.timestamp){
+                query.setTimestamp(index, value.getTimestamp());
             }
         } catch (SQLException e) {
             e.printStackTrace();

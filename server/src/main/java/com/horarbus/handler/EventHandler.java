@@ -11,9 +11,13 @@ import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Locale;
-import org.postgresql.jdbc.TimestampUtils;
+import java.util.regex.Pattern;
+
+import com.horarbus.service.MapsService;
+
 import biweekly.component.VEvent;
-import biweekly.property.Timezone;
+import io.vertx.core.json.JsonArray;
+import io.vertx.core.json.JsonObject;
 
 public class EventHandler {
     private PostgresHandler pgh = null;
@@ -47,7 +51,40 @@ public class EventHandler {
         }
 
         if (eventData.getLocation() != null) {
-            // TODO
+            String location = eventData.getLocation().getValue().toString();
+            Pattern pattern = Pattern.compile("[a-zA-Z]{1}[1-2]{1}-[0-9]+");
+
+            if(pattern.matcher(location).matches()){
+                // columns.add("local");
+                // values.add(new PostgresValue(location));
+                columns.add("place_id");
+                // Faculté de Génie, UdeS
+                values.add(new PostgresValue("ChIJywfUkEyzt0wRPYYdc8CzfbU"));
+            }else{
+                // TODO: do we need to call this every time? can we just fetch the db to validate if we already have an associated place-id?
+                try{
+                    String placeData = MapsService.getPlaceDataFromAddress(location);
+                    JsonObject json = new JsonObject(placeData);
+                    JsonArray jsonArr = json.getJsonArray("results");
+                    if(jsonArr!=null && jsonArr.size() > 0){
+                        JsonObject  result = jsonArr.getJsonObject(0);
+                        String address = result.getString("formatted_address");
+                        String placeId = result.getString("place_id");
+                        JsonObject locationObj = result.getJsonObject("geometry").getJsonObject("location");
+                        String coords = locationObj.getString("lat")+","+locationObj.getString("lng");
+                    
+                    
+                        columns.add("place_id");
+                        columns.add("coords");
+                        columns.add("address");
+                        values.add(new PostgresValue(placeId));
+                        values.add(new PostgresValue(coords));
+                        values.add(new PostgresValue(address));
+                    }
+                }catch(Exception ex){
+                    ex.printStackTrace();
+                }
+            }
         }
 
         String[] columnArray = new String[columns.size()];
