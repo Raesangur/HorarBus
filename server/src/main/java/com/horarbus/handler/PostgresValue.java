@@ -1,25 +1,26 @@
 package com.horarbus.handler;
 
+import java.sql.Timestamp;
+
 public class PostgresValue {
     public enum PostgresValueType {
-        integer,
-        string,
-        timestamp,
-        unknown
+        integer, string, timestamp, unknown
     }
 
     private Integer valueInt = null;
     private String valueString = null;
-    private Long valueLong = null;
+    private Timestamp valueTimestamp = null;
 
     public PostgresValue(String value) {
         this.valueString = value;
     }
+
     public PostgresValue(int value) {
         valueInt = value;
     }
-    public PostgresValue(long value) {
-        valueLong = value;
+
+    public PostgresValue(Timestamp value) {
+        valueTimestamp = value;
     }
 
     public int getInt() {
@@ -38,20 +39,20 @@ public class PostgresValue {
         }
     }
 
-    public Long getTimestamp() {
+    public Timestamp getTimestamp() {
         if (getType() == PostgresValueType.timestamp) {
-            return valueLong;
+            return valueTimestamp;
         } else {
             return null;
         }
     }
 
     public PostgresValueType getType() {
-        if (valueString != null && valueInt == null && valueLong == null) {
+        if (valueString != null && valueInt == null && valueTimestamp == null) {
             return PostgresValueType.string;
-        } else if(valueInt != null && valueString == null && valueLong == null) {
+        } else if (valueInt != null && valueString == null && valueTimestamp == null) {
             return PostgresValueType.integer;
-        } else if(valueLong != null && valueInt == null && valueString == null) {
+        } else if (valueTimestamp != null && valueInt == null && valueString == null) {
             return PostgresValueType.timestamp;
         } else {
             return PostgresValueType.unknown;

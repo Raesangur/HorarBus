@@ -1,12 +1,11 @@
 package com.horarbus.resource;
 
-import biweekly.Biweekly;
 import biweekly.ICalendar;
 import biweekly.component.VEvent;
-import biweekly.property.Location;
 import com.horarbus.auth.AuthData;
-
+import com.horarbus.handler.EventHandler;
 import com.horarbus.handler.UserHandler;
+import com.horarbus.service.CalendarService;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.web.RoutingContext;
 
@@ -15,26 +14,10 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
 import java.io.IOException;
-import java.net.URL;
 import java.util.List;
-import java.util.Scanner;
 
 @Path("/calendar")
 public class CalendarResource {
-
-    // Get the ical file
-    // https://stackoverflow.com/a/13632114
-    private ICalendar generateICal(String ical_url) {
-        try {
-            Scanner scanner = new Scanner(new URL(ical_url).openStream(), "UTF-8");
-            String raw = scanner.useDelimiter("\\A").next();
-            scanner.close();
-
-            return Biweekly.parse(raw).first();
-        } catch (IOException ex) {
-            return new ICalendar();
-        }
-    }
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
@@ -44,7 +27,11 @@ public class CalendarResource {
         UserHandler user = new UserHandler(authData.getCip());
 
         if (!user.is_valid()) {
-            return invalidCIP();
+            user = new UserHandler(authData.getCip(), authData.getLastname(),
+                    authData.getFirstname());
+            if (!user.is_valid()) {
+                return invalidCIP();
+            }
         }
 
         String icalKey = user.get_ical_key();
@@ -52,39 +39,31 @@ public class CalendarResource {
             return missingIcal();
         }
 
-        ICalendar ical = generateICal(icalKey);
-        return formatEventData(ical);
+        ICalendar ical = CalendarService.parseCalendarFromICal(icalKey);
+        cacheEventData(ical.getEvents());
+        return "nothing lol";
+        // return formatEventData(ical);
     }
 
-    private String formatEventData(ICalendar iCal) throws IOException {
-        List<VEvent> events = iCal.getEvents();
-
-        JsonObject[] eventsJson = new JsonObject[events.size()];
+    private void cacheEventData(List<VEvent> events) {
         for (int i = 0; i < events.size(); i++) {
-            eventsJson[i] = parseEvent(events.get(i));
+            EventHandler handler = new EventHandler(events.get(i));
+            handler.cacheData();
         }
-
-        JsonObject outputJson = new JsonObject();
-        outputJson.put("events", eventsJson);
-        return outputJson.toString();
     }
 
-    private JsonObject parseEvent(VEvent event) {
-        JsonObject json = new JsonObject();
+    // private String formatEventData(ICalendar iCal) throws IOException {
+    // List<VEvent> events = iCal.getEvents();
 
-        json.put("description", event.getDescription().getValue());
-        json.put("summary", event.getSummary().getValue());
-        json.put("start", event.getDateStart().getValue());
-        json.put("end", event.getDateEnd().getValue());
-        json.put("color", event.getColor().getValue());
+    // JsonObject[] eventsJson = new JsonObject[events.size()];
+    // for (int i = 0; i < events.size(); i++) {
+    // eventsJson[i] = CalendarService.parseEvent(events.get(i));
+    // }
 
-        Location location = event.getLocation();
-        if (location != null) {
-            json.put("location", location.getValue());
-        }
-
-        return json;
-    }
+    // JsonObject outputJson = new JsonObject();
+    // outputJson.put("events", eventsJson);
+    // return outputJson.toString();
+    // }
 
     private String missingIcal() {
         return sendError("No iCal key associated with the current user.");
