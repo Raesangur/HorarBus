@@ -43,14 +43,15 @@ public class CalendarResource {
         }
 
         ICalendar ical = CalendarService.parseCalendarFromICal(icalKey);
-        cacheEventData(ical.getEvents());
+        cacheEventData(ical.getEvents(), authData.getCip());
         return fetchCalendarData().toString();
     }
 
-    private void cacheEventData(List<VEvent> events) {
+    private void cacheEventData(List<VEvent> events, String cip) {
         CalendarHandler handler = new CalendarHandler();
         for (int i = 0; i < events.size(); i++) {
             handler.cacheData(events.get(i));
+            handler.associateEventToUser(events.get(i).getUid().getValue().toString(), cip);
         }
     }
 

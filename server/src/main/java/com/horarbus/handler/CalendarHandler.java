@@ -108,6 +108,7 @@ public class CalendarHandler {
         pgh.insert_row("calendarevent", columns.toArray(columnArray), values.toArray(valueArray));
     }
 
-    
-
+    public void associateEventToUser(String eventId, String cip){
+        pgh.insert_row("attendance", new String[] {"cip","event_id"}, new PostgresValue[]{new PostgresValue(cip),new PostgresValue(Integer.parseInt(eventId))});
+    }
 }
