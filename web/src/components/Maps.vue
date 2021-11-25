@@ -1,10 +1,6 @@
 <template>
   <div>
-    <GmapMap
-      :center='center'
-      :zoom='zoom'
-      style='width:100%;  height: 80vh;'
-    />
+    <GmapMap :center="center" :zoom="zoom" style="width: 100%; height: 80vh" />
   </div>
 </template>
 <script>
@@ -16,8 +12,7 @@ export default {
       geolocation: (state) => state.maps.geolocation,
     }),
   },
-  watch:{
-  },
+  watch: {},
   mounted() {
     this.center = {
       lat: this.geolocation.lat,
@@ -38,7 +33,7 @@ export default {
       center: { lat: 0, lng: 0 },
       currentPlace: null,
       zoom: 15,
-    }
+    };
   },
 };
 </script>

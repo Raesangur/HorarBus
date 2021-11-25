@@ -2,10 +2,12 @@
   "ExpandedNodes": [
     "",
     "\\docker",
-    "\\web",
+    "\\keycloak",
+    "\\keycloak\\startup-scripts",
     "\\web\\src",
+    "\\web\\src\\components",
     "\\web\\src\\views"
   ],
-  "SelectedNode": "\\web\\src\\views\\Horaire.vue",
+  "SelectedNode": "\\keycloak\\startup-scripts\\add-users.sh",
   "PreviewInSolutionExplorer": false
 }
