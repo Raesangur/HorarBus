@@ -33,9 +33,7 @@ CREATE TABLE Event
   description VARCHAR(512) NOT NULL,
   summary VARCHAR(256) NOT NULL,
   color VARCHAR(64) NOT NULL DEFAULT '#FFFFFF',
-  place_id VARCHAR(64) NOT NULL,
-  PRIMARY KEY (event_id),
-  FOREIGN KEY (place_id) REFERENCES Localisation(place_id)
+  PRIMARY KEY (event_id)
 );
 
 CREATE TABLE Preferences
@@ -48,6 +46,15 @@ CREATE TABLE Preferences
   PRIMARY KEY (cip),
   FOREIGN KEY (transport_name) REFERENCES Transport(transport_name),
   FOREIGN KEY (cip) REFERENCES Student(cip)
+);
+
+CREATE TABLE LocalizedEvent
+(
+  place_id VARCHAR(64) NOT NULL,
+  event_id INT NOT NULL,
+  PRIMARY KEY (place_id, event_id),
+  FOREIGN KEY (place_id) REFERENCES Localisation(place_id),
+  FOREIGN KEY (event_id) REFERENCES Event(event_id)
 );
 
 CREATE TABLE Traject
@@ -128,7 +135,7 @@ CREATE OR REPLACE FUNCTION beforeEventInsert() RETURNS TRIGGER AS
 $$
 BEGIN
 IF EXISTS (SELECT event_id FROM event WHERE event_id = NEW.event_id) THEN
-UPDATE event SET name=NEW.name, summary=NEW.summary, description=NEW.description, start_time=NEW.start_time, end_time=NEW.end_time, place_id=NEW.place_id WHERE event_id=NEW.event_id;
+UPDATE event SET name=NEW.name, summary=NEW.summary, description=NEW.description, start_time=NEW.start_time, end_time=NEW.end_time WHERE event_id=NEW.event_id;
 RETURN NULL;
 END IF;
 RETURN NEW;
@@ -138,3 +145,55 @@ $$ LANGUAGE plpgsql;
 CREATE TRIGGER eventBeforeInsertTrigger BEFORE INSERT ON event
 FOR EACH ROW
 EXECUTE PROCEDURE beforeEventInsert();
+
+DROP VIEW IF EXISTS CalendarEvent;
+CREATE VIEW CalendarEvent AS
+SELECT event.*, localisation.*
+FROM event
+LEFT JOIN localizedEvent ON event.event_id = localizedEvent.event_id
+LEFT JOIN localisation ON localizedEvent.place_id = localisation.place_id;
+
+DROP VIEW IF EXISTS TrajectEvent;
+CREATE VIEW TrajectEvent AS
+SELECT event_id, begin_time AS start_time, traject.end_time, start_place_id, end_place_id, transport_name
+FROM CalendarEvent
+LEFT JOIN Traject ON place_id=start_place_id
+WHERE NOT place_id IS NULL
+UNION ALL
+SELECT event_id, begin_time AS start_time, traject.end_time, start_place_id, end_place_id, transport_name
+FROM CalendarEvent
+LEFT JOIN Traject ON place_id=end_place_id
+WHERE NOT place_id IS NULL;
+
+CREATE OR REPLACE FUNCTION beforeCalendarEventInsert() RETURNS TRIGGER AS
+$$
+BEGIN
+
+IF NEW.place_id IS NULL THEN
+  INSERT INTO event (event_id, name, summary, description, start_time, end_time) VALUES (NEW.event_id, NEW.name, NEW.summary, NEW.description, NEW.start_time, NEW.end_time);
+  IF NOT NEW.color IS NULL THEN
+    UPDATE event SET color = NEW.color WHERE event_id = NEW.event_id;
+  END IF;
+  RETURN NEW;
+ELSE 
+  IF NOT EXISTS (SELECT place_id FROM localisation WHERE place_id = NEW.place_id) THEN
+    INSERT INTO localisation (place_id, coords, address) VALUES (NEW.place_id, NEW.coords, NEW.address);
+  END IF;
+END IF;
+
+INSERT INTO event (event_id, name, summary, description, start_time, end_time) VALUES (NEW.event_id, NEW.name, NEW.summary, NEW.description, NEW.start_time, NEW.end_time);
+IF NOT NEW.color IS NULL THEN
+  UPDATE event SET color = NEW.color WHERE event_id = NEW.event_id;
+END IF;
+
+IF NOT NEW.place_id IS NULL THEN
+  INSERT INTO localizedEvent (event_id, place_id) VALUES (NEW.event_id, NEW.place_id);
+END IF;
+
+RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER beforeCalendarEventInsertTrigger INSTEAD OF INSERT ON CalendarEvent
+FOR EACH ROW
+EXECUTE PROCEDURE beforeCalendarEventInsert();
