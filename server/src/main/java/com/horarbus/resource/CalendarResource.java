@@ -2,12 +2,14 @@ package com.horarbus.resource;
 
 import biweekly.ICalendar;
 import biweekly.component.VEvent;
-
+import com.google.maps.model.TravelMode;
+import com.horarbus.MissingTraject;
 import com.horarbus.auth.AuthData;
 import com.horarbus.handler.CalendarHandler;
 import com.horarbus.handler.UserHandler;
 import com.horarbus.service.CalendarService;
-
+import com.horarbus.service.MapsService;
+import io.opencensus.trace.Tracestate.Entry;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.web.RoutingContext;
@@ -17,7 +19,10 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 @Path("/calendar")
 public class CalendarResource {
@@ -42,40 +47,45 @@ public class CalendarResource {
             return missingIcal();
         }
 
+        CalendarHandler handler = new CalendarHandler(authData.getCip());
         ICalendar ical = CalendarService.parseCalendarFromICal(icalKey);
-        cacheEventData(ical.getEvents(), authData.getCip());
-        return fetchCalendarData().toString();
+        cacheEventData(handler, ical.getEvents());
+        return fetchCalendarData(handler).toString();
     }
 
-    private void cacheEventData(List<VEvent> events, String cip) {
-        CalendarHandler handler = new CalendarHandler();
+    private void cacheEventData(CalendarHandler handler, List<VEvent> events) {
         for (int i = 0; i < events.size(); i++) {
             handler.cacheData(events.get(i));
-            handler.associateEventToUser(events.get(i).getUid().getValue().toString(), cip);
+            handler.associateEventToUser(events.get(i).getUid().getValue().toString());
         }
     }
 
-    private JsonObject fetchCalendarData(){
-        CalendarHandler handler = new CalendarHandler();
+    private JsonObject fetchCalendarData(CalendarHandler handler) {
         JsonArray events = handler.getAllEvents();
+
+        try {
+            Set<MissingTraject> missing = handler.getMissingTrajects();
+            generateMissingTrajects(handler, missing);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+
+        JsonArray trajects = handler.getAllTrajects();
 
         JsonObject eventJson = new JsonObject();
         eventJson.put("events", events);
+        eventJson.put("trajects", trajects);
         return eventJson;
     }
 
-    // private String formatEventData(ICalendar iCal) throws IOException {
-    // List<VEvent> events = iCal.getEvents();
-
-    // JsonObject[] eventsJson = new JsonObject[events.size()];
-    // for (int i = 0; i < events.size(); i++) {
-    // eventsJson[i] = CalendarService.parseEvent(events.get(i));
-    // }
-
-    // JsonObject outputJson = new JsonObject();
-    // outputJson.put("events", eventsJson);
-    // return outputJson.toString();
-    // }
+    private void generateMissingTrajects(CalendarHandler handler, Set<MissingTraject> missing)
+            throws Exception {
+        for (MissingTraject traject : missing) {
+            String itinerary = MapsService.getItinerary(traject.getStartPlaceId(),
+                    traject.getEndPlaceId(), traject.getTravelMode(), traject.getArrivalTime());
+            handler.registerItinerary(traject, itinerary);
+        }
+    }
 
     private String missingIcal() {
         return sendError("No iCal key associated with the current user.");

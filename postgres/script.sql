@@ -42,6 +42,7 @@ CREATE TABLE Preferences
   notification_time INT NOT NULL DEFAULT 15,
   dark_mode CHAR(5) NOT NULL DEFAULT 'FALSE',
   transport_name VARCHAR(12) NOT NULL DEFAULT 'TRANSIT',
+  home_place_id VARCHAR(64) NOT NULL DEFAULT 'ChIJR7e5TUezt0wR89e8h3CL7XI',
   cip CHAR(8) NOT NULL,
   PRIMARY KEY (cip),
   FOREIGN KEY (transport_name) REFERENCES Transport(transport_name),
@@ -94,7 +95,7 @@ INSERT INTO Localisation VALUES ('ChIJywfUkEyzt0wRPYYdc8CzfbU','45.3783275,-71.9
 
 DROP VIEW IF EXISTS StudentData;
 CREATE VIEW StudentData AS
-SELECT student.cip, name, surname, ical_key, preparation_time, notification_time, dark_mode, transport_name
+SELECT student.cip, name, surname, ical_key, preparation_time, notification_time, dark_mode, transport_name, home_place_id
 FROM Student
 LEFT JOIN Preferences ON Preferences.cip = Student.cip;
 
@@ -158,14 +159,14 @@ LEFT JOIN localisation ON localizedEvent.place_id = localisation.place_id;
 
 DROP VIEW IF EXISTS TrajectEvent;
 CREATE VIEW TrajectEvent AS
-SELECT event_id, begin_time AS start_time, traject.end_time, start_place_id, end_place_id, transport_name
-FROM CalendarEvent
-LEFT JOIN Traject ON place_id=start_place_id
-WHERE NOT place_id IS NULL
-UNION ALL
-SELECT event_id, begin_time AS start_time, traject.end_time, start_place_id, end_place_id, transport_name
+SELECT event_id, begin_time AS start_time, traject.end_time, start_place_id, end_place_id, transport_name, TRUE AS arrival
 FROM CalendarEvent
 LEFT JOIN Traject ON place_id=end_place_id
+WHERE NOT place_id IS NULL
+UNION ALL
+SELECT event_id, begin_time AS start_time, traject.end_time, start_place_id, end_place_id, transport_name, FALSE AS arrival
+FROM CalendarEvent
+LEFT JOIN Traject ON place_id=start_place_id
 WHERE NOT place_id IS NULL;
 
 CREATE OR REPLACE FUNCTION beforeCalendarEventInsert() RETURNS TRIGGER AS
@@ -207,8 +208,27 @@ CREATE TRIGGER beforeCalendarEventInsertTrigger INSTEAD OF INSERT ON CalendarEve
 FOR EACH ROW
 EXECUTE PROCEDURE beforeCalendarEventInsert();
 
+DROP VIEW IF EXISTS UserTrajectEvent;
+CREATE VIEW UserTrajectEvent AS
+SELECT student.cip, trajectevent.*
+FROM trajectevent
+JOIN attendance ON attendance.event_id = trajectevent.event_id
+JOIN student ON student.cip = attendance.cip;
+
 DROP VIEW IF EXISTS CalendarAttendance;
 CREATE VIEW CalendarAttendance AS
-SELECT cip, calendarevent.*
+SELECT attendance.cip, calendarevent.*, transport_name AS requestedTransport
 FROM calendarevent
-JOIN attendance ON attendance.event_id = calendarevent.event_id;
+JOIN attendance ON attendance.event_id = calendarevent.event_id
+JOIN studentdata ON studentdata.cip = attendance.cip;
+
+DROP VIEW IF EXISTS MissingTraject;
+CREATE VIEW MissingTraject AS
+SELECT studentdata.cip, calendarattendance.event_id, calendarattendance.start_time, calendarattendance.end_time,
+CASE WHEN arrival IS true THEN home_place_id ELSE place_id END AS startPlace,
+CASE WHEN NOT arrival IS false THEN place_id ELSE home_place_id END AS targetPlace,
+requestedTransport
+FROM usertrajectevent
+JOIN calendarattendance ON calendarattendance.event_id = usertrajectevent.event_id AND (start_place_id IS NULL OR end_place_id IS NULL)
+JOIN studentdata ON studentdata.cip = usertrajectevent.cip
+WHERE NOT place_id IS NULL;
