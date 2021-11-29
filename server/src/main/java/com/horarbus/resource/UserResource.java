@@ -10,9 +10,10 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import com.horarbus.UserPrefs;
 import com.horarbus.auth.AuthData;
-import com.horarbus.handler.UserHandler;
+import com.horarbus.handler.*;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.web.RoutingContext;
+
 
 @Path("/user")
 public class UserResource {
@@ -35,6 +36,27 @@ public class UserResource {
         userData.put("preferences", prefs.toJson());
 
         return userData.toString();
+    }
+
+    @GET
+    @Produces(MediaType.TEXT_HTML)
+    @Path("/events")
+    public String getUserEvents(@Context RoutingContext context) {
+        AuthData authData = context.get("authData");
+
+        UserHandler user = new UserHandler(authData.getCip());
+        if (!user.is_valid()) {
+            return invalidCIP();
+        }
+
+        EventHandler[] events = user.get_events();
+
+        String result = new String();
+        for (EventHandler event : events) {
+            result += event.get_id() + " " + event.get_name() + " : \n";
+        }
+
+        return result;
     }
 
     @PUT

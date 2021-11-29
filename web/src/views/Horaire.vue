@@ -1,6 +1,6 @@
 <template>
   <b-row style="margin-top: 0">
-    <b-col style="padding: 0">
+    <b-col style="padding: 0" @mousemove="setHeight">
       <b-navbar toggleable="md" sticky type="dark" class="navbar">
         <b-navbar-nav class="navbar-menu mx-auto dateZone">
           <button class="caret" @click="prev()">
@@ -37,6 +37,7 @@
             <b-dropdown-item @click="showPref()">
               Mes paramètres
             </b-dropdown-item>
+            <b-dropdown-item @click="showFAQ()"> FAQ </b-dropdown-item>
             <b-dropdown-item @click="logout">Se déconnecter</b-dropdown-item>
           </b-nav-item-dropdown>
         </b-navbar-nav>
@@ -189,6 +190,13 @@
           </b-col>
         </b-row>
         <b-row>
+          <b-col cols="12" class="sectionPref">
+            Changez votre clé Ical
+            <br />
+            <button @click="showIcal" class="icalBtn">ICAL</button>
+          </b-col>
+        </b-row>
+        <b-row>
           <b-col style="display: flex; justify-content: center">
             <b-button variant="dark" class="saveButton" @click="sendPref">
               Enregistrer les informations
@@ -198,108 +206,176 @@
       </b-modal>
 
       <b-modal
-        ref="mapsSetting"
+        ref="Ical"
         hide-footer
         hide-header
         :centered="true"
         body-class="preference"
       >
         <b-row>
-          <b-col cols="10" class="title"> Trajet </b-col>
+          <b-col cols="10" class="title"> Ical </b-col>
           <b-col cols="2" class="zoneClose">
-            <button @click="hideMapsSetting()" class="close">x</button>
+            <button @click="hideIcal()" class="close">x</button>
+          </b-col>
+        </b-row>
+        <b-row>
+          <b-col cols="12" class="sectionPref">
+            Entrez votre nouvelle clé Ical
+          </b-col>
+          <br />
+          <b-col cols="12">
+            <b-form-input
+              v-model="pref.Ical"
+              placeholder="Entrer votre Ical"
+            ></b-form-input>
+          </b-col>
+        </b-row>
+      </b-modal>
+
+      <b-modal
+        ref="faq"
+        hide-footer
+        hide-header
+        :centered="true"
+        body-class="preference"
+      >
+        <b-row>
+          <b-col cols="10" class="title"> Foire aux questions </b-col>
+          <b-col cols="2" class="zoneClose">
+            <button @click="hideFAQ()" class="close">x</button>
           </b-col>
         </b-row>
 
-        <!--Mode de transport-->
         <b-row>
-          <b-col cols="12" class="sectionPref"> Mode de transport </b-col>
-        </b-row>
-        <b-form-group v-slot="{ ariaDescribedby }">
-          <b-form-radio
-            v-model="map.transport"
-            :aria-describedby="ariaDescribedby"
-            name="some-radios"
-            value="WALKING"
-            button
-            class="buttonTransport"
-            ><img :src="require('../assets/walk.png')"
-          /></b-form-radio>
-          <b-form-radio
-            v-model="map.transport"
-            :aria-describedby="ariaDescribedby"
-            name="some-radios"
-            value="BICYCLING"
-            button
-            class="buttonTransport"
-            ><img :src="require('../assets/bike.png')"
-          /></b-form-radio>
-          <b-form-radio
-            v-model="map.transport"
-            :aria-describedby="ariaDescribedby"
-            name="some-radios"
-            value="TRANSIT"
-            button
-            class="buttonTransport"
-            ><img :src="require('../assets/bus.png')"
-          /></b-form-radio>
-          <b-form-radio
-            v-model="map.transport"
-            :aria-describedby="ariaDescribedby"
-            name="some-radios"
-            value="DRIVING"
-            button
-            class="buttonTransport"
-            ><img :src="require('../assets/car.png')"
-          /></b-form-radio>
-        </b-form-group>
-
-        <!--Notification-->
-        <b-row>
-          <b-col cols="12" class="sectionPref">
-            Notifications
-            <b-row style="margin: 0">
-              <b-form-checkbox
-                v-model="map.notification_enable"
-                name="check-button"
-                class="checkboxNotification"
-              >
-              </b-form-checkbox>
-              <b-col>
-                <input
-                  v-model.number="map.temps_avance_notification"
-                  id="timenotif"
-                  :disabled="!map.notification_enable"
-                  type="number"
-                  class="tempsSelect"
-                />
-              </b-col>
-            </b-row>
-            <div style="font-size: 12px">
-              Entrer le temps avant le départ pour recevoir une notification.
-            </div>
+          <b-col
+            cols="12"
+            @click="question1 = !question1"
+            class="titreTexteFAQ"
+          >
+            <strong>HorarBus &#x3a; qu’est-ce que c’est?</strong>
           </b-col>
-        </b-row>
+          <br />
+          <b-col cols="12" class="texteFAQ" v-if="question1">
+            HorarBus est une application construite pour la communauté étudiante
+            de l’Université de Sherbrooke en génie et a comme mission de faire
+            sauver du temps aux étudiants en prévoyant pour eux leurs
+            déplacements. L’application affiche principalement un calendrier qui
+            comprend l’horaire de l’usager ainsi que ces déplacements. HorarBus
+            ajoute automatiquement toutes les plages horaires nécessaires pour
+            le transport en se basant sur l’emplacement de l’évènement,
+            l’adresse au domicile de l’étudiant et le type de transport par
+            défaut. Plusieurs paramètres peuvent être ajustés pour convenir à
+            tous les étudiants. Pour être certain que l’usager ne manque aucun
+            cours, il est possible de paramétrer une notification qui
+            l’empêcherait de passer tout droit.
+          </b-col>
 
-        <!--Temps d'avance minimum-->
-        <b-row>
-          <b-col cols="12" class="sectionPref">
-            Temps d'avance désirer
+          <br /><br />
+          <b-col
+            cols="12"
+            @click="question2 = !question2"
+            class="titreTexteFAQ"
+          >
+            <strong
+              >Sur quel type d’appareil peut-on utiliser l’application?</strong
+            >
             <br />
-            <input
-              v-model.number="map.temps_avance"
-              type="number"
-              class="tempsSelect"
-            />
           </b-col>
-        </b-row>
+          <br />
+          <b-col cols="12" class="texteFAQ" v-if="question2">
+            HorarBus sur site web est accessible sur tous les appareils, que ce
+            soit sur ordinateur Windows, MacOS et Linux, ainsi que sur téléphone
+            Android et Apple. Par contre, l’application pour téléphone est
+            seulement accessible sur Android.
+          </b-col>
 
-        <b-row>
-          <b-col style="display: flex; justify-content: center">
-            <b-button variant="dark" class="saveButton" @click="sendMaps">
-              Enregistrer les informations
-            </b-button>
+          <br /><br />
+          <b-col
+            cols="12"
+            @click="question3 = !question3"
+            class="titreTexteFAQ"
+          >
+            <strong>Quel calendrier apparait dans HorarBus?</strong> <br />
           </b-col>
+          <br />
+          <b-col cols="12" class="texteFAQ" v-if="question3">
+            Vous verrez apparaitre dans HorarBus l'horaire à laquelle votre clé
+            iCal correspond. Tous les évènements de votre calendrier qui sont
+            reliés à votre clé iCal seront affichés. Par contre, il n’est pas
+            possible d’inclure d’autre calendrier. Vous pouvez fournir seulement
+            une clé iCal.
+          </b-col>
+
+          <!--tuto clé ical-->
+          <br /><br />
+          <b-col
+            cols="12"
+            @click="question4 = !question4"
+            class="titreTexteFAQ"
+          >
+            <strong>Où trouver ma clé iCal?</strong> <br />
+          </b-col>
+          <br />
+          <b-col cols="12" class="texteFAQ" v-if="question4">
+            Rendez-vous sur Horarius, puis cliquez sur l’icône iCal qui est à
+            gauche de votre nom. L'image suivante représente l'icône sur
+            laquelle vous devez cliquer. <br />
+          </b-col>
+          <b-col cols="12" class="text-center" v-if="question4">
+            <img :src="require('../assets/icone-ical.png')" />
+          </b-col>
+          <b-col cols="12" class="texteFAQ" v-if="question4">
+            Vous devriez voir apparaitre une fenêtre contenant votre clé iCal
+            (voir l'image qui suit). Vous pouvez simplement appuyer sur le
+            bouton “COPIER” et nous fournir le résultat.
+          </b-col>
+          <b-col cols="12" class="text-center" v-if="question4">
+            <img :src="require('../assets/cle-ical.png')" class="text-center" />
+          </b-col>
+
+          <br /><br />
+          <b-col
+            cols="12"
+            @click="question5 = !question5"
+            class="titreTexteFAQ"
+          >
+            <strong>Puis-je modifier mes préférences?</strong> <br />
+          </b-col>
+          <br />
+          <b-col cols="12" class="texteFAQ" v-if="question5">
+            Il est possible que chaque utilisateur ait ses propres préférences.
+            Pour les modifier, il faut simplement cliquer sur votre nom, puis
+            sur "Mes préférences". Une fois que vous avez fini de modifier vos
+            préférences, il faut absolument peser sur le bouton "Enregistrer les
+            informations", sinon vous perdrez votre sélection.<br /><br />
+            <strong>
+              Puis-je modifier le moyen de transport pour un évènement en
+              particulier? </strong
+            ><br />
+            Oui, même si vous avez un mode de transport par défaut, il est
+            possible de modifier le mode de transport individuel de chaque
+            évènement. <br /><br />
+            <strong> À quoi servent les notifications </strong><br />
+            Les notifications peuvent se faire entendre quelques minutes avant
+            votre départ pour s’assurer que vous ne passiez pas tout droit.
+            C’est une des grandes forces de l’application HorarBus. Même si vous
+            avez complètement oublié un évènement, HorarBus vous le rappellera,
+            mais surtout, il vous permettra de ne pas arriver en retard. Il est
+            également possible de choisir combien de temps d’avance vous
+            souhaitez recevoir les notifications.<br /><br />
+            <strong> Que signifie avance minimum? </strong><br />
+            Ce paramètre sert à décider combien de temps d’avance vous voulez
+            arriver à vos évènements. Par défaut, il est fixé à 0 minute. En
+            fonction de ce paramètre, HorarBus vous fera partir plus ou moins
+            tôt.<br /><br />
+            <strong> Pourquoi me demande-t-on mon adresse au domicile? </strong
+            ><br />
+            Vous avez l’opportunité de mettre votre adresse au domicile, ou non.
+            Si jamais vous décidez de la mettre, HorarBus s’en servira pour
+            prévoir votre retour à la maison à la fin de vos évènements.
+          </b-col>
+
+          <b-col></b-col>
         </b-row>
       </b-modal>
 
@@ -310,10 +386,26 @@
         :centered="true"
         body-class="maps"
         dialog-class="modal-maps"
-        style="padding-right:0"
+        style="padding-right: 0"
       >
         <b-row>
-          <b-col cols="10" class="title"> Maps </b-col>
+          <b-col cols="2" class="title"> Maps </b-col>
+          <b-col cols="8" class="title" style="text-align: center"
+            ><a
+              class="link"
+              :href="
+                'http://maps.google.ca/maps?daddr=' +
+                trajetActif.trajet.addresseDestinataire +
+                '&saddr=' +
+                trajetActif.trajet.addresseInitial +
+                '&dirflg=' +
+                trajetActif.trajet.transport +
+                '&amp;ll='
+              "
+              target="_blank"
+              >Ouvrir Google Maps</a
+            ></b-col
+          >
           <b-col cols="2" class="zoneClose">
             <button @click="hideMaps()" class="close">x</button>
           </b-col>
@@ -370,13 +462,10 @@
         :type="type"
         class="calendar"
       >
-        <template
-          v-slot:event="{ event }"
-          :style="{ backgroundColor: event.color }"
-        >
+        <template v-slot:event="{ event }">
           <div
             class="event"
-            @mouseenter="setHeight(event.id)"
+            @mouseenter="setHeight"
             v-click-outside="dismissEvent"
             v-if="!event.trajet"
             :id="event.id"
@@ -385,7 +474,7 @@
           >
             {{ event.heure }}
             <br />
-            <a style="font-weight: 700">{{ event.summary }}</a>
+            {{ event.summary }}
             <br />
             {{ event.location }}
 
@@ -408,19 +497,19 @@
           <div
             class="event"
             v-click-outside="dismissEvent"
-            @mouseenter="setHeight(event.id)"
+            @mouseenter="setHeight"
             :id="event.id"
             v-else
             v-on:click="showEvent"
             @click="openEvent(event)"
           >
             {{ event.heureDepart }} -
-            <a style="font-weight: 700">{{ event.summary }}</a>
+            {{ event.summary }}
             <button class="editButton" @click="showMapsSetting">
               <b-icon-pencil></b-icon-pencil>
             </button>
             <br />
-            
+
             <div v-if="event.open">
               <div v-if="event.heureArrive">
                 Arrivé prévue à {{ event.heureArrive }}
@@ -438,6 +527,108 @@
               <div class="centerBorder"></div>
               <a @click="showMaps" class="link">voir la carte</a>
             </div>
+            <b-modal ref="mapsSetting" hide-footer hide-header :centered="true">
+              <b-row>
+                <b-col cols="10" class="titleTrajet"> Trajet </b-col>
+                <b-col cols="2" class="zoneClose">
+                  <button @click="hideMapsSetting()" class="closeTrajet">
+                    x
+                  </button>
+                </b-col>
+              </b-row>
+
+              <b-row>
+                <b-col cols="12" class="sectionPref"> Mode de transport </b-col>
+              </b-row>
+              <b-form-group v-slot="{ ariaDescribedby }">
+                <b-form-radio
+                  v-model="event.trajet.transport"
+                  :aria-describedby="ariaDescribedby"
+                  name="some-radios"
+                  value="WALKING"
+                  button
+                  class="buttonTransport"
+                  ><img :src="require('../assets/walk.png')"
+                /></b-form-radio>
+                <b-form-radio
+                  v-model="event.trajet.transport"
+                  :aria-describedby="ariaDescribedby"
+                  name="some-radios"
+                  value="BICYCLING"
+                  button
+                  class="buttonTransport"
+                  ><img :src="require('../assets/bike.png')"
+                /></b-form-radio>
+                <b-form-radio
+                  v-model="event.trajet.transport"
+                  :aria-describedby="ariaDescribedby"
+                  name="some-radios"
+                  value="TRANSIT"
+                  button
+                  class="buttonTransport"
+                  ><img :src="require('../assets/bus.png')"
+                /></b-form-radio>
+                <b-form-radio
+                  v-model="event.trajet.transport"
+                  :aria-describedby="ariaDescribedby"
+                  name="some-radios"
+                  value="DRIVING"
+                  button
+                  class="buttonTransport"
+                  ><img :src="require('../assets/car.png')"
+                /></b-form-radio>
+              </b-form-group>
+
+              <!-- <b-row>
+                <b-col cols="12" class="sectionPref">
+                  Notifications
+                  <b-row style="margin: 0">
+                    <b-form-checkbox
+                      v-model="event.trajet.notification_enable"
+                      name="check-button"
+                      class="checkboxNotification"
+                    >
+                    </b-form-checkbox>
+                    <b-col>
+                      <input
+                        v-model.number="event.trajet.temps_avance_notification"
+                        id="timenotif"
+                        :disabled="!event.trajet.notification_enable"
+                        type="number"
+                        class="tempsSelectTrajet"
+                      />
+                    </b-col>
+                  </b-row>
+                  <div style="font-size: 12px">
+                    Entrer le temps avant le départ pour recevoir une notification.
+                  </div>
+                </b-col>
+              </b-row> -->
+
+              <b-row>
+                <b-col cols="12" class="sectionPref">
+                  Temps d'avance désirer
+                  <br />
+                  <input
+                    v-model.number="event.trajet.temps_avance"
+                    type="number"
+                    class="tempsSelectTrajet"
+                  />
+                </b-col>
+              </b-row>
+
+              <b-row>
+                <b-col style="display: flex; justify-content: center">
+                  <b-button
+                    variant="dark"
+                    class="saveTrajet"
+                    @click="sendMaps(event)"
+                  >
+                    Enregistrer les informations
+                  </b-button>
+                </b-col>
+              </b-row>
+            </b-modal>
           </div>
         </template>
         <template v-slot:day-body="{ date, week }">
@@ -448,7 +639,11 @@
           ></div>
         </template>
       </v-calendar>
-      <div class="calendar-mobile" v-touch:swipe.left="next" v-touch:swipe.right="prev">
+      <div
+        class="calendar-mobile"
+        v-touch:swipe.left="next"
+        v-touch:swipe.right="prev"
+      >
         <Fullcalendar ref="fullCalendar" :options="calendarOptions" />
       </div>
     </b-col>
@@ -471,29 +666,66 @@ export default {
   },
 
   data: () => ({
+    question1: false,
+    question2: false,
+    question3: false,
+    question4: false,
+    question5: false,
+    question6: false,
     pref: {
       adresse_maison: "",
       temps_avance: 0,
       transport: "TRANSIT",
       notification_enable: false,
       temps_avance_notification: 0,
+      Ical: null,
     },
-    map: {
-      temps_avance: 0,
-      transport: "TRANSIT",
-      notification_enable: false,
-      temps_avance_notification: 0,
+    trajetActif: {
+      trajet: {
+        addresseDestinataire: "pub le willard",
+        addresseInitial: "universite de sherbrooke",
+        transport: "r",
+      },
     },
     position: "",
     today: new Date(),
     value: new Date(),
     type: "week",
     initialHeight: "",
-    eventActive: "",
+    eventActive: undefined,
     calendarOptions: {
       plugins: [InteractionPlugin, ListPlugin],
       initialView: "listWeek",
       locales: allLocales,
+      eventClick: function (info) {
+        if (info.event.extendedProps.trajet) {
+          if (
+            navigator.platform.indexOf("iPhone") != -1 ||
+            navigator.platform.indexOf("iPod") != -1 ||
+            navigator.platform.indexOf("iPad") != -1
+          ) {
+            window.open(
+              "maps://maps.google.ca/maps?daddr=" +
+                info.event.extendedProps.trajet.addresseDestinataire +
+                "&saddr=" +
+                info.event.extendedProps.trajet.addresseInitial +
+                "&dirflg=" +
+                info.event.extendedProps.trajet.transport +
+                "&amp;ll="
+            );
+          } else {
+            window.open(
+              "http://maps.google.ca/maps?daddr=" +
+                info.event.extendedProps.trajet.addresseDestinataire +
+                "&saddr=" +
+                info.event.extendedProps.trajet.addresseInitial +
+                "&dirflg=" +
+                info.event.extendedProps.trajet.transport +
+                "&amp;ll="
+            );
+          }
+        }
+      },
       eventDidMount: function (arg) {
         let p = document.createElement("p");
         if (arg.event.extendedProps.description3) {
@@ -562,27 +794,34 @@ export default {
           location: "C1-5014",
         },
         {
-        id: 2,
-        start: "2021-11-04 13:00",
-        end: "2021-11-04 13:30",
-        summary:
-          "Départ UdeS,Terminus intersection Blvd - Rue,Autobus #69,Arrive dans 420s".split(
-            ","
-          )[0],
-        description1:
-          "Départ UdeS,Terminus intersection Blvd - Rue,Autobus #69".split(
-            ","
-          )[1],
-        description2:
-          "Départ UdeS,Terminus intersection Blvd - Rue,Autobus #69".split(
-            ","
-          )[2],
-        color: "orange",
-        heureDepart: "2021-11-04 13:00".split(" ")[1],
-        heureArrive: "2021-11-04 14:00".split(" ")[1],
-        open: false,
-        trajet: true,
-      },
+          id: 2,
+          start: "2021-11-04 13:00",
+          end: "2021-11-04 13:30",
+          summary:
+            "Départ UdeS,Terminus intersection Blvd - Rue,Autobus #69,Arrive dans 420s".split(
+              ","
+            )[0],
+          description1:
+            "Départ UdeS,Terminus intersection Blvd - Rue,Autobus #69".split(
+              ","
+            )[1],
+          description2:
+            "Départ UdeS,Terminus intersection Blvd - Rue,Autobus #69".split(
+              ","
+            )[2],
+          color: "orange",
+          heureDepart: "2021-11-04 13:00".split(" ")[1],
+          heureArrive: "2021-11-04 14:00".split(" ")[1],
+          open: false,
+          trajet: {
+            temps_avance: 0,
+            transport: "r",
+            notification_enable: false,
+            temps_avance_notification: 0,
+            addresseDestinataire: "pub le willard",
+            addresseInitial: "universite de sherbrooke",
+          },
+        },
       ],
       eventColor: "#1867c0",
     },
@@ -662,7 +901,14 @@ export default {
         heureDepart: "2021-11-04 13:00".split(" ")[1],
         heureArrive: "2021-11-04 14:00".split(" ")[1],
         open: false,
-        trajet: true,
+        trajet: {
+          transport: "r",
+          temps_avance: 0,
+          notification_enable: false,
+          temps_avance_notification: 0,
+          addresseDestinataire: "pub le willard",
+          addresseInitial: "universite de sherbrooke",
+        },
       },
     ],
     days: [
@@ -675,7 +921,7 @@ export default {
       "Samedi",
     ],
   }),
-  updated(){
+  updated() {
     this.switchTheme();
   },
   mounted() {
@@ -708,11 +954,14 @@ export default {
       this.getEvents();
     },
     eventsState() {
+      if (!this.eventsState) {
+        this.showIcal();
+      }
       for (let i in this.eventsState) {
         this.eventsState[i].open = false;
         let now = new Date();
         var offset = now.getTimezoneOffset() / 60;
-        let start = new Date(this.eventsState[i].start)
+        let start = new Date(this.eventsState[i].start);
         start.setHours(start.getHours() - offset);
         start = start.toISOString();
         this.eventsState[i].start = start;
@@ -724,19 +973,37 @@ export default {
       this.events = this.eventsState;
       this.calendarOptions.events = this.eventsState;
       for (let i in this.eventsState) {
+        if (this.calendarOptions.events.trajet) {
+          switch (this.calendarOptions.events.trajet.transport) {
+            case "TRANSIT":
+              this.calendarOptions.events.trajet.transport = "r";
+              break;
+            case "WALKING":
+              this.calendarOptions.events.trajet.transport = "w";
+              break;
+            case "BICYCLING":
+              this.calendarOptions.events.trajet.transport = "b";
+              break;
+            case "DRIVING":
+              this.calendarOptions.events.trajet.transport = "d";
+              break;
+            default:
+              break;
+          }
+        }
         this.events[i].start =
-          this.eventsState[i].start.split("T")[0] + 
+          this.eventsState[i].start.split("T")[0] +
           " " +
           this.eventsState[i].start.split("T")[1].split(":")[0] +
           ":" +
           this.eventsState[i].start.split("T")[1].split(":")[1];
         this.events[i].end =
-          this.eventsState[i].end.split("T")[0] + 
+          this.eventsState[i].end.split("T")[0] +
           " " +
           this.eventsState[i].end.split("T")[1].split(":")[0] +
           ":" +
           this.eventsState[i].end.split("T")[1].split(":")[1];
-        
+
         this.events[i].heure =
           this.events[i].start.split(" ")[1] +
           " - " +
@@ -773,6 +1040,7 @@ export default {
       this.pref.temps_avance_notification = this.prefState.notification.time;
       this.pref.notification_enable = this.prefState.notification.enabled;
       this.pref.adresse_maison = this.prefState.local_address;
+      this.pref.Ical = this.prefState.Ical;
       this.darkMode = this.prefState.dark_mode;
     },
     value() {
@@ -798,7 +1066,7 @@ export default {
     },
   },
   methods: {
-    ...mapActions(["putUser", "putPref", "getEvents","setGeo","getUser"]),
+    ...mapActions(["putUser", "getEvents", "setGeo", "getUser"]),
     sendPref() {
       let pref = {
         preparation_time: "",
@@ -808,10 +1076,12 @@ export default {
           enabled: "",
         },
         dark_mode: "",
+        Ical: null,
       };
       pref.preparation_time = this.pref.temps_avance;
       pref.transport = this.pref.transport;
       pref.local_address = this.pref.adresse_maison;
+      pref.Ical = this.pref.Ical;
       pref.notification = {
         time: this.pref.temps_avance_notification,
         enabled: this.pref.notification_enable,
@@ -820,21 +1090,21 @@ export default {
       this.putUser(pref);
       this.hidePref();
     },
-    sendMaps() {
+    sendMaps(event) {
       let map = {
         preparation_time: "",
         transport: "",
-        notification: {
-          time: "",
-          enabled: "",
-        },
+        // notification: {
+        //   time: "",
+        //   enabled: "",
+        // },
       };
-      map.preparation_time = this.map.temps_avance;
-      map.transport = this.map.transport;
-      map.notification = {
-        time: this.map.temps_avance_notification,
-        enabled: this.map.notification_enable,
-      };
+      map.preparation_time = event.trajet.temps_avance;
+      map.transport = event.trajet.transport;
+      // map.notification = {
+      //   time: event.trajet.temps_avance_notification,
+      //   enabled: event.trajet.notification_enable,
+      // };
       console.log(map);
       //this.putMaps(pref);
       this.hideMaps();
@@ -853,12 +1123,30 @@ export default {
     },
     showMaps() {
       this.$refs["maps"].show();
+      for (let i in this.events) {
+        this.events[i].open = false;
+      }
+    },
+    showIcal() {
+      this.$refs["Ical"].show();
+    },
+    hideIcal() {
+      this.$refs["Ical"].hide();
+    },
+    showFAQ() {
+      this.$refs["faq"].show();
+    },
+    hideFAQ() {
+      this.$refs["faq"].hide();
     },
     hideMaps() {
       this.$refs["maps"].hide();
     },
     showMapsSetting() {
       this.$refs["mapsSetting"].show();
+      for (let i in this.events) {
+        this.events[i].open = false;
+      }
     },
     hideMapsSetting() {
       this.$refs["mapsSetting"].hide();
@@ -959,65 +1247,62 @@ export default {
         document.getElementsByTagName("footer")[0].style.color = "#000000";
       }
     },
-    openEvent(event){
-      event.open= true;
+    openEvent(event) {
+      event.open = true;
+      this.trajetActif = event;
+      switch (event.trajet.transport) {
+        case "TRANSIT":
+          this.trajetActif.trajet.transport = "r";
+          break;
+        case "WALKING":
+          this.trajetActif.trajet.transport = "w";
+          break;
+        case "BICYCLING":
+          this.trajetActif.trajet.transport = "b";
+          break;
+        case "DRIVING":
+          this.trajetActif.trajet.transport = "d";
+          break;
+        default:
+          break;
+      }
     },
     showEvent(event) {
-      event.target.style.height = "fit-content";
-      if(event.path){
-        event.path[1].style.zIndex = "1000";
-      }
-      if(event.target.offsetParent){
-        event.target.offsetParent.style.zIndex = "1000";
-      }
-      event.target.style.zIndex = "1000";
-      if (this.eventActive.event === undefined) {
-        if(event.path){
-          this.initialHeight = event.path[1].style.height;
-        }
-        if(event.target.offsetParent){
-          this.initialHeight = event.target.offsetParent.style.height;
-        }
-        
-      }
-      this.eventActive = event;
-      if(event.path){
-        event.path[1].style.height = "fit-content";
-      }
-      if(event.target.offsetParent){
-        event.target.offsetParent.style.height = "fit-content";
-      }
-      if (this.eventActive === event) {
-        document.body.addEventListener(
-          "click",
-          event.target.clickOutsideEvent
-        );
-      } else {
+      if (this.eventActive && this.eventActive !== event) {
         this.dismissEvent();
       }
+      event.target.style.height = "fit-content";
+      event.target.offsetParent.style.zIndex = "1000";
+      event.target.style.zIndex = "1000";
+      if (this.eventActive === undefined) {
+        this.initialHeight = event.target.offsetParent.style.height;
+      }
+      this.eventActive = event;
+      document.body.addEventListener("click", event.target.clickOutsideEvent);
+      event.target.offsetParent.style.height = "fit-content";
     },
     dismissEvent() {
-      for(let i in this.events){
+      for (let i in this.events) {
         this.events[i].open = false;
       }
-      //this.eventActive.event.open = false;
-      if(this.eventActive.path){
-        this.eventActive.path[1].style.zIndex = "0";
-        this.eventActive.path[1].style.height = this.initialHeight;
-      }
-      if(this.eventActive.target.offsetParent){
-        this.eventActive.target.offsetParent.style.zIndex = "0";
-        this.eventActive.target.offsetParent.style.height = this.initialHeight;
-      }
+      this.eventActive.target.offsetParent.style.zIndex = "0";
+      this.eventActive.target.style.zIndex = "0";
+      this.eventActive.target.offsetParent.style.height = this.initialHeight;
       document.body.removeEventListener(
         "click",
         this.eventActive.target.clickOutsideEvent
       );
-      this.eventActive = "";
+      this.eventActive = undefined;
     },
-    setHeight(id) {
-      document.getElementById(id).style.height =
-        document.getElementById(id).parentElement.style.height;
+    setHeight() {
+      for (let i in this.events) {
+        if (document.getElementById(this.events[i].id)) {
+          document.getElementById(this.events[i].id).style.height =
+            document.getElementById(
+              this.events[i].id
+            ).parentElement.style.height;
+        }
+      }
     },
     setToday() {
       const now = new Date();
@@ -1085,7 +1370,7 @@ export default {
 </script>
 
 <style scoped>
-.logo{
+.logo {
   height: 56px !important;
 }
 .saveButton {
@@ -1098,15 +1383,9 @@ export default {
   border-radius: 10px;
   font-weight: bold;
 }
-.editButton {
-  border-radius: 100%;
-  background-color: #ffbf5f;
-  width: 20px;
-  height: 20px;
-  float: right;
-}
+
 .saveButton:hover {
-  background: transparent;
+  background: #222222;
   color: #ffffff;
   border: 1px solid #ffffff;
 }
@@ -1139,8 +1418,8 @@ export default {
   background: transparent !important;
 }
 .tempsSelect:disabled {
-  background: #3d3a3a !important;
-  color: #c0c0c0 !important;
+  background: #b6b6b6 !important;
+  color: #424242 !important;
   border-bottom: 1px solid rgba(255, 255, 255, 0.3) !important;
 }
 .tempsSelect:focus-within {
@@ -1151,10 +1430,37 @@ export default {
   box-shadow: none !important;
   border-bottom: 1px solid rgba(255, 255, 255, 1) !important;
 }
+.saveTrajet {
+  font-size: 16px;
+  text-align: center;
+  color: #ffffff;
+  height: 100%;
+  background: #222222;
+  border: 1px solid #ffffff;
+  border-radius: 10px;
+  font-weight: bold;
+}
+.saveTrajet:hover {
+  background: #ffffff;
+  color: #222222;
+  border: 1px solid #222222;
+}
+.editButton {
+  border-radius: 100% !important;
+  background-color: #ffbf5f !important;
+  width: 20px !important;
+  height: 20px !important;
+  float: right !important;
+}
 .buttonTransport:first-child {
   margin-left: 0px;
 }
-
+/deep/.theme--light .v-present {
+  background-color: #c2c2c2;
+}
+/deep/.theme--dark .v-present {
+  background-color: #525252;
+}
 /deep/.v-calendar .v-event-timed:hover {
   opacity: 0.95;
 }
@@ -1173,11 +1479,21 @@ export default {
   position: absolute;
   overflow: unset;
 }
+.icalBtn {
+  border: 1px solid #ffffff;
+  padding: 5px;
+}
+.icalBtn:hover {
+  border: 1px solid #222222;
+  background-color: #ffffff;
+  color: #222222;
+}
 /deep/.v-calendar-daily__scroll-area {
   overflow: unset;
 }
 .event {
   font-weight: 300;
+  font-size: 13px;
   text-align: left;
   padding: 1px;
   border-radius: 5px;
@@ -1213,7 +1529,7 @@ export default {
   margin-left: -6.5px;
 }
 
-.link{
+.link {
   color: inherit;
 }
 
@@ -1236,6 +1552,41 @@ export default {
   justify-content: flex-end;
   width: 186.2px;
 }
+.closeTrajet {
+  vertical-align: middle;
+  font-size: 30px !important;
+  color: #222222;
+  border: none;
+  background: transparent;
+  text-align: center;
+  float: right;
+}
+.tempsSelectTrajet {
+  color: #222222 !important;
+  width: 80% !important;
+  border-bottom: 1px solid rgba(34, 34, 34, 0.7) !important;
+  height: 30px !important;
+  background: transparent !important;
+}
+
+.tempsSelectTrajet:disabled {
+  background: #cacaca !important;
+  color: #8b8b8b !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.3) !important;
+}
+.tempsSelectTrajet:focus-within {
+  background: transparent !important;
+  border-bottom: 1px solid rgba(34, 34, 34, 1) !important;
+}
+.tempsSelectTrajet:focus {
+  box-shadow: none !important;
+  border-bottom: 1px solid rgba(34, 34, 34, 1) !important;
+}
+.titleTrajet {
+  font-size: 25px;
+  color: #222222;
+  font-weight: bold;
+}
 /deep/.dropdown-menu {
   background-color: #1867c0 !important;
   color: #ffffff !important;
@@ -1255,6 +1606,20 @@ export default {
 .date:hover {
   text-decoration: none;
   color: #ffffff !important;
+}
+.texteFAQ {
+  font-size: 15px;
+  color: #ffffff;
+  text-align: justify;
+}
+.titreTexteFAQ {
+  font-size: 20px;
+  color: #ffffff;
+}
+.text-center {
+  text-align: center;
+  height: auto;
+  width: 350px;
 }
 .horarbus {
   display: flex;
@@ -1320,6 +1685,7 @@ nav {
 .zoneClose {
   vertical-align: middle;
   margin-top: 5px;
+  float: right;
 }
 .close {
   vertical-align: middle;
@@ -1334,11 +1700,11 @@ nav {
   border-radius: 11px;
   color: #ffffff;
 }
-/deep/.modal{
+/deep/.modal {
   padding-right: 0px !important;
 }
 
-/deep/.modal-open .modal{
+/deep/.modal-open .modal {
   overflow-y: unset !important;
 }
 /deep/.maps {
@@ -1446,7 +1812,7 @@ nav {
 /deep/.modal-left {
   margin-left: 0px;
 }
-/deep/.modal-maps  {
+/deep/.modal-maps {
   width: 100%;
   max-width: none;
 }

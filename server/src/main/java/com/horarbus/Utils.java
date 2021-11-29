@@ -19,4 +19,25 @@ public class Utils {
             return 0;
         }
     }
+
+    public static String sanitizeTransport(String transport) {
+        if (transport == null || transport.equals("")) {
+            System.out.println("Invalid transport method");
+            return null;
+        }
+
+        transport = transport.toUpperCase();
+
+        if (transport.equals("BUS")) {
+            transport = "TRANSIT";
+        }
+
+        if (transport.equals("DRIVING") || transport.equals("WALKING")
+                || transport.equals("TRANSIT") || transport.equals("BICYCLING")) {
+            return transport;
+        } else {
+            System.out.println("Invalid transport method: " + transport);
+            return null;
+        }
+    }
 }

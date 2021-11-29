@@ -1,5 +1,7 @@
 package com.horarbus.handler;
 
+import com.horarbus.Utils;
+
 public class UserHandler {
     private static final int DEFAULT_PREPARATION_TIME = 15;
     private static final int DEFAULT_NOTIFICATION_TIME = 15;
@@ -26,10 +28,12 @@ public class UserHandler {
         this.cip = cip;
         pgh = new PostgresHandler();
 
-        pgh.insert_row("Student", new String[] {"cip", "name", "surname"},
-                       new PostgresValue[]{new PostgresValue(cip),
-                                           new PostgresValue(nom),
-                                           new PostgresValue(prenom)});
+        if (select_column("cip") == "") {
+            pgh.insert_row("Student", new String[] {"cip", "name", "surname"},
+                        new PostgresValue[]{new PostgresValue(cip),
+                                            new PostgresValue(nom),
+                                            new PostgresValue(prenom)});
+        }
     }
 
     private boolean validate_cip(String cip) {
@@ -60,9 +64,10 @@ public class UserHandler {
     }
 
     private String select_column(String column) {
-        return pgh.select_column(column, "Student",
-                                 new String[]{"cip"},
-                                 new PostgresValue[]{new PostgresValue(cip)});
+        String[] result = pgh.select_column(column, "Student",
+                                            new String[]{"cip"},
+                                            new PostgresValue[]{new PostgresValue(cip)});
+        return result == null ? "" : result[0];
     }
 
     private void update_column(String column, String value) {
@@ -79,6 +84,18 @@ public class UserHandler {
 
     public String get_cip() {
         return cip;
+    }
+
+    public EventHandler[] get_events() {
+        String[] event_ids = pgh.select_column("event_id", "Attendance",
+                                               new String[]{"cip"},
+                                               new PostgresValue[]{new PostgresValue(cip)});
+        
+        EventHandler[] events = new EventHandler[event_ids.length];
+        for (int i = 0; i < event_ids.length; i++) {
+            events[i] = new EventHandler(Integer.parseInt(event_ids[i]));
+        }
+        return events;
     }
 
     public String get_ical_key() {
