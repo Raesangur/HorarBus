@@ -1307,7 +1307,10 @@ export default {
   background-color: #021a36;
   /*!important;*/
 }
-/deep/.v-present{
+/deep/.theme--light .v-present{
+  background-color: #c2c2c2;
+}
+/deep/.theme--dark .v-present{
   background-color: #525252;
 }
 .buttonTransport {
