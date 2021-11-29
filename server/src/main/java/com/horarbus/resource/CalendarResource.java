@@ -1,12 +1,14 @@
 package com.horarbus.resource;
 
-import biweekly.Biweekly;
 import biweekly.ICalendar;
 import biweekly.component.VEvent;
-import biweekly.property.Location;
+import com.horarbus.MissingTraject;
 import com.horarbus.auth.AuthData;
-
+import com.horarbus.handler.CalendarHandler;
 import com.horarbus.handler.UserHandler;
+import com.horarbus.service.CalendarService;
+import com.horarbus.service.MapsService;
+import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.web.RoutingContext;
 
@@ -15,26 +17,11 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
 import java.io.IOException;
-import java.net.URL;
 import java.util.List;
-import java.util.Scanner;
+import java.util.Set;
 
 @Path("/calendar")
 public class CalendarResource {
-
-    // Get the ical file
-    // https://stackoverflow.com/a/13632114
-    private ICalendar generateICal(String ical_url) {
-        try {
-            Scanner scanner = new Scanner(new URL(ical_url).openStream(), "UTF-8");
-            String raw = scanner.useDelimiter("\\A").next();
-            scanner.close();
-
-            return Biweekly.parse(raw).first();
-        } catch (IOException ex) {
-            return new ICalendar();
-        }
-    }
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
@@ -44,7 +31,11 @@ public class CalendarResource {
         UserHandler user = new UserHandler(authData.getCip());
 
         if (!user.is_valid()) {
-            return invalidCIP();
+            user = new UserHandler(authData.getCip(), authData.getLastname(),
+                    authData.getFirstname());
+            if (!user.is_valid()) {
+                return invalidCIP();
+            }
         }
 
         String icalKey = user.get_ical_key();
@@ -52,38 +43,45 @@ public class CalendarResource {
             return missingIcal();
         }
 
-        ICalendar ical = generateICal(icalKey);
-        return formatEventData(ical);
+        CalendarHandler handler = new CalendarHandler(authData.getCip());
+        ICalendar ical = CalendarService.parseCalendarFromICal(icalKey);
+        cacheEventData(handler, ical.getEvents());
+        return fetchCalendarData(handler).toString();
     }
 
-    private String formatEventData(ICalendar iCal) throws IOException {
-        List<VEvent> events = iCal.getEvents();
-
-        JsonObject[] eventsJson = new JsonObject[events.size()];
+    private void cacheEventData(CalendarHandler handler, List<VEvent> events) {
         for (int i = 0; i < events.size(); i++) {
-            eventsJson[i] = parseEvent(events.get(i));
+            handler.cacheData(events.get(i));
+            handler.associateEventToUser(events.get(i).getUid().getValue().toString());
         }
-
-        JsonObject outputJson = new JsonObject();
-        outputJson.put("events", eventsJson);
-        return outputJson.toString();
     }
 
-    private JsonObject parseEvent(VEvent event) {
-        JsonObject json = new JsonObject();
+    private JsonObject fetchCalendarData(CalendarHandler handler) {
+        JsonObject eventJson = new JsonObject();
+        JsonArray events = handler.getAllEvents();
+        eventJson.put("events", events);
 
-        json.put("description", event.getDescription().getValue());
-        json.put("summary", event.getSummary().getValue());
-        json.put("start", event.getDateStart().getValue());
-        json.put("end", event.getDateEnd().getValue());
-        json.put("color", event.getColor().getValue());
-
-        Location location = event.getLocation();
-        if (location != null) {
-            json.put("location", location.getValue());
+        try {
+            Set<MissingTraject> missing = handler.getMissingTrajects();
+            generateMissingTrajects(handler, missing);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            eventJson.put("trajects", new JsonArray());
         }
 
-        return json;
+        JsonArray trajects = handler.getAllTrajects();
+        eventJson.put("trajects", trajects);
+
+        return eventJson;
+    }
+
+    private void generateMissingTrajects(CalendarHandler handler, Set<MissingTraject> missing)
+            throws Exception {
+        for (MissingTraject traject : missing) {
+            String itinerary = MapsService.getItinerary(traject.getStartPlaceId(),
+                    traject.getEndPlaceId(), traject.getTravelMode(), traject.getArrivalTime());
+            handler.registerItinerary(traject, itinerary);
+        }
     }
 
     private String missingIcal() {
