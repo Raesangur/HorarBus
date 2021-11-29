@@ -1320,6 +1320,7 @@ export default {
 }
 .event {
   font-weight: 300;
+  font-size: 13px;
   text-align: left;
   padding: 1px;
   border-radius: 5px;
