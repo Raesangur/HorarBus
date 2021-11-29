@@ -9,6 +9,7 @@ export default {
         getEvents({ commit }) {
             CalendarService.getEvents()
                 .then((events) => {
+                    console.log(events.data)
                     for (let i in events.data.events) {
                         events.data.events[i].open = false;
                     }
