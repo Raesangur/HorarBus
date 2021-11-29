@@ -190,10 +190,44 @@
           </b-col>
         </b-row>
         <b-row>
+          <b-col cols="12" class="sectionPref">
+            Changez votre clé Ical
+            <br />
+            <button @click="showIcal" class="icalBtn">ICAL</button>
+          </b-col>
+        </b-row>
+        <b-row>
           <b-col style="display: flex; justify-content: center">
             <b-button variant="dark" class="saveButton" @click="sendPref">
               Enregistrer les informations
             </b-button>
+          </b-col>
+        </b-row>
+      </b-modal>
+
+      <b-modal
+        ref="Ical"
+        hide-footer
+        hide-header
+        :centered="true"
+        body-class="preference"
+      >
+        <b-row>
+          <b-col cols="10" class="title"> Ical </b-col>
+          <b-col cols="2" class="zoneClose">
+            <button @click="hideIcal()" class="close">x</button>
+          </b-col>
+        </b-row>
+        <b-row>
+          <b-col cols="12" class="sectionPref">
+            Entrez votre nouvelle clé Ical
+          </b-col>
+          <br />
+          <b-col cols="12">
+            <b-form-input
+              v-model="pref.Ical"
+              placeholder="Entrer votre Ical"
+            ></b-form-input>
           </b-col>
         </b-row>
       </b-modal>
@@ -346,112 +380,6 @@
       </b-modal>
 
       <b-modal
-        ref="mapsSetting"
-        hide-footer
-        hide-header
-        :centered="true"
-        body-class="preference"
-      >
-        <b-row>
-          <b-col cols="10" class="title"> Trajet </b-col>
-          <b-col cols="2" class="zoneClose">
-            <button @click="hideMapsSetting()" class="close">x</button>
-          </b-col>
-        </b-row>
-
-        <!--Mode de transport-->
-        <b-row>
-          <b-col cols="12" class="sectionPref"> Mode de transport </b-col>
-        </b-row>
-        <b-form-group v-slot="{ ariaDescribedby }">
-          <b-form-radio
-            v-model="map.transport"
-            :aria-describedby="ariaDescribedby"
-            name="some-radios"
-            value="WALKING"
-            button
-            class="buttonTransport"
-            ><img :src="require('../assets/walk.png')"
-          /></b-form-radio>
-          <b-form-radio
-            v-model="map.transport"
-            :aria-describedby="ariaDescribedby"
-            name="some-radios"
-            value="BICYCLING"
-            button
-            class="buttonTransport"
-            ><img :src="require('../assets/bike.png')"
-          /></b-form-radio>
-          <b-form-radio
-            v-model="map.transport"
-            :aria-describedby="ariaDescribedby"
-            name="some-radios"
-            value="TRANSIT"
-            button
-            class="buttonTransport"
-            ><img :src="require('../assets/bus.png')"
-          /></b-form-radio>
-          <b-form-radio
-            v-model="map.transport"
-            :aria-describedby="ariaDescribedby"
-            name="some-radios"
-            value="DRIVING"
-            button
-            class="buttonTransport"
-            ><img :src="require('../assets/car.png')"
-          /></b-form-radio>
-        </b-form-group>
-
-        <!--Notification-->
-        <b-row>
-          <b-col cols="12" class="sectionPref">
-            Notifications
-            <b-row style="margin: 0">
-              <b-form-checkbox
-                v-model="map.notification_enable"
-                name="check-button"
-                class="checkboxNotification"
-              >
-              </b-form-checkbox>
-              <b-col>
-                <input
-                  v-model.number="map.temps_avance_notification"
-                  id="timenotif"
-                  :disabled="!map.notification_enable"
-                  type="number"
-                  class="tempsSelect"
-                />
-              </b-col>
-            </b-row>
-            <div style="font-size: 12px">
-              Entrer le temps avant le départ pour recevoir une notification.
-            </div>
-          </b-col>
-        </b-row>
-
-        <!--Temps d'avance minimum-->
-        <b-row>
-          <b-col cols="12" class="sectionPref">
-            Temps d'avance désirer
-            <br />
-            <input
-              v-model.number="map.temps_avance"
-              type="number"
-              class="tempsSelect"
-            />
-          </b-col>
-        </b-row>
-
-        <b-row>
-          <b-col style="display: flex; justify-content: center">
-            <b-button variant="dark" class="saveButton" @click="sendMaps">
-              Enregistrer les informations
-            </b-button>
-          </b-col>
-        </b-row>
-      </b-modal>
-
-      <b-modal
         ref="maps"
         hide-footer
         hide-header
@@ -461,7 +389,23 @@
         style="padding-right: 0"
       >
         <b-row>
-          <b-col cols="10" class="title"> Maps </b-col>
+          <b-col cols="2" class="title"> Maps </b-col>
+          <b-col cols="8" class="title" style="text-align: center"
+            ><a
+              class="link"
+              :href="
+                'http://maps.google.ca/maps?daddr=' +
+                trajetActif.trajet.addresseDestinataire +
+                '&saddr=' +
+                trajetActif.trajet.addresseInitial +
+                '&dirflg=' +
+                trajetActif.trajet.transport +
+                '&amp;ll='
+              "
+              target="_blank"
+              >Ouvrir Google Maps</a
+            ></b-col
+          >
           <b-col cols="2" class="zoneClose">
             <button @click="hideMaps()" class="close">x</button>
           </b-col>
@@ -518,9 +462,7 @@
         :type="type"
         class="calendar"
       >
-        <template
-          v-slot:event="{ event }"
-        >
+        <template v-slot:event="{ event }">
           <div
             class="event"
             @mouseenter="setHeight"
@@ -585,6 +527,108 @@
               <div class="centerBorder"></div>
               <a @click="showMaps" class="link">voir la carte</a>
             </div>
+            <b-modal ref="mapsSetting" hide-footer hide-header :centered="true">
+              <b-row>
+                <b-col cols="10" class="titleTrajet"> Trajet </b-col>
+                <b-col cols="2" class="zoneClose">
+                  <button @click="hideMapsSetting()" class="closeTrajet">
+                    x
+                  </button>
+                </b-col>
+              </b-row>
+
+              <b-row>
+                <b-col cols="12" class="sectionPref"> Mode de transport </b-col>
+              </b-row>
+              <b-form-group v-slot="{ ariaDescribedby }">
+                <b-form-radio
+                  v-model="event.trajet.transport"
+                  :aria-describedby="ariaDescribedby"
+                  name="some-radios"
+                  value="WALKING"
+                  button
+                  class="buttonTransport"
+                  ><img :src="require('../assets/walk.png')"
+                /></b-form-radio>
+                <b-form-radio
+                  v-model="event.trajet.transport"
+                  :aria-describedby="ariaDescribedby"
+                  name="some-radios"
+                  value="BICYCLING"
+                  button
+                  class="buttonTransport"
+                  ><img :src="require('../assets/bike.png')"
+                /></b-form-radio>
+                <b-form-radio
+                  v-model="event.trajet.transport"
+                  :aria-describedby="ariaDescribedby"
+                  name="some-radios"
+                  value="TRANSIT"
+                  button
+                  class="buttonTransport"
+                  ><img :src="require('../assets/bus.png')"
+                /></b-form-radio>
+                <b-form-radio
+                  v-model="event.trajet.transport"
+                  :aria-describedby="ariaDescribedby"
+                  name="some-radios"
+                  value="DRIVING"
+                  button
+                  class="buttonTransport"
+                  ><img :src="require('../assets/car.png')"
+                /></b-form-radio>
+              </b-form-group>
+
+              <!-- <b-row>
+                <b-col cols="12" class="sectionPref">
+                  Notifications
+                  <b-row style="margin: 0">
+                    <b-form-checkbox
+                      v-model="event.trajet.notification_enable"
+                      name="check-button"
+                      class="checkboxNotification"
+                    >
+                    </b-form-checkbox>
+                    <b-col>
+                      <input
+                        v-model.number="event.trajet.temps_avance_notification"
+                        id="timenotif"
+                        :disabled="!event.trajet.notification_enable"
+                        type="number"
+                        class="tempsSelectTrajet"
+                      />
+                    </b-col>
+                  </b-row>
+                  <div style="font-size: 12px">
+                    Entrer le temps avant le départ pour recevoir une notification.
+                  </div>
+                </b-col>
+              </b-row> -->
+
+              <b-row>
+                <b-col cols="12" class="sectionPref">
+                  Temps d'avance désirer
+                  <br />
+                  <input
+                    v-model.number="event.trajet.temps_avance"
+                    type="number"
+                    class="tempsSelectTrajet"
+                  />
+                </b-col>
+              </b-row>
+
+              <b-row>
+                <b-col style="display: flex; justify-content: center">
+                  <b-button
+                    variant="dark"
+                    class="saveTrajet"
+                    @click="sendMaps(event)"
+                  >
+                    Enregistrer les informations
+                  </b-button>
+                </b-col>
+              </b-row>
+            </b-modal>
           </div>
         </template>
         <template v-slot:day-body="{ date, week }">
@@ -634,12 +678,14 @@ export default {
       transport: "TRANSIT",
       notification_enable: false,
       temps_avance_notification: 0,
+      Ical: null,
     },
-    map: {
-      temps_avance: 0,
-      transport: "TRANSIT",
-      notification_enable: false,
-      temps_avance_notification: 0,
+    trajetActif: {
+      trajet: {
+        addresseDestinataire: "pub le willard",
+        addresseInitial: "universite de sherbrooke",
+        transport: "r",
+      },
     },
     position: "",
     today: new Date(),
@@ -651,6 +697,35 @@ export default {
       plugins: [InteractionPlugin, ListPlugin],
       initialView: "listWeek",
       locales: allLocales,
+      eventClick: function (info) {
+        if (info.event.extendedProps.trajet) {
+          if (
+            navigator.platform.indexOf("iPhone") != -1 ||
+            navigator.platform.indexOf("iPod") != -1 ||
+            navigator.platform.indexOf("iPad") != -1
+          ) {
+            window.open(
+              "maps://maps.google.ca/maps?daddr=" +
+                info.event.extendedProps.trajet.addresseDestinataire +
+                "&saddr=" +
+                info.event.extendedProps.trajet.addresseInitial +
+                "&dirflg=" +
+                info.event.extendedProps.trajet.transport +
+                "&amp;ll="
+            );
+          } else {
+            window.open(
+              "http://maps.google.ca/maps?daddr=" +
+                info.event.extendedProps.trajet.addresseDestinataire +
+                "&saddr=" +
+                info.event.extendedProps.trajet.addresseInitial +
+                "&dirflg=" +
+                info.event.extendedProps.trajet.transport +
+                "&amp;ll="
+            );
+          }
+        }
+      },
       eventDidMount: function (arg) {
         let p = document.createElement("p");
         if (arg.event.extendedProps.description3) {
@@ -738,7 +813,14 @@ export default {
           heureDepart: "2021-11-04 13:00".split(" ")[1],
           heureArrive: "2021-11-04 14:00".split(" ")[1],
           open: false,
-          trajet: true,
+          trajet: {
+            temps_avance: 0,
+            transport: "r",
+            notification_enable: false,
+            temps_avance_notification: 0,
+            addresseDestinataire: "pub le willard",
+            addresseInitial: "universite de sherbrooke",
+          },
         },
       ],
       eventColor: "#1867c0",
@@ -819,7 +901,14 @@ export default {
         heureDepart: "2021-11-04 13:00".split(" ")[1],
         heureArrive: "2021-11-04 14:00".split(" ")[1],
         open: false,
-        trajet: true,
+        trajet: {
+          transport: "r",
+          temps_avance: 0,
+          notification_enable: false,
+          temps_avance_notification: 0,
+          addresseDestinataire: "pub le willard",
+          addresseInitial: "universite de sherbrooke",
+        },
       },
     ],
     days: [
@@ -865,6 +954,9 @@ export default {
       this.getEvents();
     },
     eventsState() {
+      if (!this.eventsState) {
+        this.showIcal();
+      }
       for (let i in this.eventsState) {
         this.eventsState[i].open = false;
         let now = new Date();
@@ -881,6 +973,24 @@ export default {
       this.events = this.eventsState;
       this.calendarOptions.events = this.eventsState;
       for (let i in this.eventsState) {
+        if (this.calendarOptions.events.trajet) {
+          switch (this.calendarOptions.events.trajet.transport) {
+            case "TRANSIT":
+              this.calendarOptions.events.trajet.transport = "r";
+              break;
+            case "WALKING":
+              this.calendarOptions.events.trajet.transport = "w";
+              break;
+            case "BICYCLING":
+              this.calendarOptions.events.trajet.transport = "b";
+              break;
+            case "DRIVING":
+              this.calendarOptions.events.trajet.transport = "d";
+              break;
+            default:
+              break;
+          }
+        }
         this.events[i].start =
           this.eventsState[i].start.split("T")[0] +
           " " +
@@ -930,6 +1040,7 @@ export default {
       this.pref.temps_avance_notification = this.prefState.notification.time;
       this.pref.notification_enable = this.prefState.notification.enabled;
       this.pref.adresse_maison = this.prefState.local_address;
+      this.pref.Ical = this.prefState.Ical;
       this.darkMode = this.prefState.dark_mode;
     },
     value() {
@@ -955,7 +1066,7 @@ export default {
     },
   },
   methods: {
-    ...mapActions(["putUser", "putPref", "getEvents", "setGeo", "getUser"]),
+    ...mapActions(["putUser", "getEvents", "setGeo", "getUser"]),
     sendPref() {
       let pref = {
         preparation_time: "",
@@ -965,10 +1076,12 @@ export default {
           enabled: "",
         },
         dark_mode: "",
+        Ical: null,
       };
       pref.preparation_time = this.pref.temps_avance;
       pref.transport = this.pref.transport;
       pref.local_address = this.pref.adresse_maison;
+      pref.Ical = this.pref.Ical;
       pref.notification = {
         time: this.pref.temps_avance_notification,
         enabled: this.pref.notification_enable,
@@ -977,21 +1090,21 @@ export default {
       this.putUser(pref);
       this.hidePref();
     },
-    sendMaps() {
+    sendMaps(event) {
       let map = {
         preparation_time: "",
         transport: "",
-        notification: {
-          time: "",
-          enabled: "",
-        },
+        // notification: {
+        //   time: "",
+        //   enabled: "",
+        // },
       };
-      map.preparation_time = this.map.temps_avance;
-      map.transport = this.map.transport;
-      map.notification = {
-        time: this.map.temps_avance_notification,
-        enabled: this.map.notification_enable,
-      };
+      map.preparation_time = event.trajet.temps_avance;
+      map.transport = event.trajet.transport;
+      // map.notification = {
+      //   time: event.trajet.temps_avance_notification,
+      //   enabled: event.trajet.notification_enable,
+      // };
       console.log(map);
       //this.putMaps(pref);
       this.hideMaps();
@@ -1010,6 +1123,15 @@ export default {
     },
     showMaps() {
       this.$refs["maps"].show();
+      for (let i in this.events) {
+        this.events[i].open = false;
+      }
+    },
+    showIcal() {
+      this.$refs["Ical"].show();
+    },
+    hideIcal() {
+      this.$refs["Ical"].hide();
     },
     showFAQ() {
       this.$refs["faq"].show();
@@ -1022,6 +1144,9 @@ export default {
     },
     showMapsSetting() {
       this.$refs["mapsSetting"].show();
+      for (let i in this.events) {
+        this.events[i].open = false;
+      }
     },
     hideMapsSetting() {
       this.$refs["mapsSetting"].hide();
@@ -1124,6 +1249,23 @@ export default {
     },
     openEvent(event) {
       event.open = true;
+      this.trajetActif = event;
+      switch (event.trajet.transport) {
+        case "TRANSIT":
+          this.trajetActif.trajet.transport = "r";
+          break;
+        case "WALKING":
+          this.trajetActif.trajet.transport = "w";
+          break;
+        case "BICYCLING":
+          this.trajetActif.trajet.transport = "b";
+          break;
+        case "DRIVING":
+          this.trajetActif.trajet.transport = "d";
+          break;
+        default:
+          break;
+      }
     },
     showEvent(event) {
       if (this.eventActive && this.eventActive !== event) {
@@ -1153,13 +1295,14 @@ export default {
       this.eventActive = undefined;
     },
     setHeight() {
-      for(let i in this.events){
-        if(document.getElementById(this.events[i].id)){
+      for (let i in this.events) {
+        if (document.getElementById(this.events[i].id)) {
           document.getElementById(this.events[i].id).style.height =
-          document.getElementById(this.events[i].id).parentElement.style.height;
+            document.getElementById(
+              this.events[i].id
+            ).parentElement.style.height;
         }
       }
-      
     },
     setToday() {
       const now = new Date();
@@ -1240,15 +1383,9 @@ export default {
   border-radius: 10px;
   font-weight: bold;
 }
-.editButton {
-  border-radius: 100%;
-  background-color: #ffbf5f;
-  width: 20px;
-  height: 20px;
-  float: right;
-}
+
 .saveButton:hover {
-  background: transparent;
+  background: #222222;
   color: #ffffff;
   border: 1px solid #ffffff;
 }
@@ -1281,8 +1418,8 @@ export default {
   background: transparent !important;
 }
 .tempsSelect:disabled {
-  background: #3d3a3a !important;
-  color: #c0c0c0 !important;
+  background: #b6b6b6 !important;
+  color: #424242 !important;
   border-bottom: 1px solid rgba(255, 255, 255, 0.3) !important;
 }
 .tempsSelect:focus-within {
@@ -1293,13 +1430,35 @@ export default {
   box-shadow: none !important;
   border-bottom: 1px solid rgba(255, 255, 255, 1) !important;
 }
+.saveTrajet {
+  font-size: 16px;
+  text-align: center;
+  color: #ffffff;
+  height: 100%;
+  background: #222222;
+  border: 1px solid #ffffff;
+  border-radius: 10px;
+  font-weight: bold;
+}
+.saveTrajet:hover {
+  background: #ffffff;
+  color: #222222;
+  border: 1px solid #222222;
+}
+.editButton {
+  border-radius: 100% !important;
+  background-color: #ffbf5f !important;
+  width: 20px !important;
+  height: 20px !important;
+  float: right !important;
+}
 .buttonTransport:first-child {
   margin-left: 0px;
 }
-/deep/.theme--light .v-present{
+/deep/.theme--light .v-present {
   background-color: #c2c2c2;
 }
-/deep/.theme--dark .v-present{
+/deep/.theme--dark .v-present {
   background-color: #525252;
 }
 /deep/.v-calendar .v-event-timed:hover {
@@ -1319,6 +1478,15 @@ export default {
   margin-right: 8px;
   position: absolute;
   overflow: unset;
+}
+.icalBtn {
+  border: 1px solid #ffffff;
+  padding: 5px;
+}
+.icalBtn:hover {
+  border: 1px solid #222222;
+  background-color: #ffffff;
+  color: #222222;
 }
 /deep/.v-calendar-daily__scroll-area {
   overflow: unset;
@@ -1383,6 +1551,41 @@ export default {
   display: flex;
   justify-content: flex-end;
   width: 186.2px;
+}
+.closeTrajet {
+  vertical-align: middle;
+  font-size: 30px !important;
+  color: #222222;
+  border: none;
+  background: transparent;
+  text-align: center;
+  float: right;
+}
+.tempsSelectTrajet {
+  color: #222222 !important;
+  width: 80% !important;
+  border-bottom: 1px solid rgba(34, 34, 34, 0.7) !important;
+  height: 30px !important;
+  background: transparent !important;
+}
+
+.tempsSelectTrajet:disabled {
+  background: #cacaca !important;
+  color: #8b8b8b !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.3) !important;
+}
+.tempsSelectTrajet:focus-within {
+  background: transparent !important;
+  border-bottom: 1px solid rgba(34, 34, 34, 1) !important;
+}
+.tempsSelectTrajet:focus {
+  box-shadow: none !important;
+  border-bottom: 1px solid rgba(34, 34, 34, 1) !important;
+}
+.titleTrajet {
+  font-size: 25px;
+  color: #222222;
+  font-weight: bold;
 }
 /deep/.dropdown-menu {
   background-color: #1867c0 !important;
@@ -1482,6 +1685,7 @@ nav {
 .zoneClose {
   vertical-align: middle;
   margin-top: 5px;
+  float: right;
 }
 .close {
   vertical-align: middle;
