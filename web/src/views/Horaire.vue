@@ -1046,6 +1046,10 @@ export default {
     value() {
       let calendarApi = this.$refs.fullCalendar.getApi();
       calendarApi.gotoDate(this.value);
+      for (let i in this.events) {
+        this.events[i].open = false;
+      }
+      this.eventActive = undefined;
     },
     darkMode() {
       this.switchTheme();
@@ -1192,6 +1196,10 @@ export default {
       if (this.$refs.calendar) {
         this.$refs.calendar.next();
       }
+      for (let i in this.events) {
+        this.events[i].open = false;
+      }
+      this.eventActive = undefined;
     },
     prev() {
       if (this.$refs.fullCalendar) {
@@ -1201,6 +1209,10 @@ export default {
       if (this.$refs.calendar) {
         this.$refs.calendar.prev();
       }
+      for (let i in this.events) {
+        this.events[i].open = false;
+      }
+      this.eventActive = undefined;
     },
     switchTheme() {
       if (this.darkMode == true) {
@@ -1268,6 +1280,7 @@ export default {
             break;
         }
       }
+      console.log(this.trajetActif)
     },
     showEvent(event) {
       if (this.eventActive && this.eventActive !== event) {
@@ -1295,6 +1308,7 @@ export default {
         this.eventActive.target.clickOutsideEvent
       );
       this.eventActive = undefined;
+      
     },
     setHeight() {
       for (let i in this.events) {
