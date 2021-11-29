@@ -38,26 +38,26 @@ public class UserResource {
         return userData.toString();
     }
 
-    @GET
-    @Produces(MediaType.TEXT_HTML)
-    @Path("/events")
-    public String getUserEvents(@Context RoutingContext context) {
-        AuthData authData = context.get("authData");
+    // @GET
+    // @Produces(MediaType.TEXT_HTML)
+    // @Path("/events")
+    // public String getUserEvents(@Context RoutingContext context) {
+    // AuthData authData = context.get("authData");
 
-        UserHandler user = new UserHandler(authData.getCip());
-        if (!user.is_valid()) {
-            return invalidCIP();
-        }
+    // UserHandler user = new UserHandler(authData.getCip());
+    // if (!user.is_valid()) {
+    // return invalidCIP();
+    // }
 
-        EventHandler[] events = user.get_events();
+    // EventHandler[] events = user.get_events();
 
-        String result = new String();
-        for (EventHandler event : events) {
-            result += event.get_id() + " " + event.get_name() + " : \n";
-        }
+    // String result = new String();
+    // for (EventHandler event : events) {
+    // result += event.get_id() + " " + event.get_name() + " : \n";
+    // }
 
-        return result;
-    }
+    // return result;
+    // }
 
     @PUT
     @Consumes(MediaType.APPLICATION_JSON)
