@@ -1296,7 +1296,9 @@ export default {
 .buttonTransport:first-child {
   margin-left: 0px;
 }
-
+/deep/.v-present{
+  background-color: #525252;
+}
 /deep/.v-calendar .v-event-timed:hover {
   opacity: 0.95;
 }
