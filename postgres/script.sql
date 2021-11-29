@@ -92,6 +92,7 @@ INSERT INTO student VALUES ('stla0801','22','Anthony','https://www.gel.usherbroo
 INSERT INTO student VALUES ('pera3307','AL','Alisée','');
 
 INSERT INTO Localisation VALUES ('ChIJywfUkEyzt0wRPYYdc8CzfbU','45.3783275,-71.9284194','Faculté de génie, 2500 Bd de lUniversité, Sherbrooke');
+INSERT INTO Localisation VALUES ('ChIJR7e5TUezt0wR89e8h3CL7XI','45.3886837,-71.9165197','Pub Chez Willard, 1600 Rue Denault, Sherbrooke, QC J1H 2R2');
 
 DROP VIEW IF EXISTS StudentData;
 CREATE VIEW StudentData AS
@@ -229,6 +230,6 @@ CASE WHEN arrival IS true THEN home_place_id ELSE place_id END AS startPlace,
 CASE WHEN NOT arrival IS false THEN place_id ELSE home_place_id END AS targetPlace,
 requestedTransport
 FROM usertrajectevent
-JOIN calendarattendance ON calendarattendance.event_id = usertrajectevent.event_id AND (start_place_id IS NULL OR end_place_id IS NULL)
+JOIN calendarattendance ON calendarattendance.event_id = usertrajectevent.event_id AND (start_place_id IS NULL OR end_place_id IS NULL OR transport_name <> requestedTransport)
 JOIN studentdata ON studentdata.cip = usertrajectevent.cip
 WHERE NOT place_id IS NULL;

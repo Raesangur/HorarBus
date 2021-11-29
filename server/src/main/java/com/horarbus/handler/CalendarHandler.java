@@ -89,16 +89,25 @@ public class CalendarHandler {
         ResultSet results = executeRequestForUser("usertrajectevent");
 
         try {
-            JsonArray events = new JsonArray();
+            JsonArray trajects = new JsonArray();
             while (results.next()) {
-                // System.out.println(results.getInt("event_id"));
-                // System.out.println(results.getTimestamp("start_time"));
-                // System.out.println(results.getTimestamp("end_time"));
-                // System.out.println(results.getString("start_place_id"));
-                // System.out.println(results.getString("end_place_id"));
-                // System.out.println(results.getString("transport_name"));
+                MissingTraject traject;
+
+                String startPlaceId = results.getString("start_place_id");
+                String endPlaceId = results.getString("end_place_id");
+                TravelMode transport = TravelMode.valueOf(results.getString("transport_name"));
+
+                if (transport == TravelMode.TRANSIT) {
+                    long arrivalTime = results.getTimestamp("end_time").getTime();
+                    traject = new MissingTraject(startPlaceId, endPlaceId, transport, arrivalTime);
+                } else {
+                    traject = new MissingTraject(startPlaceId, endPlaceId, transport);
+                }
+
+                String itineraryJson = readFile(traject.getFilename());
+                trajects.add(new JsonObject(itineraryJson));
             }
-            return events;
+            return trajects;
         } catch (SQLException ex) {
             ex.printStackTrace();
         }
@@ -140,7 +149,8 @@ public class CalendarHandler {
                 // Faculté de Génie, UdeS
                 values.add(new PostgresValue("ChIJywfUkEyzt0wRPYYdc8CzfbU"));
             } else {
-                // TODO: do we need to call this every time? can we just fetch the db to validate if
+                // TODO: do we need to call this every time? can we just fetch the db to
+                // validate if
                 // we already have an associated place-id?
                 try {
                     String placeData = MapsService.getPlaceDataFromAddress(location);
@@ -184,22 +194,35 @@ public class CalendarHandler {
         writeToFile(filename, itineraryJson.toString());
 
         try {
-            JsonArray routes = itineraryJson.getJsonArray("routes");
-            JsonArray legs = routes.getJsonObject(0).getJsonArray("legs");
-            JsonObject leg = legs.getJsonObject(0);
-            String[] columns = new String[] {"begin_time", "end_time", "transport_name",
-                    "start_place_id", "end_place_Id"};
-            PostgresValue[] values = new PostgresValue[] {
-                    new PostgresValue(
-                            new Timestamp(leg.getJsonObject("departure_time").getLong("value"))),
-                    new PostgresValue(
-                            new Timestamp(leg.getJsonObject("arrival_time").getLong("value"))),
-                    new PostgresValue(missing.getTravelMode().toString()),
-                    new PostgresValue(missing.getStartPlaceId()),
-                    new PostgresValue(missing.getEndPlaceId())};
-            pgh.insert_row("traject", columns, values);
+            if (itineraryJson.getString("status").toUpperCase().trim().equals("OK")) {
+                JsonArray routes = itineraryJson.getJsonArray("routes");
+                JsonArray legs = routes.getJsonObject(0).getJsonArray("legs");
+                JsonObject leg = legs.getJsonObject(0);
+                String[] columns = new String[] {"begin_time", "end_time", "transport_name",
+                        "start_place_id", "end_place_Id"};
+
+                long startTime = 0, arrivalTime = 0;
+                TravelMode transport = missing.getTravelMode();
+                if (transport == TravelMode.TRANSIT) {
+                    startTime = leg.getJsonObject("departure_time").getLong("value") * 1000;
+                    arrivalTime = leg.getJsonObject("arrival_time").getLong("value") * 1000;
+                } else {
+                    arrivalTime = leg.getJsonObject("duration").getLong("value") * 1000;
+                }
+
+                PostgresValue[] values =
+                        new PostgresValue[] {new PostgresValue(new Timestamp(startTime)),
+                                new PostgresValue(new Timestamp(arrivalTime)),
+                                new PostgresValue(transport.toString().toUpperCase()),
+                                new PostgresValue(missing.getStartPlaceId()),
+                                new PostgresValue(missing.getEndPlaceId())};
+                pgh.insert_row("traject", columns, values);
+            } else {
+                throw new Exception("Cannot go from " + missing.getStartPlaceId() + " to "
+                        + missing.getEndPlaceId() + " via " + missing.getTravelMode());
+            }
         } catch (Exception ex) {
-            ex.printStackTrace();
+            // ex.printStackTrace();
             return;
         }
     }
