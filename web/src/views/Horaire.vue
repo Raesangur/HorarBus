@@ -1321,6 +1321,7 @@ export default {
 .event {
   font-weight: 300;
   text-align: left;
+  font-size: 13px;
   padding: 1px;
   border-radius: 5px;
   white-space: normal;
