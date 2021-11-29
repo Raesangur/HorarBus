@@ -8,6 +8,7 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.nio.charset.StandardCharsets;
 
 public class HttpService implements IHttpService {
     protected URL url;
@@ -67,12 +68,11 @@ public class HttpService implements IHttpService {
         }
         if (((HttpURLConnection) connection).getResponseCode() < 200
                 || ((HttpURLConnection) connection).getResponseCode() >= 300) {
-            throw new HttpException("Request refused by auth server.");
+            throw new HttpException("The request returned an error. Error code: "
+                    + Integer.toString(((HttpURLConnection) connection).getResponseCode()));
         }
 
-        String response = readConnectionResponse(connection);
-
-        return response;
+        return readConnectionResponse(connection);
     }
 
     private URLConnection connect() {
@@ -112,7 +112,7 @@ public class HttpService implements IHttpService {
 
         try {
             InputStream inStream = connection.getInputStream();
-            InputStreamReader inReader = new InputStreamReader(inStream);
+            InputStreamReader inReader = new InputStreamReader(inStream, StandardCharsets.UTF_8);
             BufferedReader reader = new BufferedReader(inReader);
 
             String line;

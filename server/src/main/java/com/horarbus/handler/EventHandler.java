@@ -13,9 +13,10 @@ public class EventHandler {
     }
 
     private String select_column(String column) {
-        return pgh.select_column(column, "Event",
-                                 new String[]{"event_id"},
-                                 new PostgresValue[]{event_id});
+        String[] result = pgh.select_column(column, "Event",
+                                            new String[]{"event_id"},
+                                            new PostgresValue[]{event_id});
+        return result == null ? "" : result[0];
     }
     private void update_column(String column, String value) {
         pgh.update_column(column, "Event", new PostgresValue(value),
@@ -38,10 +39,10 @@ public class EventHandler {
         return event_id.getInt();
     }
 
-    private String get_start() {
+    public String get_start() {
         return select_column("time_start");
     }
-    private void set_start(String timestamp) {
+    public void set_start(String timestamp) {
         long tmstmp = Utils.string_to_unix_milli(timestamp);
         if (tmstmp == 0) {
             return;
@@ -50,27 +51,27 @@ public class EventHandler {
         update_column("time_start", tmstmp);
     }
 
-    private String get_end() {
+    public String get_end() {
         return select_column("time_end");
     }
 
-    private String get_name() {
+    public String get_name() {
         return select_column("name");
     }
 
-    private String get_summary() {
+    public String get_summary() {
         return select_column("summary");
     }
 
-    private String get_description() {
+    public String get_description() {
         return select_column("description");
     }
 
-    private String get_coords() {
+    public String get_coords() {
         return select_column("coords");
     }
 
-    private int get_uid() {
+    public int get_uid() {
         return Integer.parseInt(select_column("ical_id"));
     }
 

@@ -48,8 +48,7 @@ public class AuthFilter implements ContainerRequestFilter {
             httpService.setRequestMethod("GET");
             httpService.setURL(keycloakValidationEndpoint.get());
             httpService.setAuthToken(token);
-            String response = httpService.executeRequest();
-
+	    String response = httpService.executeRequest();
             return new AuthData(new JsonObject(response));
         } catch (Exception ex) {
             throw new AuthException(ex.getMessage());
