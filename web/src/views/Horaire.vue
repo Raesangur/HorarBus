@@ -1049,6 +1049,9 @@ export default {
     },
     showMaps() {
       this.$refs["maps"].show();
+      for (let i in this.events) {
+        this.events[i].open = false;
+      }
     },
     showIcal() {
       this.$refs["Ical"].show();
@@ -1067,6 +1070,9 @@ export default {
     },
     showMapsSetting() {
       this.$refs["mapsSetting"].show();
+      for (let i in this.events) {
+        this.events[i].open = false;
+      }
     },
     hideMapsSetting() {
       this.$refs["mapsSetting"].hide();
