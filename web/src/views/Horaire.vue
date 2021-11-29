@@ -532,7 +532,7 @@
           >
             {{ event.heure }}
             <br />
-            <a style="font-weight: 700">{{ event.summary }}</a>
+            {{ event.summary }}
             <br />
             {{ event.location }}
 
@@ -562,7 +562,7 @@
             @click="openEvent(event)"
           >
             {{ event.heureDepart }} -
-            <a style="font-weight: 700">{{ event.summary }}</a>
+            {{ event.summary }}
             <button class="editButton" @click="showMapsSetting">
               <b-icon-pencil></b-icon-pencil>
             </button>
