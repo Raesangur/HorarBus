@@ -1250,22 +1250,25 @@ export default {
     openEvent(event) {
       event.open = true;
       this.trajetActif = event;
-      switch (event.trajet.transport) {
-        case "TRANSIT":
-          this.trajetActif.trajet.transport = "r";
-          break;
-        case "WALKING":
-          this.trajetActif.trajet.transport = "w";
-          break;
-        case "BICYCLING":
-          this.trajetActif.trajet.transport = "b";
-          break;
-        case "DRIVING":
-          this.trajetActif.trajet.transport = "d";
-          break;
-        default:
-          break;
+      if(this.trajetActif.trajet){
+        switch (this.trajetActif.trajet.transport) {
+          case "TRANSIT":
+            this.trajetActif.trajet.transport = "r";
+            break;
+          case "WALKING":
+            this.trajetActif.trajet.transport = "w";
+            break;
+          case "BICYCLING":
+            this.trajetActif.trajet.transport = "b";
+            break;
+          case "DRIVING":
+            this.trajetActif.trajet.transport = "d";
+            break;
+          default:
+            break;
+        }
       }
+      
     },
     showEvent(event) {
       if (this.eventActive && this.eventActive !== event) {
