@@ -64,13 +64,13 @@ public class CalendarResource {
         try {
             Set<MissingTraject> missing = handler.getMissingTrajects();
             generateMissingTrajects(handler, missing);
-
-            JsonArray trajects = handler.getAllTrajects();
-            eventJson.put("trajects", trajects);
         } catch (Exception ex) {
             ex.printStackTrace();
             eventJson.put("trajects", new JsonArray());
         }
+
+        JsonArray trajects = handler.getAllTrajects();
+        eventJson.put("trajects", trajects);
 
         return eventJson;
     }
