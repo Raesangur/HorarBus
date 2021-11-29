@@ -1249,8 +1249,8 @@ export default {
     },
     openEvent(event) {
       event.open = true;
-      this.trajetActif = event;
-      if(this.trajetActif.trajet){
+      if(event.trajet){
+        this.trajetActif = event;
         switch (this.trajetActif.trajet.transport) {
           case "TRANSIT":
             this.trajetActif.trajet.transport = "r";
