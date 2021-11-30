@@ -29,9 +29,9 @@ public class UserHandler {
         pgh = new PostgresHandler();
 
         if (select_column("cip") == "") {
-            pgh.insert_row(TABLE_NAME, new String[] {"cip", "name", "surname"},
+            pgh.insert_row("student", new String[] {"cip", "name", "surname", "ical_key"},
                     new PostgresValue[] {new PostgresValue(cip), new PostgresValue(nom),
-                            new PostgresValue(prenom)});
+                            new PostgresValue(prenom), new PostgresValue("")});
         }
     }
 
@@ -65,7 +65,7 @@ public class UserHandler {
     private String select_column(String column) {
         String[] result = pgh.select_column(column, TABLE_NAME, new String[] {"cip"},
                 new PostgresValue[] {new PostgresValue(cip)});
-        return result == null ? "" : result[0];
+        return result == null || result.length == 0 ? "" : result[0];
     }
 
     private void update_column(String column, String value) {

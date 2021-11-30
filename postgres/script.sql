@@ -233,3 +233,15 @@ FROM usertrajectevent
 JOIN calendarattendance ON calendarattendance.event_id = usertrajectevent.event_id AND (start_place_id IS NULL OR end_place_id IS NULL OR transport_name <> requestedTransport)
 JOIN studentdata ON studentdata.cip = usertrajectevent.cip
 WHERE NOT place_id IS NULL;
+
+CREATE OR REPLACE FUNCTION assureStudentPreferences() RETURNS TRIGGER AS
+$$
+BEGIN
+INSERT INTO preferences (cip) VALUES (NEW.cip);
+RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER afterStudentInsertion AFTER INSERT ON student
+FOR EACH ROW
+EXECUTE PROCEDURE assureStudentPreferences();
