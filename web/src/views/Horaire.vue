@@ -1280,7 +1280,6 @@ export default {
             break;
         }
       }
-      console.log(this.trajetActif)
     },
     showEvent(event) {
       if (this.eventActive && this.eventActive !== event) {
