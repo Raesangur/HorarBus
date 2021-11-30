@@ -983,19 +983,19 @@ export default {
       this.events = this.eventsState;
       this.calendarOptions.events = this.eventsState;
       for (let i in this.eventsState) {
-        if (this.calendarOptions.events.trajet) {
-          switch (this.calendarOptions.events.trajet.transport) {
+        if (this.calendarOptions.events[i].trajet) {
+          switch (this.calendarOptions.events[i].trajet.transport) {
             case "TRANSIT":
-              this.calendarOptions.events.trajet.transport = "r";
+              this.calendarOptions.events[i].trajet.transport = "r";
               break;
             case "WALKING":
-              this.calendarOptions.events.trajet.transport = "w";
+              this.calendarOptions.events[i].trajet.transport = "w";
               break;
             case "BICYCLING":
-              this.calendarOptions.events.trajet.transport = "b";
+              this.calendarOptions.events[i].trajet.transport = "b";
               break;
             case "DRIVING":
-              this.calendarOptions.events.trajet.transport = "d";
+              this.calendarOptions.events[i].trajet.transport = "d";
               break;
             default:
               break;
@@ -1025,7 +1025,6 @@ export default {
           this.events[i].description3 =
             this.events[i].description.split("\n")[3];
         }
-        //this.events[i].style.backgroundColor = this.events[i].color;
         this.calendarOptions.events[i].start = this.events[i].start;
         this.calendarOptions.events[i].end = this.events[i].end;
         this.calendarOptions.events[i].heure =
@@ -1050,7 +1049,6 @@ export default {
       this.pref.temps_avance_notification = this.prefState.notification.time;
       this.pref.notification_enable = this.prefState.notification.enabled;
       this.pref.adresse_maison = this.prefState.local_address;
-      this.pref.Ical = this.prefState.Ical;
       this.darkMode = this.prefState.dark_mode;
     },
     value() {
@@ -1121,8 +1119,8 @@ export default {
       //   enabled: event.trajet.notification_enable,
       // };
       console.log(map);
-      //this.putMaps(pref);
-      this.hideMaps();
+      //this.putEvents(pref);
+      this.hideMapsSetting();
     },
     onResize() {
       this.resize();
@@ -1291,7 +1289,6 @@ export default {
             break;
         }
       }
-      console.log(this.trajetActif)
     },
     showEvent(event) {
       if (this.eventActive && this.eventActive !== event) {

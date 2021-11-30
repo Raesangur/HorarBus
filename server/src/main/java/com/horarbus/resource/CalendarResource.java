@@ -61,16 +61,16 @@ public class CalendarResource {
         JsonArray events = handler.getAllEvents();
         eventJson.put("events", events);
 
-        try {
-            Set<MissingTraject> missing = handler.getMissingTrajects();
-            generateMissingTrajects(handler, missing);
-        } catch (Exception ex) {
-            ex.printStackTrace();
-            eventJson.put("trajects", new JsonArray());
-        }
+        // try {
+        //     Set<MissingTraject> missing = handler.getMissingTrajects();
+        //     generateMissingTrajects(handler, missing);
+        // } catch (Exception ex) {
+        //     ex.printStackTrace();
+        //     eventJson.put("trajects", new JsonArray());
+        // }
 
-        JsonArray trajects = handler.getAllTrajects();
-        eventJson.put("trajects", trajects);
+        // JsonArray trajects = handler.getAllTrajects();
+        // eventJson.put("trajects", trajects);
 
         return eventJson;
     }

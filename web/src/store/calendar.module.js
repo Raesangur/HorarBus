@@ -9,6 +9,7 @@ export default {
         getEvents({ commit }) {
             CalendarService.getEvents()
                 .then((events) => {
+                    console.log(events.data)
                     for (let i in events.data.events) {
                         events.data.events[i].open = false;
                     }
@@ -16,6 +17,15 @@ export default {
                 })
                 .catch((err) => {
                     console.log(err);
+                });
+        },
+        async putEvents({ dispatch }, payload) {
+            CalendarService.putEvents(payload)
+                .then(() => {
+                    dispatch("getEvents");
+                })
+                .catch((err) => {
+                    console.log(err.response);
                 });
         },
     },

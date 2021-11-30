@@ -19,6 +19,7 @@ export default {
                     console.log(err.response);
                 });
         },
+
         async setGeo({ commit }, payload) {
             commit("setGeo", payload);
         },
