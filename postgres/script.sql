@@ -80,20 +80,6 @@ CREATE TABLE Attendance
   FOREIGN KEY (event_id) REFERENCES Event(event_id)
 );
 
-INSERT INTO Transport VALUES ('BICYCLING');
-INSERT INTO Transport VALUES ('DRIVING');
-INSERT INTO Transport VALUES ('TRANSIT');
-INSERT INTO Transport VALUES ('WALKING');
-
-INSERT INTO student VALUES ('bera1107','Blond','Alexandre','https://www.gel.usherbrooke.ca/horarius/icalendar?key=bcb2d410-7b36-4ff3-bd0c-57c29c489261');
-INSERT INTO student VALUES ('lacp3102','Petit','Pascal','https://www.gel.usherbrooke.ca/horarius/icalendar?key=67a822b8-32c3-4f87-b074-b01295f0c665');
-INSERT INTO student VALUES ('rouj1615','Six','Julien','https://www.gel.usherbrooke.ca/horarius/icalendar?key=c754875d-2930-4ceb-9827-f90741d44338');
-INSERT INTO student VALUES ('stla0801','22','Anthony','https://www.gel.usherbrooke.ca/horarius/icalendar?key=9761bc19-4df0-4db3-bd43-03831e35275a');
-INSERT INTO student VALUES ('pera3307','AL','Alisée','');
-
-INSERT INTO Localisation VALUES ('ChIJywfUkEyzt0wRPYYdc8CzfbU','45.3783275,-71.9284194','Faculté de génie, 2500 Bd de lUniversité, Sherbrooke');
-INSERT INTO Localisation VALUES ('ChIJR7e5TUezt0wR89e8h3CL7XI','45.3886837,-71.9165197','Pub Chez Willard, 1600 Rue Denault, Sherbrooke, QC J1H 2R2');
-
 DROP VIEW IF EXISTS StudentData;
 CREATE VIEW StudentData AS
 SELECT student.cip, name, surname, ical_key, preparation_time, notification_time, dark_mode, transport_name, home_place_id
@@ -233,3 +219,29 @@ FROM usertrajectevent
 JOIN calendarattendance ON calendarattendance.event_id = usertrajectevent.event_id AND (start_place_id IS NULL OR end_place_id IS NULL OR transport_name <> requestedTransport)
 JOIN studentdata ON studentdata.cip = usertrajectevent.cip
 WHERE NOT place_id IS NULL;
+
+CREATE OR REPLACE FUNCTION assureStudentPreferences() RETURNS TRIGGER AS
+$$
+BEGIN
+INSERT INTO preferences (cip) VALUES (NEW.cip);
+RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER afterStudentInsertion AFTER INSERT ON student
+FOR EACH ROW
+EXECUTE PROCEDURE assureStudentPreferences();
+
+INSERT INTO Transport VALUES ('BICYCLING');
+INSERT INTO Transport VALUES ('DRIVING');
+INSERT INTO Transport VALUES ('TRANSIT');
+INSERT INTO Transport VALUES ('WALKING');
+
+INSERT INTO student VALUES ('bera1107','Blond','Alexandre','https://www.gel.usherbrooke.ca/horarius/icalendar?key=bcb2d410-7b36-4ff3-bd0c-57c29c489261');
+INSERT INTO student VALUES ('lacp3102','Petit','Pascal','https://www.gel.usherbrooke.ca/horarius/icalendar?key=67a822b8-32c3-4f87-b074-b01295f0c665');
+INSERT INTO student VALUES ('rouj1615','Six','Julien','https://www.gel.usherbrooke.ca/horarius/icalendar?key=c754875d-2930-4ceb-9827-f90741d44338');
+INSERT INTO student VALUES ('stla0801','22','Anthony','https://www.gel.usherbrooke.ca/horarius/icalendar?key=9761bc19-4df0-4db3-bd43-03831e35275a');
+INSERT INTO student VALUES ('pera3307','AL','Alisée','');
+
+INSERT INTO Localisation VALUES ('ChIJywfUkEyzt0wRPYYdc8CzfbU','45.3783275,-71.9284194','Faculté de génie, 2500 Bd de lUniversité, Sherbrooke');
+INSERT INTO Localisation VALUES ('ChIJR7e5TUezt0wR89e8h3CL7XI','45.3886837,-71.9165197','Pub Chez Willard, 1600 Rue Denault, Sherbrooke, QC J1H 2R2');

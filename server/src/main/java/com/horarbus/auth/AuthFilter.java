@@ -10,6 +10,7 @@ import javax.ws.rs.container.PreMatching;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.Provider;
+import com.horarbus.handler.UserHandler;
 import com.horarbus.service.http.HttpsService;
 import com.horarbus.service.http.IHttpService;
 import java.io.*;
@@ -27,6 +28,7 @@ public class AuthFilter implements ContainerRequestFilter {
         try {
             String token = getAuthToken(requestContext);
             AuthData authData = readAuthDataFromToken(token);
+            registerNewUser(authData);
             requestContext.setProperty("authData", authData);
         } catch (AuthException ex) {
             ex.printStackTrace();
@@ -48,11 +50,15 @@ public class AuthFilter implements ContainerRequestFilter {
             httpService.setRequestMethod("GET");
             httpService.setURL(keycloakValidationEndpoint.get());
             httpService.setAuthToken(token);
-	    String response = httpService.executeRequest();
+            String response = httpService.executeRequest();
             return new AuthData(new JsonObject(response));
         } catch (Exception ex) {
             throw new AuthException(ex.getMessage());
         }
+    }
+
+    private void registerNewUser(AuthData userData) {
+        new UserHandler(userData.getCip(), userData.getLastname(), userData.getFirstname());
     }
 
     private void rejectRequest(ContainerRequestContext context) {
