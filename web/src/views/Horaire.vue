@@ -230,6 +230,16 @@
             ></b-form-input>
           </b-col>
         </b-row>
+        <b-row>
+          <b-col style="display: flex; justify-content: center">
+            <b-button variant="dark" class="saveButton" @click="sendPref" style="margin-right:5px">
+              Enregistrer les informations
+            </b-button>
+            <b-button variant="Alert" class="saveTrajet" @click="hideIcal">
+              Annuler
+            </b-button>
+          </b-col>
+        </b-row>
       </b-modal>
 
       <b-modal
@@ -1093,6 +1103,7 @@ export default {
       pref.dark_mode = this.darkMode;
       this.putUser(pref);
       this.hidePref();
+      this.hideIcal();
     },
     sendMaps(event) {
       let map = {
