@@ -71,13 +71,12 @@ public class CalendarHandler {
                     missing.add(new MissingTraject(results.getString("startplace"),
                             results.getString("targetplace"), transport));
                 } else {
-                    // TODO: convertir le 0 en temps correctement
-                    Timestamp eventStartTime = results.getTimestamp("start_time");
+                    long eventStartTime = results.getTimestamp("start_time").getTime() / 1000;
                     missing.add(new MissingTraject(results.getString("startplace"),
-                            results.getString("targetplace"), transport,
-                            eventStartTime.getTime() / 1000));
+                            results.getString("targetplace"), transport, eventStartTime));
                 }
             }
+
             return missing;
         } catch (SQLException ex) {
             ex.printStackTrace();
@@ -98,14 +97,16 @@ public class CalendarHandler {
                 TravelMode transport = TravelMode.valueOf(results.getString("transport_name"));
 
                 if (transport == TravelMode.TRANSIT) {
-                    long arrivalTime = results.getTimestamp("end_time").getTime();
+                    long arrivalTime = results.getTimestamp("event_start_time").getTime() / 1000;
                     traject = new MissingTraject(startPlaceId, endPlaceId, transport, arrivalTime);
                 } else {
                     traject = new MissingTraject(startPlaceId, endPlaceId, transport);
                 }
 
                 String itineraryJson = readFile(traject.getFilename());
-                trajects.add(new JsonObject(itineraryJson));
+                if (itineraryJson != null) {
+                    trajects.add(new JsonObject(itineraryJson));
+                }
             }
             return trajects;
         } catch (SQLException ex) {
@@ -211,8 +212,8 @@ public class CalendarHandler {
                 }
 
                 PostgresValue[] values =
-                        new PostgresValue[] {new PostgresValue(new Timestamp(startTime)),
-                                new PostgresValue(new Timestamp(arrivalTime)),
+                        new PostgresValue[] {new PostgresValue(new Timestamp(startTime % 86400)),
+                                new PostgresValue(new Timestamp(arrivalTime % 86400)),
                                 new PostgresValue(transport.toString().toUpperCase()),
                                 new PostgresValue(missing.getStartPlaceId()),
                                 new PostgresValue(missing.getEndPlaceId())};

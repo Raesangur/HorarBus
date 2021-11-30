@@ -55,6 +55,13 @@ public class MissingTraject {
     }
 
     public String getFilename() {
-        return startPlaceId + endPlaceId + transport.toString() + Long.toString(arrivalTime);
+        return startPlaceId + endPlaceId + transport.toString()
+                + Long.toString(arrivalTime % 86400);
+    }
+
+    @Override
+    public String toString() {
+        return "MissingTraject: [" + startPlaceId + ", " + endPlaceId + ", " + transport + ", "
+                + arrivalTime + "]";
     }
 }
