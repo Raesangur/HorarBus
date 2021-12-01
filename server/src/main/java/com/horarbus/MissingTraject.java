@@ -35,7 +35,7 @@ public class MissingTraject {
 
     @Override
     public int hashCode() {
-        return (transport.toString() + startPlaceId + endPlaceId).hashCode();
+        return (transport.toString() + "start_" + startPlaceId + "end_ " + endPlaceId).hashCode();
     }
 
     public String getStartPlaceId() {
