@@ -89,10 +89,17 @@ LEFT JOIN Preferences ON Preferences.cip = Student.cip;
 CREATE OR REPLACE FUNCTION onStudentDataChange() RETURNS TRIGGER AS
 $$
 BEGIN
-UPDATE student SET surname=NEW.surname WHERE cip=OLD.cip;
+IF NOT NEW.ical_key IS NULL THEN
+UPDATE student SET ical_key=NEW.ical_key WHERE cip=OLD.cip;
+END IF;
+
 
 IF NOT EXISTS (SELECT cip FROM preferences WHERE cip=OLD.cip) THEN
 INSERT INTO preferences (cip) VALUES (OLD.cip);
+END IF;
+
+IF NOT NEW.home_place_id IS NULL THEN
+UPDATE preferences SET home_place_id=NEW.home_place_id WHERE cip=OLD.cip;
 END IF;
 
 IF NOT NEW.preparation_time IS NULL THEN

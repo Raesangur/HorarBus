@@ -3,6 +3,7 @@ package com.horarbus.service;
 import java.io.IOException;
 import java.net.URL;
 import java.util.Scanner;
+import com.google.maps.model.TravelMode;
 import com.horarbus.handler.LocationHandler;
 import biweekly.Biweekly;
 import biweekly.ICalendar;
@@ -46,9 +47,17 @@ public class CalendarService {
                 getLocationDetails(waypoints.getJsonObject(1).getString("place_id")));
 
         if (status.equals("OK")) {
+            long eventTime = itineraryData.getLong("eventTime");
+
             JsonObject leg = routes.getJsonObject(0).getJsonArray("legs").getJsonObject(0);
-            output.put("end", leg.getJsonObject("arrival_time").getLong("value") * 1000);
-            output.put("start", leg.getJsonObject("departure_time").getLong("value") * 1000);
+            if (TravelMode.valueOf(transport.toUpperCase()) != TravelMode.TRANSIT) {
+                output.put("end", eventTime);
+                output.put("start",
+                        eventTime - leg.getJsonObject("duration").getLong("value") * 1000);
+            } else {
+                output.put("end", leg.getJsonObject("arrival_time").getLong("value") * 1000);
+                output.put("start", leg.getJsonObject("departure_time").getLong("value") * 1000);
+            }
             traject.put("steps", leg.getJsonArray("steps"));
         } else {
             output.put("start", null);
