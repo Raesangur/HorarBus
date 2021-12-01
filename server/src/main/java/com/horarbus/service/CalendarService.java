@@ -28,6 +28,7 @@ public class CalendarService {
 
     public static JsonObject formatItinerary(JsonObject itineraryData) {
         JsonObject output = new JsonObject();
+        JsonObject traject = new JsonObject();
 
         String transport = itineraryData.getString("transport");
         JsonObject itinerary = itineraryData.getJsonObject("itinerary");
@@ -36,17 +37,25 @@ public class CalendarService {
         JsonArray routes = itinerary.getJsonArray("routes");
         String status = itinerary.getString("status");
 
-        output.put("transport", transport);
         // TODO: temps avance
-        output.put("temps_avance", -1);
-        output.put("adresseDestinataire",
+        traject.put("temps_avance", -1);
+        traject.put("transport", transport);
+        traject.put("adresseDestinataire",
                 getLocationDetails(waypoints.getJsonObject(0).getString("place_id")));
-        output.put("adresseInitiale",
+        traject.put("adresseInitiale",
                 getLocationDetails(waypoints.getJsonObject(1).getString("place_id")));
 
-        JsonArray details =
-                status.equals("OK") ? routes.getJsonObject(0).getJsonArray("legs") : null;
-        output.put("details", details);
+        if (status.equals("OK")) {
+            JsonObject leg = routes.getJsonObject(0).getJsonArray("legs").getJsonObject(0);
+            output.put("start", leg.getJsonObject("arrival_time").getLong("value"));
+            output.put("end", leg.getJsonObject("departure_time").getLong("value"));
+            traject.put("steps", leg.getJsonArray("steps"));
+        } else {
+            output.put("start", null);
+            output.put("end", null);
+        }
+
+        output.put("traject", traject);
 
         return output;
     }
