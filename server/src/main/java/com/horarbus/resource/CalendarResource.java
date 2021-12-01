@@ -18,8 +18,11 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.Map.Entry;
 
 @Path("/calendar")
 public class CalendarResource {
@@ -71,11 +74,14 @@ public class CalendarResource {
         }
 
         JsonArray formattedTrajects = new JsonArray();
+        HashMap<String, JsonObject> loadedPlaceInfo = new HashMap<String, JsonObject>();
         for (JsonObject itinerary : handler.getAllTrajects()) {
             if (itinerary != null) {
-                formattedTrajects.add(CalendarService.formatItinerary((JsonObject) itinerary));
+                formattedTrajects.add(
+                        CalendarService.formatItinerary((JsonObject) itinerary, loadedPlaceInfo));
             }
         }
+
         eventJson.put("trajects", formattedTrajects);
 
         return eventJson;

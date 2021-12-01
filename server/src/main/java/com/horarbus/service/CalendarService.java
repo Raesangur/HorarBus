@@ -2,6 +2,7 @@ package com.horarbus.service;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.HashMap;
 import java.util.Scanner;
 import com.google.maps.model.TravelMode;
 import com.horarbus.handler.LocationHandler;
@@ -27,7 +28,8 @@ public class CalendarService {
         }
     }
 
-    public static JsonObject formatItinerary(JsonObject itineraryData) {
+    public static JsonObject formatItinerary(JsonObject itineraryData,
+            HashMap<String, JsonObject> knownPlaceInfo) {
         JsonObject output = new JsonObject();
         JsonObject traject = new JsonObject();
 
@@ -41,10 +43,10 @@ public class CalendarService {
         // TODO: temps avance
         traject.put("temps_avance", -1);
         traject.put("transport", transport);
-        traject.put("adresseDestinataire",
-                getLocationDetails(waypoints.getJsonObject(0).getString("place_id")));
-        traject.put("adresseInitiale",
-                getLocationDetails(waypoints.getJsonObject(1).getString("place_id")));
+        traject.put("adresseDestinataire", getLocationDetails(
+                waypoints.getJsonObject(0).getString("place_id"), knownPlaceInfo));
+        traject.put("adresseInitiale", getLocationDetails(
+                waypoints.getJsonObject(1).getString("place_id"), knownPlaceInfo));
 
         if (status.equals("OK")) {
             long eventTime = itineraryData.getLong("eventTime");
@@ -69,15 +71,20 @@ public class CalendarService {
         return output;
     }
 
-    private static JsonObject getLocationDetails(String placeId) {
-        LocationHandler handler = new LocationHandler(placeId);
+    private static JsonObject getLocationDetails(String placeId,
+            HashMap<String, JsonObject> knownPlaceInfo) {
+        if (knownPlaceInfo.get(placeId) == null) {
+            LocationHandler handler = new LocationHandler(placeId);
 
-        JsonObject placeInfo = new JsonObject();
-        placeInfo.put("place_id", handler.get_id());
-        placeInfo.put("coords", handler.get_coords());
-        placeInfo.put("address", handler.get_address());
+            JsonObject placeInfo = new JsonObject();
+            placeInfo.put("place_id", handler.get_id());
+            placeInfo.put("coords", handler.get_coords());
+            placeInfo.put("address", handler.get_address());
 
-        return placeInfo;
+            knownPlaceInfo.put(placeId, placeInfo);
+        }
+
+        return knownPlaceInfo.get(placeId);
     }
 
     public static JsonObject parseEvent(VEvent event) {
