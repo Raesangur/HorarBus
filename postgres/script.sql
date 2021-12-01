@@ -208,7 +208,7 @@ select student.cip, event.start_time as event_start_time, te.*
 from trajectevent AS TE, (SELECT event.event_id, MIN(extract (MILLISECONDS FROM trajectevent.end_time) - extract(MILLISECONDS from event.start_time)) AS earlyAmount
 	FROM trajectevent
 	JOIN event ON event.event_id = trajectevent.event_id
-	GROUP BY event.event_id, trajectevent.event_id) AS ER,
+	GROUP BY event.event_id, trajectevent.event_id, arrival) AS ER,
 	attendance, student, event
 where attendance.event_id = TE.event_id and student.cip = attendance.cip and event.event_id = attendance.event_id
 group by student.cip, te.event_id, te.start_time, te.end_time, te.start_place_id, te.end_place_id, te.transport_name, te.arrival, er.earlyamount, event.start_time
