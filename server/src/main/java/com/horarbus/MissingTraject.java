@@ -1,6 +1,5 @@
 package com.horarbus;
 
-import java.sql.Time;
 import java.sql.Timestamp;
 import com.google.maps.model.TravelMode;
 
@@ -27,8 +26,11 @@ public class MissingTraject {
             return false;
         }
         MissingTraject missing = (MissingTraject) obj;
-        return startPlaceId.equals(missing.startPlaceId) && endPlaceId.equals(missing.endPlaceId)
-                && transport.equals(missing.transport) && arrivalTime == missing.arrivalTime;
+        boolean baseComparison = startPlaceId.equals(missing.startPlaceId)
+                && endPlaceId.equals(missing.endPlaceId) && transport.equals(missing.transport);
+        return transport == TravelMode.TRANSIT
+                ? baseComparison && arrivalTime.equals(missing.arrivalTime)
+                : baseComparison;
     }
 
     @Override
