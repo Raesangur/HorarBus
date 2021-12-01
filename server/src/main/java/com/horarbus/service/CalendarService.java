@@ -47,8 +47,8 @@ public class CalendarService {
 
         if (status.equals("OK")) {
             JsonObject leg = routes.getJsonObject(0).getJsonArray("legs").getJsonObject(0);
-            output.put("start", leg.getJsonObject("arrival_time").getLong("value"));
-            output.put("end", leg.getJsonObject("departure_time").getLong("value"));
+            output.put("start", leg.getJsonObject("arrival_time").getLong("value") * 1000);
+            output.put("end", leg.getJsonObject("departure_time").getLong("value") * 1000);
             traject.put("steps", leg.getJsonArray("steps"));
         } else {
             output.put("start", null);
