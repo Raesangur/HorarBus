@@ -542,6 +542,7 @@
               <div v-if="event.description1">
                 {{ event.description1 }}
               </div>
+              <div class="centerBorder"></div>
               <div v-if="event.description2">
                 {{ event.description2 }}
               </div>
@@ -957,13 +958,13 @@ export default {
     this.updateTime();
     this.getToday();
     const successCallback = (position) => {
-      // if(position.coords.accuracy >= 1000){
-      //   let infoPosition = prompt("Entrer votre adresse", "");
-      //   this.position = infoPosition;
-      // }
-      // else{
-      //   this.position = position;
-      // }
+      if(position.coords.accuracy >= 1000){
+        let infoPosition = prompt("Entrer votre adresse", "");
+        this.position = infoPosition;
+      }
+      else{
+        this.position = position;
+      }
       console.log(position);
       this.setGeo(position);
     };
@@ -1038,6 +1039,8 @@ export default {
         }
       }
     },
+
+    
     trajetState() {
       let nbrEvents = 0;
       for (nbrEvents in this.eventsState) {
@@ -1057,12 +1060,14 @@ export default {
         end = end.toISOString();
         this.trajetState[i].end = end;
       }
+      
       for (let i = 0; i < this.trajetState.length; i++) {
         this.events[i + nbrEvents] = this.trajetState[i];
         this.calendarOptions.events[i + nbrEvents] = this.trajetState[i];
       }
-      console.log(this.calendarOptions);
+      console.log(this.calendarOptions.events);
       for (let i = 0; i < this.trajetState.length; i++) {
+        this.events[i + nbrEvents].traject.adresseInitiale.address = this.position.;
         if (this.calendarOptions.events[i + nbrEvents].traject.transport) {
           switch (
             this.calendarOptions.events[i + nbrEvents].traject.transport
@@ -1087,7 +1092,6 @@ export default {
               break;
           }
         }
-
         this.events[i + nbrEvents].start =
           this.trajetState[i].start.split("T")[0] +
           " " +
@@ -1106,14 +1110,20 @@ export default {
           " - " +
           this.events[i + nbrEvents].end.split(" ")[1];
         this.events[i + nbrEvents].heureDepart = this.events[i + nbrEvents].heure.split("-")[0];
+        this.events[i + nbrEvents].heureArrive = this.events[i + nbrEvents].heure.split("-")[1];
         this.events[i + nbrEvents].color = "rgb(255, 165, 0)";
-        // this.events[i+nbrEvents].description1 = this.events[i+nbrEvents].description.split("\n")[0];
-        // this.events[i+nbrEvents].description2 = this.events[i+nbrEvents].description.split("\n")[2];
+        this.events[i+nbrEvents].summary = "Transport";
+        if(this.events[i + nbrEvents].traject.steps[1].transit_details){
+          this.events[i+nbrEvents].description = this.events[i + nbrEvents].traject.steps[1].transit_details;
+        }
+        if(this.events[i+nbrEvents].description){
+          this.events[i+nbrEvents].description1 = this.events[i+nbrEvents].description.departure_stop.name.replaceAll("Ã©","é")+ " vers "+this.events[i+nbrEvents].description.arrival_stop.name.replaceAll("Ã©","é");
+        }
+        if(this.events[i+nbrEvents].description){
+          this.events[i+nbrEvents].description2 = "Autobus #"+this.events[i+nbrEvents].description.line.short_name;
+        }
+
         this.events[i + nbrEvents].id = "eventFullWindow" + (i + nbrEvents);
-        // if (this.events[i+nbrEvents].description.split("\n")[3]) {
-        //   this.events[i+nbrEvents].description3 =
-        //     this.events[i+nbrEvents].description.split("\n")[3];
-        // }
         this.calendarOptions.events[i + nbrEvents].start =
           this.events[i + nbrEvents].start;
         this.calendarOptions.events[i + nbrEvents].end =
@@ -1123,16 +1133,16 @@ export default {
           " - " +
           this.calendarOptions.events[i + nbrEvents].end.split(" ")[1];
           this.calendarOptions.events[i + nbrEvents].color = "rgb(255, 165, 0)";
-        // this.calendarOptions.events[i+nbrEvents].title =
-        //   this.calendarOptions.events[i+nbrEvents].summary;
-        // this.calendarOptions.events[i+nbrEvents].description1 =
-        //   this.calendarOptions.events[i+nbrEvents].description.split("\n")[0];
-        // this.calendarOptions.events[i+nbrEvents].description2 =
-        //   this.calendarOptions.events[i+nbrEvents].description.split("\n")[2];
-        // if (this.calendarOptions.events[i+nbrEvents].description.split("\n")[3]) {
-        //   this.calendarOptions.events[i+nbrEvents].description3 =
-        //     this.calendarOptions.events[i+nbrEvents].description.split("\n")[3];
-        // }
+          this.calendarOptions.events[i+ nbrEvents].title = "Départ "+ this.calendarOptions.events[i+nbrEvents].traject.adresseDestinataire.address.split(",")[0];
+        if(this.calendarOptions.events[i+nbrEvents].traject.steps[1].transit_details){
+          this.calendarOptions.events[i+nbrEvents].description = this.calendarOptions.events[i+nbrEvents].traject.steps[1].transit_details;
+        }
+        if(this.calendarOptions.events[i+nbrEvents].description){
+          this.calendarOptions.events[i+nbrEvents].description1 = this.calendarOptions.events[i+nbrEvents].description.departure_stop.name.replaceAll("Ã©","é")+ " vers "+this.calendarOptions.events[i+nbrEvents].description.arrival_stop.name.replaceAll("Ã©","é");
+        }
+        if(this.calendarOptions.events[i+nbrEvents].description){
+          this.calendarOptions.events[i+nbrEvents].description2 = "Autobus #"+this.calendarOptions.events[i+nbrEvents].description.line.short_name;
+        }
       }
     },
     prefState() {
