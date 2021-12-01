@@ -27,8 +27,11 @@ public class MapsService {
     public static String getItinerary(String startingPlaceId, String arrivalPlaceId,
             TravelMode travelMode, long arrivalTime) throws Exception {
         String params = "origin=place_id:" + formatValue(startingPlaceId) + "&destination=place_id:"
-                + formatValue(arrivalPlaceId) + "&mode=" + travelMode.toUrlValue()
-                + "&arrival_time=" + Long.toString(arrivalTime);
+                + formatValue(arrivalPlaceId) + "&mode=" + travelMode.toUrlValue();
+
+        if (travelMode == TravelMode.TRANSIT) {
+            params += "&arrival_time=" + Long.toString(arrivalTime);
+        }
 
         String endpointStr = MapsService.ITINERARY_URL + params;
         return MapsService.doRequest(generateEndpoint(endpointStr));

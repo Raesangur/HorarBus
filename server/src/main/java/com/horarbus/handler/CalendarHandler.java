@@ -67,14 +67,10 @@ public class CalendarHandler {
                 }
 
                 TravelMode transport = TravelMode.valueOf(transportStr);
-                if (transport != TravelMode.TRANSIT) {
-                    missing.add(new MissingTraject(results.getString("startplace"),
-                            results.getString("targetplace"), transport));
-                } else {
-                    long eventStartTime = results.getTimestamp("start_time").getTime() / 1000;
-                    missing.add(new MissingTraject(results.getString("startplace"),
-                            results.getString("targetplace"), transport, eventStartTime));
-                }
+                Timestamp eventStartTime = results.getTimestamp("start_time");
+
+                missing.add(new MissingTraject(results.getString("startplace"),
+                        results.getString("targetplace"), transport, eventStartTime));
             }
 
             return missing;
@@ -96,12 +92,8 @@ public class CalendarHandler {
                 String endPlaceId = results.getString("end_place_id");
                 TravelMode transport = TravelMode.valueOf(results.getString("transport_name"));
 
-                if (transport == TravelMode.TRANSIT) {
-                    long arrivalTime = results.getTimestamp("event_start_time").getTime() / 1000;
-                    traject = new MissingTraject(startPlaceId, endPlaceId, transport, arrivalTime);
-                } else {
-                    traject = new MissingTraject(startPlaceId, endPlaceId, transport);
-                }
+                Timestamp arrivalTime = results.getTimestamp("event_start_time");
+                traject = new MissingTraject(startPlaceId, endPlaceId, transport, arrivalTime);
 
                 String itineraryJson = readFile(traject.getFilename());
                 if (itineraryJson != null) {
@@ -208,12 +200,14 @@ public class CalendarHandler {
                     startTime = leg.getJsonObject("departure_time").getLong("value") * 1000;
                     arrivalTime = leg.getJsonObject("arrival_time").getLong("value") * 1000;
                 } else {
-                    arrivalTime = leg.getJsonObject("duration").getLong("value") * 1000;
+                    startTime = Utils
+                            .removeTimeFromEpoch(Utils.timestampToMillis(missing.getArrivalTime()));
+                    arrivalTime = startTime + leg.getJsonObject("duration").getLong("value") * 1000;
                 }
 
                 PostgresValue[] values =
-                        new PostgresValue[] {new PostgresValue(new Timestamp(startTime % 86400)),
-                                new PostgresValue(new Timestamp(arrivalTime % 86400)),
+                        new PostgresValue[] {new PostgresValue(new Timestamp(startTime)),
+                                new PostgresValue(new Timestamp(arrivalTime)),
                                 new PostgresValue(transport.toString().toUpperCase()),
                                 new PostgresValue(missing.getStartPlaceId()),
                                 new PostgresValue(missing.getEndPlaceId())};

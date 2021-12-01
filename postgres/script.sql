@@ -60,8 +60,8 @@ CREATE TABLE LocalizedEvent
 
 CREATE TABLE Traject
 (
-  begin_time TIMESTAMP NOT NULL,
-  end_time TIMESTAMP NOT NULL,
+  begin_time TIME NOT NULL,
+  end_time TIME NOT NULL,
   transport_name VARCHAR(12) NOT NULL,
   start_place_id VARCHAR(64) NOT NULL,
   end_place_id VARCHAR(64) NOT NULL,
