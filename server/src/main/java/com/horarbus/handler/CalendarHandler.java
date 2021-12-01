@@ -80,11 +80,11 @@ public class CalendarHandler {
         }
     }
 
-    public JsonArray getAllTrajects() {
+    public ArrayList<JsonObject> getAllTrajects() {
         ResultSet results = executeRequestForUser("usertrajectevent");
 
         try {
-            JsonArray trajects = new JsonArray();
+            ArrayList<JsonObject> trajects = new ArrayList<>();
             while (results.next()) {
                 MissingTraject traject;
 
@@ -97,14 +97,17 @@ public class CalendarHandler {
 
                 String itineraryJson = readFile(traject.getFilename());
                 if (itineraryJson != null) {
-                    trajects.add(new JsonObject(itineraryJson));
+                    JsonObject data = new JsonObject();
+                    data.put("transport", transport.toString());
+                    data.put("itinerary", new JsonObject(itineraryJson));
+                    trajects.add(data);
                 }
             }
             return trajects;
         } catch (SQLException ex) {
             ex.printStackTrace();
         }
-        return new JsonArray();
+        return null;
     }
 
     public void cacheData(VEvent eventData) {
