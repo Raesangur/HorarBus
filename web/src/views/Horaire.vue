@@ -232,7 +232,12 @@
         </b-row>
         <b-row>
           <b-col style="display: flex; justify-content: center">
-            <b-button variant="dark" class="saveButton" @click="sendPref" style="margin-right:5px">
+            <b-button
+              variant="dark"
+              class="saveButton"
+              @click="sendPref"
+              style="margin-right: 5px"
+            >
               Enregistrer les informations
             </b-button>
             <b-button variant="Alert" class="saveTrajet" @click="hideIcal">
@@ -405,9 +410,9 @@
               class="link"
               :href="
                 'http://maps.google.ca/maps?daddr=' +
-                trajetActif.trajet.addresseDestinataire +
+                trajetActif.trajet.adresseDestinataire +
                 '&saddr=' +
-                trajetActif.trajet.addresseInitial +
+                trajetActif.trajet.adresseInitial +
                 '&dirflg=' +
                 trajetActif.trajet.transport +
                 '&amp;ll='
@@ -692,8 +697,8 @@ export default {
     },
     trajetActif: {
       trajet: {
-        addresseDestinataire: "pub le willard",
-        addresseInitial: "universite de sherbrooke",
+        adresseDestinataire: "pub le willard",
+        adresseInitial: "universite de sherbrooke",
         transport: "r",
       },
     },
@@ -716,9 +721,9 @@ export default {
           ) {
             window.open(
               "maps://maps.google.ca/maps?daddr=" +
-                info.event.extendedProps.trajet.addresseDestinataire +
+                info.event.extendedProps.trajet.adresseDestinataire +
                 "&saddr=" +
-                info.event.extendedProps.trajet.addresseInitial +
+                info.event.extendedProps.trajet.adresseInitial +
                 "&dirflg=" +
                 info.event.extendedProps.trajet.transport +
                 "&amp;ll="
@@ -726,9 +731,9 @@ export default {
           } else {
             window.open(
               "http://maps.google.ca/maps?daddr=" +
-                info.event.extendedProps.trajet.addresseDestinataire +
+                info.event.extendedProps.trajet.adresseDestinataire +
                 "&saddr=" +
-                info.event.extendedProps.trajet.addresseInitial +
+                info.event.extendedProps.trajet.adresseInitial +
                 "&dirflg=" +
                 info.event.extendedProps.trajet.transport +
                 "&amp;ll="
@@ -828,8 +833,8 @@ export default {
             transport: "r",
             notification_enable: false,
             temps_avance_notification: 0,
-            addresseDestinataire: "pub le willard",
-            addresseInitial: "universite de sherbrooke",
+            adresseDestinataire: "pub le willard",
+            adresseInitial: "universite de sherbrooke",
           },
         },
       ],
@@ -916,8 +921,8 @@ export default {
           temps_avance: 0,
           notification_enable: false,
           temps_avance_notification: 0,
-          addresseDestinataire: "pub le willard",
-          addresseInitial: "universite de sherbrooke",
+          adresseDestinataire: "pub le willard",
+          adresseInitial: "universite de sherbrooke",
         },
       },
     ],
@@ -935,9 +940,8 @@ export default {
     this.switchTheme();
   },
   mounted() {
-    this.getUser();
-    this.getEvents();
     this.resize();
+    this.getEvents();
     this.$refs.calendar.checkChange();
     this.ready = true;
     this.scrollToTime();
@@ -945,7 +949,7 @@ export default {
     this.getToday();
     const successCallback = (position) => {
       // if(position.coords.accuracy >= 1000){
-      //   let infoPosition = prompt("Entrer votre addresse", "");
+      //   let infoPosition = prompt("Entrer votre adresse", "");
       //   this.position = infoPosition;
       // }
       // else{
@@ -963,12 +967,12 @@ export default {
     user() {
       this.getEvents();
     },
+
     eventsState() {
       if (!this.eventsState) {
         this.showIcal();
       }
       for (let i in this.eventsState) {
-        this.eventsState[i].open = false;
         let now = new Date();
         var offset = now.getTimezoneOffset() / 60;
         let start = new Date(this.eventsState[i].start);
@@ -983,24 +987,6 @@ export default {
       this.events = this.eventsState;
       this.calendarOptions.events = this.eventsState;
       for (let i in this.eventsState) {
-        if (this.calendarOptions.events[i].trajet) {
-          switch (this.calendarOptions.events[i].trajet.transport) {
-            case "TRANSIT":
-              this.calendarOptions.events[i].trajet.transport = "r";
-              break;
-            case "WALKING":
-              this.calendarOptions.events[i].trajet.transport = "w";
-              break;
-            case "BICYCLING":
-              this.calendarOptions.events[i].trajet.transport = "b";
-              break;
-            case "DRIVING":
-              this.calendarOptions.events[i].trajet.transport = "d";
-              break;
-            default:
-              break;
-          }
-        }
         this.events[i].start =
           this.eventsState[i].start.split("T")[0] +
           " " +
@@ -1043,6 +1029,100 @@ export default {
         }
       }
     },
+    trajetState() {
+      
+      let nbrEvents = 0;
+      for (nbrEvents in this.eventsState) {
+        nbrEvents++;
+      }
+      for (let i in this.trajetState) {
+        let now = new Date();
+        var offset = now.getTimezoneOffset() / 60;
+
+        let start = new Date(this.trajetState[i].start);
+        start.setHours(start.getHours() - offset);
+        start = start.toISOString();
+        this.trajetState[i].start = start;
+
+        let end = new Date(this.trajetState[i].end);
+        end.setHours(end.getHours() - offset);
+        end = end.toISOString();
+        this.trajetState[i].end = end;
+      }
+      for (let i = 0; i < this.trajetState.length; i++) {
+        this.events[i + nbrEvents] = this.trajetState[i];
+        this.calendarOptions.events[i + nbrEvents] = this.trajetState[i];
+      }
+      console.log(this.events);
+      for (let i = 0; i < this.trajetState.length; i++) {
+        console.log(i)
+        if (this.calendarOptions.events[i + nbrEvents].traject.transport) {
+          switch (
+            this.calendarOptions.events[i + nbrEvents].traject.transport
+          ) {
+            case "TRANSIT":
+              this.calendarOptions.events[i + nbrEvents].traject.transport =
+                "r";
+              break;
+            case "WALKING":
+              this.calendarOptions.events[i + nbrEvents].traject.transport =
+                "w";
+              break;
+            case "BICYCLING":
+              this.calendarOptions.events[i + nbrEvents].traject.transport =
+                "b";
+              break;
+            case "DRIVING":
+              this.calendarOptions.events[i + nbrEvents].traject.transport =
+                "d";
+              break;
+            default:
+              break;
+          }
+        }
+
+        this.events[i+nbrEvents].start =
+          this.trajetState[i].start.split("T")[0] +
+          " " +
+          this.trajetState[i].start.split("T")[1].split(":")[0] +
+          ":" +
+          this.trajetState[i].start.split("T")[1].split(":")[1];
+        this.events[i+nbrEvents].end =
+          this.trajetState[i].end.split("T")[0] +
+          " " +
+          this.trajetState[i].end.split("T")[1].split(":")[0] +
+          ":" +
+          this.trajetState[i].end.split("T")[1].split(":")[1];
+
+        this.events[i + nbrEvents].heure =
+          this.events[i+nbrEvents].start.split(" ")[1] +
+          " - " +
+          this.events[i+nbrEvents].end.split(" ")[1];
+        // this.events[i+nbrEvents].description1 = this.events[i+nbrEvents].description.split("\n")[0];
+        // this.events[i+nbrEvents].description2 = this.events[i+nbrEvents].description.split("\n")[2];
+          this.events[i+nbrEvents].id = "eventFullWindow" + (i+nbrEvents);
+        // if (this.events[i+nbrEvents].description.split("\n")[3]) {
+        //   this.events[i+nbrEvents].description3 =
+        //     this.events[i+nbrEvents].description.split("\n")[3];
+        // }
+        this.calendarOptions.events[i+nbrEvents].start = this.events[i+nbrEvents].start;
+        this.calendarOptions.events[i+nbrEvents].end = this.events[i+nbrEvents].end;
+        this.calendarOptions.events[i+nbrEvents].heure =
+          this.calendarOptions.events[i+nbrEvents].start.split(" ")[1] +
+          " - " +
+          this.calendarOptions.events[i+nbrEvents].end.split(" ")[1];
+        // this.calendarOptions.events[i+nbrEvents].title =
+        //   this.calendarOptions.events[i+nbrEvents].summary;
+        // this.calendarOptions.events[i+nbrEvents].description1 =
+        //   this.calendarOptions.events[i+nbrEvents].description.split("\n")[0];
+        // this.calendarOptions.events[i+nbrEvents].description2 =
+        //   this.calendarOptions.events[i+nbrEvents].description.split("\n")[2];
+        // if (this.calendarOptions.events[i+nbrEvents].description.split("\n")[3]) {
+        //   this.calendarOptions.events[i+nbrEvents].description3 =
+        //     this.calendarOptions.events[i+nbrEvents].description.split("\n")[3];
+        // }
+      }
+    },
     prefState() {
       this.pref.transport = this.prefState.transport;
       this.pref.temps_avance = this.prefState.preparation_time;
@@ -1069,6 +1149,7 @@ export default {
       user: (state) => state.user.user,
       prefState: (state) => state.user.pref,
       eventsState: (state) => state.calendar.events,
+      trajetState: (state) => state.calendar.trajects,
     }),
     cal() {
       return this.ready ? this.$refs.calendar : null;
@@ -1078,7 +1159,7 @@ export default {
     },
   },
   methods: {
-    ...mapActions(["putUser", "getEvents", "setGeo", "getUser"]),
+    ...mapActions(["putUser", "getEvents", "setGeo", "getUser", "putEvents"]),
     sendPref() {
       let pref = {
         preparation_time: "",
@@ -1270,7 +1351,7 @@ export default {
     },
     openEvent(event) {
       event.open = true;
-      if(event.trajet){
+      if (event.trajet) {
         this.trajetActif = event;
         switch (this.trajetActif.trajet.transport) {
           case "TRANSIT":
@@ -1316,7 +1397,6 @@ export default {
         this.eventActive.target.clickOutsideEvent
       );
       this.eventActive = undefined;
-      
     },
     setHeight() {
       for (let i in this.events) {

@@ -4,16 +4,24 @@ export default {
     namespaced: false,
     state: {
         events: {},
+        trajects: {},
     },
     actions: {
         getEvents({ commit }) {
             CalendarService.getEvents()
                 .then((events) => {
-                    console.log(events.data)
                     for (let i in events.data.events) {
                         events.data.events[i].open = false;
                     }
+                    for (let i in events.data.trajects) {
+                        events.data.trajects[i].open = false;
+                        events.data.trajects[i].traject.transport =
+                            events.data.trajects[i].traject.transport.toUpperCase();
+
+                    }
+                    events.data.trajects = events.data.trajects.filter(trajects => trajects.end !== null && trajects.start !== null);
                     commit("getEvents", events.data.events);
+                    commit("getTrajet", events.data.trajects);
                 })
                 .catch((err) => {
                     console.log(err);
@@ -33,6 +41,9 @@ export default {
     mutations: {
         getEvents(state, payload) {
             state.events = payload;
+        },
+        getTrajet(state, payload) {
+            state.trajects = payload;
         },
     },
 };

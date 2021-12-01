@@ -28,7 +28,7 @@ public class AuthFilter implements ContainerRequestFilter {
         try {
             String token = getAuthToken(requestContext);
             AuthData authData = readAuthDataFromToken(token);
-            registerNewUser(authData);
+            //registerNewUser(authData);
             requestContext.setProperty("authData", authData);
         } catch (AuthException ex) {
             ex.printStackTrace();
