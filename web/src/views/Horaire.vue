@@ -712,7 +712,7 @@ export default {
         transport: "r",
       },
     },
-    position: "",
+    position: undefined,
     today: new Date(),
     value: new Date(),
     type: "week",
@@ -957,21 +957,24 @@ export default {
     this.scrollToTime();
     this.updateTime();
     this.getToday();
+    if(this.positionState){
+      this.position = this.positionState;
+    }
     const successCallback = (position) => {
-      if(position.coords.accuracy >= 1000){
+      if(position.coords.accuracy >= 300 && !this.position){
         let infoPosition = prompt("Entrer votre adresse", "");
         this.position = infoPosition;
-      }
+      } 
       else{
         this.position = position;
       }
-      console.log(position);
+      console.log(this.position);
       this.setGeo(position);
     };
     const errorCallback = (error) => {
       console.error(error);
     };
-    navigator.geolocation.watchPosition(successCallback, errorCallback);
+    navigator.geolocation.getCurrentPosition(successCallback, errorCallback);
   },
   watch: {
     user() {
@@ -1067,7 +1070,13 @@ export default {
       }
       console.log(this.calendarOptions.events);
       for (let i = 0; i < this.trajetState.length; i++) {
-        this.events[i + nbrEvents].traject.adresseInitiale.address = this.position.;
+        if(this.position.coords){
+          this.events[i + nbrEvents].traject.adresseInitiale.address = this.position.coords.latitude + ","+this.position.coords.longitude;
+        }
+        else{
+          this.events[i + nbrEvents].traject.adresseInitiale.address = this.position;
+        }
+        
         if (this.calendarOptions.events[i + nbrEvents].traject.transport) {
           switch (
             this.calendarOptions.events[i + nbrEvents].traject.transport
@@ -1172,6 +1181,7 @@ export default {
       prefState: (state) => state.user.pref,
       eventsState: (state) => state.calendar.events,
       trajetState: (state) => state.calendar.trajects,
+      positionState: (state) => state.maps.position,
     }),
     cal() {
       return this.ready ? this.$refs.calendar : null;
