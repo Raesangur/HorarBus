@@ -60,6 +60,15 @@
               </b-col>
             </b-row>
             <b-row>
+              <b-col
+                class="sideItem"
+                @click="showFAQ()"
+                v-b-toggle.sidebar-menu
+              >
+                FAQ
+              </b-col>
+            </b-row>
+            <b-row>
               <b-col class="sideItem" v-b-toggle.sidebar-menu @click="logout">
                 Se déconnecter
               </b-col>
@@ -410,11 +419,11 @@
               class="link"
               :href="
                 'http://maps.google.ca/maps?daddr=' +
-                trajetActif.trajet.adresseDestinataire +
+                trajetActif.traject.adresseDestinataire.address +
                 '&saddr=' +
-                trajetActif.trajet.adresseInitial +
+                trajetActif.traject.adresseInitiale.address +
                 '&dirflg=' +
-                trajetActif.trajet.transport +
+                trajetActif.traject.transport +
                 '&amp;ll='
               "
               target="_blank"
@@ -482,7 +491,7 @@
             class="event"
             @mouseenter="setHeight"
             v-click-outside="dismissEvent"
-            v-if="!event.trajet"
+            v-if="!event.traject"
             :id="event.id"
             v-on:click="showEvent"
             @click="openEvent(event)"
@@ -557,7 +566,7 @@
               </b-row>
               <b-form-group v-slot="{ ariaDescribedby }">
                 <b-form-radio
-                  v-model="event.trajet.transport"
+                  v-model="event.traject.transport"
                   :aria-describedby="ariaDescribedby"
                   name="some-radios"
                   value="WALKING"
@@ -566,7 +575,7 @@
                   ><img :src="require('../assets/walk.png')"
                 /></b-form-radio>
                 <b-form-radio
-                  v-model="event.trajet.transport"
+                  v-model="event.traject.transport"
                   :aria-describedby="ariaDescribedby"
                   name="some-radios"
                   value="BICYCLING"
@@ -575,7 +584,7 @@
                   ><img :src="require('../assets/bike.png')"
                 /></b-form-radio>
                 <b-form-radio
-                  v-model="event.trajet.transport"
+                  v-model="event.traject.transport"
                   :aria-describedby="ariaDescribedby"
                   name="some-radios"
                   value="TRANSIT"
@@ -584,7 +593,7 @@
                   ><img :src="require('../assets/bus.png')"
                 /></b-form-radio>
                 <b-form-radio
-                  v-model="event.trajet.transport"
+                  v-model="event.traject.transport"
                   :aria-describedby="ariaDescribedby"
                   name="some-radios"
                   value="DRIVING"
@@ -599,16 +608,16 @@
                   Notifications
                   <b-row style="margin: 0">
                     <b-form-checkbox
-                      v-model="event.trajet.notification_enable"
+                      v-model="event.traject.notification_enable"
                       name="check-button"
                       class="checkboxNotification"
                     >
                     </b-form-checkbox>
                     <b-col>
                       <input
-                        v-model.number="event.trajet.temps_avance_notification"
+                        v-model.number="event.traject.temps_avance_notification"
                         id="timenotif"
-                        :disabled="!event.trajet.notification_enable"
+                        :disabled="!event.traject.notification_enable"
                         type="number"
                         class="tempsSelectTrajet"
                       />
@@ -625,7 +634,7 @@
                   Temps d'avance désirer
                   <br />
                   <input
-                    v-model.number="event.trajet.temps_avance"
+                    v-model.number="event.traject.temps_avance"
                     type="number"
                     class="tempsSelectTrajet"
                   />
@@ -696,9 +705,9 @@ export default {
       Ical: null,
     },
     trajetActif: {
-      trajet: {
+      traject: {
         adresseDestinataire: "pub le willard",
-        adresseInitial: "universite de sherbrooke",
+        adresseInitiale: "universite de sherbrooke",
         transport: "r",
       },
     },
@@ -713,7 +722,7 @@ export default {
       initialView: "listWeek",
       locales: allLocales,
       eventClick: function (info) {
-        if (info.event.extendedProps.trajet) {
+        if (info.event.extendedProps.traject) {
           if (
             navigator.platform.indexOf("iPhone") != -1 ||
             navigator.platform.indexOf("iPod") != -1 ||
@@ -721,21 +730,21 @@ export default {
           ) {
             window.open(
               "maps://maps.google.ca/maps?daddr=" +
-                info.event.extendedProps.trajet.adresseDestinataire +
+                info.event.extendedProps.traject.adresseDestinataire.address +
                 "&saddr=" +
-                info.event.extendedProps.trajet.adresseInitial +
+                info.event.extendedProps.traject.adresseInitiale.address +
                 "&dirflg=" +
-                info.event.extendedProps.trajet.transport +
+                info.event.extendedProps.traject.transport +
                 "&amp;ll="
             );
           } else {
             window.open(
               "http://maps.google.ca/maps?daddr=" +
-                info.event.extendedProps.trajet.adresseDestinataire +
+                info.event.extendedProps.traject.adresseDestinataire.address +
                 "&saddr=" +
-                info.event.extendedProps.trajet.adresseInitial +
+                info.event.extendedProps.traject.adresseInitiale.address +
                 "&dirflg=" +
-                info.event.extendedProps.trajet.transport +
+                info.event.extendedProps.traject.transport +
                 "&amp;ll="
             );
           }
@@ -828,13 +837,13 @@ export default {
           heureDepart: "2021-11-04 13:00".split(" ")[1],
           heureArrive: "2021-11-04 14:00".split(" ")[1],
           open: false,
-          trajet: {
+          traject: {
             temps_avance: 0,
             transport: "r",
             notification_enable: false,
             temps_avance_notification: 0,
             adresseDestinataire: "pub le willard",
-            adresseInitial: "universite de sherbrooke",
+            adresseInitiale: "universite de sherbrooke",
           },
         },
       ],
@@ -868,7 +877,7 @@ export default {
         open: false,
         prof: "Bernie",
         session: "Session 3 génie informatique",
-        trajet: false,
+        traject: false,
       },
       {
         id: 1,
@@ -893,7 +902,7 @@ export default {
         location: "C1-5006",
         open: false,
         prof: "Bernie",
-        trajet: false,
+        traject: false,
         session: "Session 3 génie informatique",
       },
       {
@@ -916,13 +925,13 @@ export default {
         heureDepart: "2021-11-04 13:00".split(" ")[1],
         heureArrive: "2021-11-04 14:00".split(" ")[1],
         open: false,
-        trajet: {
+        traject: {
           transport: "r",
           temps_avance: 0,
           notification_enable: false,
           temps_avance_notification: 0,
           adresseDestinataire: "pub le willard",
-          adresseInitial: "universite de sherbrooke",
+          adresseInitiale: "universite de sherbrooke",
         },
       },
     ],
@@ -1030,7 +1039,6 @@ export default {
       }
     },
     trajetState() {
-      
       let nbrEvents = 0;
       for (nbrEvents in this.eventsState) {
         nbrEvents++;
@@ -1053,9 +1061,8 @@ export default {
         this.events[i + nbrEvents] = this.trajetState[i];
         this.calendarOptions.events[i + nbrEvents] = this.trajetState[i];
       }
-      console.log(this.events);
+      console.log(this.calendarOptions);
       for (let i = 0; i < this.trajetState.length; i++) {
-        console.log(i)
         if (this.calendarOptions.events[i + nbrEvents].traject.transport) {
           switch (
             this.calendarOptions.events[i + nbrEvents].traject.transport
@@ -1081,13 +1088,13 @@ export default {
           }
         }
 
-        this.events[i+nbrEvents].start =
+        this.events[i + nbrEvents].start =
           this.trajetState[i].start.split("T")[0] +
           " " +
           this.trajetState[i].start.split("T")[1].split(":")[0] +
           ":" +
           this.trajetState[i].start.split("T")[1].split(":")[1];
-        this.events[i+nbrEvents].end =
+        this.events[i + nbrEvents].end =
           this.trajetState[i].end.split("T")[0] +
           " " +
           this.trajetState[i].end.split("T")[1].split(":")[0] +
@@ -1095,22 +1102,27 @@ export default {
           this.trajetState[i].end.split("T")[1].split(":")[1];
 
         this.events[i + nbrEvents].heure =
-          this.events[i+nbrEvents].start.split(" ")[1] +
+          this.events[i + nbrEvents].start.split(" ")[1] +
           " - " +
-          this.events[i+nbrEvents].end.split(" ")[1];
+          this.events[i + nbrEvents].end.split(" ")[1];
+        this.events[i + nbrEvents].heureDepart = this.events[i + nbrEvents].heure.split("-")[0];
+        this.events[i + nbrEvents].color = "rgb(255, 165, 0)";
         // this.events[i+nbrEvents].description1 = this.events[i+nbrEvents].description.split("\n")[0];
         // this.events[i+nbrEvents].description2 = this.events[i+nbrEvents].description.split("\n")[2];
-          this.events[i+nbrEvents].id = "eventFullWindow" + (i+nbrEvents);
+        this.events[i + nbrEvents].id = "eventFullWindow" + (i + nbrEvents);
         // if (this.events[i+nbrEvents].description.split("\n")[3]) {
         //   this.events[i+nbrEvents].description3 =
         //     this.events[i+nbrEvents].description.split("\n")[3];
         // }
-        this.calendarOptions.events[i+nbrEvents].start = this.events[i+nbrEvents].start;
-        this.calendarOptions.events[i+nbrEvents].end = this.events[i+nbrEvents].end;
-        this.calendarOptions.events[i+nbrEvents].heure =
-          this.calendarOptions.events[i+nbrEvents].start.split(" ")[1] +
+        this.calendarOptions.events[i + nbrEvents].start =
+          this.events[i + nbrEvents].start;
+        this.calendarOptions.events[i + nbrEvents].end =
+          this.events[i + nbrEvents].end;
+        this.calendarOptions.events[i + nbrEvents].heure =
+          this.calendarOptions.events[i + nbrEvents].start.split(" ")[1] +
           " - " +
-          this.calendarOptions.events[i+nbrEvents].end.split(" ")[1];
+          this.calendarOptions.events[i + nbrEvents].end.split(" ")[1];
+          this.calendarOptions.events[i + nbrEvents].color = "rgb(255, 165, 0)";
         // this.calendarOptions.events[i+nbrEvents].title =
         //   this.calendarOptions.events[i+nbrEvents].summary;
         // this.calendarOptions.events[i+nbrEvents].description1 =
@@ -1193,11 +1205,11 @@ export default {
         //   enabled: "",
         // },
       };
-      map.preparation_time = event.trajet.temps_avance;
-      map.transport = event.trajet.transport;
+      map.preparation_time = event.traject.temps_avance;
+      map.transport = event.traject.transport;
       // map.notification = {
-      //   time: event.trajet.temps_avance_notification,
-      //   enabled: event.trajet.notification_enable,
+      //   time: event.traject.temps_avance_notification,
+      //   enabled: event.traject.notification_enable,
       // };
       console.log(map);
       //this.putEvents(pref);
@@ -1351,20 +1363,20 @@ export default {
     },
     openEvent(event) {
       event.open = true;
-      if (event.trajet) {
+      if (event.traject) {
         this.trajetActif = event;
-        switch (this.trajetActif.trajet.transport) {
+        switch (this.trajetActif.traject.transport) {
           case "TRANSIT":
-            this.trajetActif.trajet.transport = "r";
+            this.trajetActif.traject.transport = "r";
             break;
           case "WALKING":
-            this.trajetActif.trajet.transport = "w";
+            this.trajetActif.traject.transport = "w";
             break;
           case "BICYCLING":
-            this.trajetActif.trajet.transport = "b";
+            this.trajetActif.traject.transport = "b";
             break;
           case "DRIVING":
-            this.trajetActif.trajet.transport = "d";
+            this.trajetActif.traject.transport = "d";
             break;
           default:
             break;
@@ -1552,8 +1564,8 @@ export default {
 .editButton {
   border-radius: 100% !important;
   background-color: #ffbf5f !important;
-  width: 20px !important;
-  height: 20px !important;
+  width: 18px !important;
+  height: 18px !important;
   float: right !important;
 }
 .buttonTransport:first-child {
