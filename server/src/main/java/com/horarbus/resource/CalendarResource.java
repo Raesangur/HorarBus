@@ -70,8 +70,13 @@ public class CalendarResource {
             eventJson.put("trajects", new JsonArray());
         }
 
-        JsonArray trajects = handler.getAllTrajects();
-        eventJson.put("trajects", trajects);
+        JsonArray formattedTrajects = new JsonArray();
+        for (JsonObject itinerary : handler.getAllTrajects()) {
+            if (itinerary != null) {
+                formattedTrajects.add(CalendarService.formatItinerary((JsonObject) itinerary));
+            }
+        }
+        eventJson.put("trajects", formattedTrajects);
 
         return eventJson;
     }

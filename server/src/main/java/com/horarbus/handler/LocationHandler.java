@@ -1,36 +1,46 @@
 package com.horarbus.handler;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
 public class LocationHandler {
-    private String place_id;
     private PostgresHandler pgh;
+
+    private String place_id;
+    private String coords;
+    private String address;
 
     public LocationHandler(String place_id) {
         this.place_id = place_id;
 
         pgh = new PostgresHandler();
+        coords = null;
+        address = null;
 
-        if (select_column("place_id") == "") {
-            pgh.insert_row("Location",
-                           new String[]{"place_id"},
-                           new PostgresValue[]{new PostgresValue(place_id)});
+        try {
+            ResultSet results = pgh.executeQuery(
+                    "SELECT * FROM localisation WHERE UPPER(place_id) = UPPER('" + place_id + "')");
+            if (results != null) {
+                while (results.next()) {
+                    place_id = results.getString("place_id");
+                    coords = results.getString("coords");
+                    address = results.getString("address");
+                }
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
         }
-    }
-
-    private String select_column(String column) {
-        String[] result = pgh.select_column(column, "Location",
-                                            new String[]{"place_id"},
-                                            new PostgresValue[]{new PostgresValue(place_id)});
-
-        return result == null ? "" : result[0];
-    }
-    private void update_column(String column, String value) {
-        pgh.update_column(column, "Location",
-                          new PostgresValue(value),
-                          new String[]{"place_id"},
-                          new PostgresValue[]{new PostgresValue(place_id)});
     }
 
     public String get_id() {
         return place_id;
+    }
+
+    public String get_coords() {
+        return coords;
+    }
+
+    public String get_address() {
+        return address;
     }
 }
