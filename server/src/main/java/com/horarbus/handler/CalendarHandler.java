@@ -67,17 +67,12 @@ public class CalendarHandler {
                 }
 
                 TravelMode transport = TravelMode.valueOf(transportStr);
-                if (transport != TravelMode.TRANSIT) {
-                    missing.add(new MissingTraject(results.getString("startplace"),
-                            results.getString("targetplace"), transport));
-                } else {
-                    // TODO: convertir le 0 en temps correctement
-                    Timestamp eventStartTime = results.getTimestamp("start_time");
-                    missing.add(new MissingTraject(results.getString("startplace"),
-                            results.getString("targetplace"), transport,
-                            eventStartTime.getTime() / 1000));
-                }
+                Timestamp eventStartTime = results.getTimestamp("start_time");
+
+                missing.add(new MissingTraject(results.getString("startplace"),
+                        results.getString("targetplace"), transport, eventStartTime));
             }
+
             return missing;
         } catch (SQLException ex) {
             ex.printStackTrace();
@@ -97,15 +92,13 @@ public class CalendarHandler {
                 String endPlaceId = results.getString("end_place_id");
                 TravelMode transport = TravelMode.valueOf(results.getString("transport_name"));
 
-                if (transport == TravelMode.TRANSIT) {
-                    long arrivalTime = results.getTimestamp("end_time").getTime();
-                    traject = new MissingTraject(startPlaceId, endPlaceId, transport, arrivalTime);
-                } else {
-                    traject = new MissingTraject(startPlaceId, endPlaceId, transport);
-                }
+                Timestamp arrivalTime = results.getTimestamp("event_start_time");
+                traject = new MissingTraject(startPlaceId, endPlaceId, transport, arrivalTime);
 
                 String itineraryJson = readFile(traject.getFilename());
-                trajects.add(new JsonObject(itineraryJson));
+                if (itineraryJson != null) {
+                    trajects.add(new JsonObject(itineraryJson));
+                }
             }
             return trajects;
         } catch (SQLException ex) {
@@ -207,7 +200,9 @@ public class CalendarHandler {
                     startTime = leg.getJsonObject("departure_time").getLong("value") * 1000;
                     arrivalTime = leg.getJsonObject("arrival_time").getLong("value") * 1000;
                 } else {
-                    arrivalTime = leg.getJsonObject("duration").getLong("value") * 1000;
+                    startTime = Utils
+                            .removeTimeFromEpoch(Utils.timestampToMillis(missing.getArrivalTime()));
+                    arrivalTime = startTime + leg.getJsonObject("duration").getLong("value") * 1000;
                 }
 
                 PostgresValue[] values =

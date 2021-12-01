@@ -1,19 +1,17 @@
 package com.horarbus;
 
+import java.sql.Time;
+import java.sql.Timestamp;
 import com.google.maps.model.TravelMode;
 
 public class MissingTraject {
     private String startPlaceId;
     private String endPlaceId;
     private TravelMode transport;
-    private long arrivalTime;
-
-    public MissingTraject(String startPlaceId, String endPlaceId, TravelMode transport) {
-        this(startPlaceId, endPlaceId, transport, 0);
-    }
+    private Timestamp arrivalTime;
 
     public MissingTraject(String startPlaceId, String endPlaceId, TravelMode transport,
-            long arrivalTime) {
+            Timestamp arrivalTime) {
         this.startPlaceId = startPlaceId;
         this.endPlaceId = endPlaceId;
         this.transport = transport;
@@ -50,11 +48,18 @@ public class MissingTraject {
         return transport;
     }
 
-    public long getArrivalTime() {
+    public Timestamp getArrivalTime() {
         return arrivalTime;
     }
 
     public String getFilename() {
-        return startPlaceId + endPlaceId + transport.toString() + Long.toString(arrivalTime);
+        return startPlaceId + endPlaceId + transport.toString()
+                + (arrivalTime != null ? Long.toString(arrivalTime.getTime()) : "");
+    }
+
+    @Override
+    public String toString() {
+        return "MissingTraject: [" + startPlaceId + ", " + endPlaceId + ", " + transport + ", "
+                + arrivalTime + "]";
     }
 }

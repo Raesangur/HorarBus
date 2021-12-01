@@ -3,6 +3,7 @@ package com.horarbus.resource;
 import biweekly.ICalendar;
 import biweekly.component.VEvent;
 import com.horarbus.MissingTraject;
+import com.horarbus.Utils;
 import com.horarbus.auth.AuthData;
 import com.horarbus.handler.CalendarHandler;
 import com.horarbus.handler.UserHandler;
@@ -79,7 +80,8 @@ public class CalendarResource {
             throws Exception {
         for (MissingTraject traject : missing) {
             String itinerary = MapsService.getItinerary(traject.getStartPlaceId(),
-                    traject.getEndPlaceId(), traject.getTravelMode(), traject.getArrivalTime());
+                    traject.getEndPlaceId(), traject.getTravelMode(),
+                    Utils.timestampToMillis(traject.getArrivalTime()) / 1000);
             handler.registerItinerary(traject, itinerary);
         }
     }
