@@ -46,7 +46,6 @@ public class MapsService {
         }
 
         String endpointStr = MapsService.ITINERARY_URL + params;
-        // System.out.println(endpointStr);
         return MapsService.doRequest(generateEndpoint(endpointStr));
     }
 

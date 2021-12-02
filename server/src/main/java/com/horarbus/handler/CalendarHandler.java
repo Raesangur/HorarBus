@@ -72,8 +72,6 @@ public class CalendarHandler {
                 Timestamp definingTime =
                         results.getTimestamp(isArriving ? "timetoarrive" : "timetoleave");
 
-                // System.out.println(definingTime + " : " + definingTime.getTime());
-
                 missing.add(new MissingTraject(results.getString("startplace"),
                         results.getString("targetplace"), transport, definingTime, isArriving));
             }
@@ -107,6 +105,7 @@ public class CalendarHandler {
                 String itineraryJson = readFile(traject.getFilename());
                 if (itineraryJson != null) {
                     JsonObject data = new JsonObject();
+                    data.put("arriving", arriving);
                     data.put("transport", transport.toString());
                     data.put("eventTime", Utils.timestampToMillis(definingTime));
                     data.put("itinerary", new JsonObject(itineraryJson));
