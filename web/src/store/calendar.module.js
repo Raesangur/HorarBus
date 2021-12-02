@@ -25,6 +25,7 @@ export default {
                     commit("getTrajet", events.data.trajects);
                 })
                 .catch((err) => {
+                    commit("getEvents", "error");
                     console.log(err);
                 });
         },
