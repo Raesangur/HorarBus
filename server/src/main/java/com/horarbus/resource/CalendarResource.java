@@ -77,29 +77,28 @@ public class CalendarResource {
         }
 
         CalendarHandler handler = new CalendarHandler(authData.getCip());
-        JsonArray events = handler.getAllEvents();
-        JsonArray todayEvents = new JsonArray();
+        ArrayList<JsonObject> trajects = handler.getAllTrajects();
+        JsonArray todayTrajects = new JsonArray();
 
         long todayDate = new Date().getTime();
         todayDate = Utils.removeTimeFromEpoch(todayDate);
 
-        for (int i = 0; i < events.size(); i++) {
-            JsonObject event = events.getJsonObject(i);
-            if (event == null)
+        for(JsonObject traject : trajects) {
+            if (traject == null)
                 continue;
 
-            Long date = event.getLong("start");
+            Long date = traject.getLong("timetoarrive");
             if (date == null || date == 0) {
                 continue;
             }
 
             date = Utils.removeTimeFromEpoch(date);
             if (todayDate == date) {
-                todayEvents.add(event);
+                todayTrajects.add(traject);
             }
         }
 
-        return todayEvents.toString();
+        return todayTrajects.toString();
     }
 
     private void cacheEventData(CalendarHandler handler, List<VEvent> events) {
