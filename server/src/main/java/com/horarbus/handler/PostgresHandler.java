@@ -249,4 +249,13 @@ public class PostgresHandler {
             return null;
         }
     }
-}
+
+    @Override
+    protected void finalize() {
+	try {
+            getConnection().close();        
+	} catch (SQLException e) {
+            System.out.println("Connection to database refused to close");
+	}
+    }
+} 
