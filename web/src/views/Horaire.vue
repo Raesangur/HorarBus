@@ -994,7 +994,7 @@ export default {
     },
 
     eventsState() {
-      if (!this.eventsState) {
+      if (this.eventsState === "error") {
         this.showIcal();
       }
       for (let i in this.eventsState) {
