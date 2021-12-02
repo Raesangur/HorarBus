@@ -49,8 +49,9 @@ select cip, arrival, event_id, requestedtransport, startplace, targetplace, time
 from routedetails rd
 left join traject t on
 t.transport_name = rd.requestedtransport and startplace = start_place_id and targetplace = end_place_id and
-((rd.requestedtransport = 'TRANSIT' and ((arrival = true and timetoarrive::time = begin_time) or (arrival = false and timetoleave::time = end_time))) or rd.requestedtransport <> 'TRANSIT')
-where start_place_id is null or end_place_id is null;
+((rd.requestedtransport = 'TRANSIT' and ((arrival = true and timetoarrive::time = end_time) or (arrival = false and timetoleave::time = begin_time))) or rd.requestedtransport <> 'TRANSIT')
+where (start_place_id is null or end_place_id is null) and (timetoarrive > current_date or timetoleave > current_date)
+order by timetoarrive desc, timetoleave desc;
 
 
 DROP VIEW IF EXISTS UserTrajectEvent;
@@ -59,6 +60,6 @@ select cip, arrival, event_id, requestedtransport, startplace, targetplace, time
 from routedetails rd
 join traject t on
 t.transport_name = rd.requestedtransport and startplace = start_place_id and targetplace = end_place_id and
-((rd.requestedtransport = 'TRANSIT' and ((arrival = true and timetoarrive::time = begin_time) or (arrival = false and timetoleave::time = end_time))) or rd.requestedtransport <> 'TRANSIT');
-
+((rd.requestedtransport = 'TRANSIT' and ((arrival = true and timetoarrive::time = end_time) or (arrival = false and timetoleave::time = begin_time))) or rd.requestedtransport <> 'TRANSIT')
+order by timetoarrive desc, timetoleave desc;
 

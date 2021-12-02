@@ -24,16 +24,29 @@ public class MapsService {
         return MapsService.doRequest(generateEndpoint(endpointStr));
     }
 
-    public static String getItinerary(String startingPlaceId, String arrivalPlaceId,
+    public static String getItineraryWithArrival(String startingPlaceId, String arrivalPlaceId,
             TravelMode travelMode, long arrivalTime) throws Exception {
+        return MapsService.getItinerary(startingPlaceId, arrivalPlaceId, travelMode, arrivalTime,
+                "arrival_time");
+    }
+
+    public static String getItineraryWithDeparture(String startingPlaceId, String arrivalPlaceId,
+            TravelMode travelMode, long arrivalTime) throws Exception {
+        return MapsService.getItinerary(startingPlaceId, arrivalPlaceId, travelMode, arrivalTime,
+                "departure_time");
+    }
+
+    private static String getItinerary(String startingPlaceId, String arrivalPlaceId,
+            TravelMode travelMode, long arrivalTime, String timeSpecification) throws Exception {
         String params = "origin=place_id:" + formatValue(startingPlaceId) + "&destination=place_id:"
                 + formatValue(arrivalPlaceId) + "&mode=" + travelMode.toUrlValue();
 
         if (travelMode == TravelMode.TRANSIT) {
-            params += "&arrival_time=" + Long.toString(arrivalTime);
+            params += "&" + timeSpecification + "=" + Long.toString(arrivalTime);
         }
 
         String endpointStr = MapsService.ITINERARY_URL + params;
+        // System.out.println(endpointStr);
         return MapsService.doRequest(generateEndpoint(endpointStr));
     }
 

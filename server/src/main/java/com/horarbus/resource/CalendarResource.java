@@ -19,10 +19,8 @@ import javax.ws.rs.core.MediaType;
 
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.Map.Entry;
 
 @Path("/calendar")
 public class CalendarResource {
@@ -90,9 +88,18 @@ public class CalendarResource {
     private void generateMissingTrajects(CalendarHandler handler, Set<MissingTraject> missing)
             throws Exception {
         for (MissingTraject traject : missing) {
-            String itinerary = MapsService.getItinerary(traject.getStartPlaceId(),
-                    traject.getEndPlaceId(), traject.getTravelMode(),
-                    Utils.timestampToMillis(traject.getArrivalTime()) / 1000);
+            String itinerary = "";
+
+            if (traject.getIsArriving()) {
+                itinerary = MapsService.getItineraryWithArrival(traject.getStartPlaceId(),
+                        traject.getEndPlaceId(), traject.getTravelMode(),
+                        Utils.timestampToMillis(traject.getDefiningTime()) / 1000);
+            } else {
+                itinerary = MapsService.getItineraryWithDeparture(traject.getStartPlaceId(),
+                        traject.getEndPlaceId(), traject.getTravelMode(),
+                        Utils.timestampToMillis(traject.getDefiningTime()) / 1000);
+            }
+
             handler.registerItinerary(traject, itinerary);
         }
     }

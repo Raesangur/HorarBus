@@ -7,14 +7,16 @@ public class MissingTraject {
     private String startPlaceId;
     private String endPlaceId;
     private TravelMode transport;
-    private Timestamp arrivalTime;
+    private Timestamp definingTime;
+    private boolean isArriving;
 
     public MissingTraject(String startPlaceId, String endPlaceId, TravelMode transport,
-            Timestamp arrivalTime) {
+            Timestamp definingTime, boolean isArriving) {
         this.startPlaceId = startPlaceId;
         this.endPlaceId = endPlaceId;
         this.transport = transport;
-        this.arrivalTime = arrivalTime;
+        this.definingTime = definingTime;
+        this.isArriving = isArriving;
     }
 
     @Override
@@ -29,7 +31,8 @@ public class MissingTraject {
         boolean baseComparison = startPlaceId.equals(missing.startPlaceId)
                 && endPlaceId.equals(missing.endPlaceId) && transport.equals(missing.transport);
         return transport == TravelMode.TRANSIT
-                ? baseComparison && arrivalTime.equals(missing.arrivalTime)
+                ? baseComparison && definingTime.toLocalDateTime().toLocalTime()
+                        .equals(missing.definingTime.toLocalDateTime().toLocalTime())
                 : baseComparison;
     }
 
@@ -50,18 +53,24 @@ public class MissingTraject {
         return transport;
     }
 
-    public Timestamp getArrivalTime() {
-        return arrivalTime;
+    public Timestamp getDefiningTime() {
+        return definingTime;
+    }
+
+    public boolean getIsArriving() {
+        return isArriving;
     }
 
     public String getFilename() {
+        String dateStr = definingTime.toLocalDateTime().toLocalTime().toString().replace(":", "_");
         return startPlaceId + endPlaceId + transport.toString()
-                + (arrivalTime != null ? Long.toString(arrivalTime.getTime()) : "");
+                + (definingTime != null ? dateStr : "");
     }
+
 
     @Override
     public String toString() {
         return "MissingTraject: [" + startPlaceId + ", " + endPlaceId + ", " + transport + ", "
-                + arrivalTime + "]";
+                + definingTime + "]";
     }
 }
