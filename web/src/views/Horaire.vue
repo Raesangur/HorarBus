@@ -1141,10 +1141,10 @@ export default {
         }
 
         this.events[i + nbrEvents].id = "eventFullWindow" + (i + nbrEvents);
-        if(parseInt(this.events[i + nbrEvents].heureArrive.split(":")[1])-parseInt(this.events[i + nbrEvents].heureDepart.split(":")[1]) < 20){
+        if(parseInt(this.events[i + nbrEvents].heureArrive.split(":")[1])-parseInt(this.events[i + nbrEvents].heureDepart.split(":")[1]) < 20 ){
           this.events[i + nbrEvents].temps = parseInt(this.events[i + nbrEvents].heureArrive.split(":")[1])-parseInt(this.events[i + nbrEvents].heureDepart.split(":")[1]);
         }
-        if(parseInt(this.events[i + nbrEvents].heureArrive.split(":")[1])<parseInt(this.events[i + nbrEvents].heureDepart.split(":")[1])){
+        if(parseInt(this.events[i + nbrEvents].heureArrive.split(":")[1])<parseInt(this.events[i + nbrEvents].heureDepart.split(":")[1]) && ((parseInt(this.events[i + nbrEvents].heureArrive.split(":")[1])+60) - parseInt(this.events[i + nbrEvents].heureDepart.split(":")[1])) < 20){
           this.events[i + nbrEvents].temps = parseInt(this.events[i + nbrEvents].heureArrive.split(":")[1]) + 60 -parseInt(this.events[i + nbrEvents].heureDepart.split(":")[1]);
         }
         this.calendarOptions.events[i + nbrEvents].start =
