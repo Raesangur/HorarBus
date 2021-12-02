@@ -998,8 +998,7 @@ export default {
         this.showIcal();
       }
       for (let i in this.eventsState) {
-        let now = new Date();
-        var offset = now.getTimezoneOffset() / 60;
+        var offset = 5;
         let start = new Date(this.eventsState[i].start);
         start.setHours(start.getHours() - offset);
         start = start.toISOString();
@@ -1062,8 +1061,7 @@ export default {
         nbrEvents++;
       }
       for (let i in this.trajetState) {
-        let now = new Date();
-        var offset = now.getTimezoneOffset() / 60;
+        var offset = 5;
         let start = new Date(this.trajetState[i].start);
         start.setHours(start.getHours() - offset);
         start = start.toISOString();
@@ -1169,7 +1167,7 @@ export default {
     },
     todayState(){
       let now = new Date();
-      var offset = now.getTimezoneOffset() / 60;
+      var offset = 5;
       for (let i in this.todayState) {
         let start = new Date(this.todayState[i].start);
         start.setHours(start.getHours() - offset);
