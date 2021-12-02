@@ -56,9 +56,9 @@ public class CalendarResource {
         return fetchCalendarData(handler).toString();
     }
 
-    @POST
+    @GET
     @Produces(MediaType.APPLICATION_JSON)
-    @Path("/")
+    @Path("/today/")
     public String get_today_user_events(@Context RoutingContext context) throws IOException {
         AuthData authData = context.get("authData");
         UserHandler user = new UserHandler(authData.getCip());
