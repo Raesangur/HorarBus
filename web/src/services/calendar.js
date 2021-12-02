@@ -8,7 +8,7 @@ export default {
     putEvents() {
         return Api.default().put("/api/" + basic + "/");
     },
-    postEvents() {
-        return Api.default().post("/api/" + basic + "/");
+    getToday() {
+        return Api.default().get("/api/" + basic + "/today");
     },
 };

@@ -29,15 +29,7 @@ export default {
                     console.log(err);
                 });
         },
-        TodayEvents({ commit }) {
-            CalendarService.getEvents()
-                .then((events) => {
-                    commit("getToday", events.data.trajects);
-                })
-                .catch((err) => {
-                    console.log(err);
-                });
-        },
+
         async putEvents({ dispatch }, payload) {
             CalendarService.putEvents(payload)
                 .then(() => {
@@ -47,10 +39,13 @@ export default {
                     console.log(err.response);
                 });
         },
-        async postEvents({ dispatch }, payload) {
-            CalendarService.postEvents(payload)
-                .then(() => {
-                    dispatch("TodayEvents");
+        async getTodayEvents({ commit }, payload) {
+            console.log("SUS")
+            CalendarService.getToday(payload)
+                .then((events) => {
+                    console.log("yeah")
+                    console.log(events)
+                    commit("getToday", events.data.trajects);
                 })
                 .catch((err) => {
                     console.log(err.response);

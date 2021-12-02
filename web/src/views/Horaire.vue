@@ -1283,12 +1283,22 @@ export default {
         this.position = this.pref.adresse_maison;
       }
     },
-    // position(){
-    //   this.postEvents({
-    //     "coords":"",
-    //     ...this.position,
-    //   })
-    // },
+    position(){
+      if(this.position.coords){
+        this.getTodayEvents({
+          "coords":{
+            "latitude":this.position.coords.latitude,
+            "longitude":this.position.coords.longitude,
+            },
+        })
+      }
+      else{
+        this.getTodayEvents({
+          "address":this.position,
+        })
+      }
+      
+    },
     value() {
       let calendarApi = this.$refs.fullCalendar.getApi();
       calendarApi.gotoDate(this.value);
@@ -1319,7 +1329,7 @@ export default {
     },
   },
   methods: {
-    ...mapActions(["putUser", "getEvents", "setGeo", "getUser", "putEvents", "postEvents"]),
+    ...mapActions(["putUser", "getEvents", "setGeo", "getUser", "putEvents", "getTodayEvents"]),
     sendPref() {
       let pref = {
         preparation_time: "",
@@ -1624,7 +1634,6 @@ export default {
           break;
       }
       let year = now.getFullYear();
-      //let val = now.toISOString().split("T");
       this.today = month + year;
     },
     logout() {
