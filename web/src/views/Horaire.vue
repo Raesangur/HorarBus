@@ -1168,6 +1168,7 @@ export default {
       }
     },
     todayState(){
+      console.log(this.todayState)
       let now = new Date();
       var offset = now.getTimezoneOffset() / 60;
       for (let i in this.todayState) {

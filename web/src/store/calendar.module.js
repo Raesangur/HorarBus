@@ -40,12 +40,10 @@ export default {
                 });
         },
         async getTodayEvents({ commit }, payload) {
-            console.log("SUS")
             CalendarService.getToday(payload)
                 .then((events) => {
-                    console.log("yeah")
-                    console.log(events)
-                    commit("getToday", events.data.trajects);
+                    console.log(events.data)
+                    commit("getToday", events.data);
                 })
                 .catch((err) => {
                     console.log(err.response);
