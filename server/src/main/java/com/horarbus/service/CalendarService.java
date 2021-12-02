@@ -92,8 +92,8 @@ public class CalendarService {
 
         json.put("description", event.getDescription().getValue());
         json.put("summary", event.getSummary().getValue());
-        json.put("start", event.getDateStart().getValue());
-        json.put("end", event.getDateEnd().getValue());
+        json.put("start", event.getDateStart().getValue().getTime());
+        json.put("end", event.getDateEnd().getValue().getTime());
         json.put("color", event.getColor().getValue());
 
         Location location = event.getLocation();
