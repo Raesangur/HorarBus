@@ -998,8 +998,7 @@ export default {
         this.showIcal();
       }
       for (let i in this.eventsState) {
-        let now = new Date();
-        var offset = now.getTimezoneOffset() / 60;
+        var offset = 10;
         let start = new Date(this.eventsState[i].start);
         start.setHours(start.getHours() - offset);
         start = start.toISOString();
@@ -1062,8 +1061,7 @@ export default {
         nbrEvents++;
       }
       for (let i in this.trajetState) {
-        let now = new Date();
-        var offset = now.getTimezoneOffset() / 60;
+        var offset = 10;
         let start = new Date(this.trajetState[i].start);
         start.setHours(start.getHours() - offset);
         start = start.toISOString();
@@ -1143,11 +1141,11 @@ export default {
         }
 
         this.events[i + nbrEvents].id = "eventFullWindow" + (i + nbrEvents);
-        if(parseInt(this.events[i + nbrEvents].heureArrive.split(":")[1])-parseInt(this.events[i + nbrEvents].heureDepart.split(":")[1]) < 20){
+        if(parseInt(this.events[i + nbrEvents].heureArrive.split(":")[1])-parseInt(this.events[i + nbrEvents].heureDepart.split(":")[1]) < 20 ){
           this.events[i + nbrEvents].temps = parseInt(this.events[i + nbrEvents].heureArrive.split(":")[1])-parseInt(this.events[i + nbrEvents].heureDepart.split(":")[1]);
         }
         if(parseInt(this.events[i + nbrEvents].heureArrive.split(":")[1])<parseInt(this.events[i + nbrEvents].heureDepart.split(":")[1]) && ((parseInt(this.events[i + nbrEvents].heureArrive.split(":")[1])+60) - parseInt(this.events[i + nbrEvents].heureDepart.split(":")[1])) < 20){
-          this.events[i + nbrEvents].temps = parseInt(this.events[i + nbrEvents].heureArrive.split(":")[1]) + 60 - parseInt(this.events[i + nbrEvents].heureDepart.split(":")[1]);
+          this.events[i + nbrEvents].temps = parseInt(this.events[i + nbrEvents].heureArrive.split(":")[1]) + 60 -parseInt(this.events[i + nbrEvents].heureDepart.split(":")[1]);
         }
         this.calendarOptions.events[i + nbrEvents].start =
           this.events[i + nbrEvents].start;
@@ -1174,7 +1172,7 @@ export default {
     todayState(){
       console.log(this.todayState)
       let now = new Date();
-      var offset = now.getTimezoneOffset() / 60;
+      var offset = 10;
       for (let i in this.todayState) {
         let start = new Date(this.todayState[i].start);
         start.setHours(start.getHours() - offset);
