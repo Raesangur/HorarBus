@@ -10,12 +10,10 @@ import com.horarbus.handler.CalendarHandler;
 import com.horarbus.handler.UserHandler;
 import com.horarbus.service.CalendarService;
 import com.horarbus.service.MapsService;
-import io.vertx.core.json.Json;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.web.RoutingContext;
 
-import javax.swing.text.DateFormatter;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
@@ -24,11 +22,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.time.LocalDate;
 import java.util.*;
-import java.util.Map.Entry;
 
 @Path("/calendar")
 public class CalendarResource {

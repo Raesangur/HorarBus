@@ -47,8 +47,8 @@ public class ItineraryResource {
             System.out.println(departurePlaceId + " " + arrivalPlaceData + " " + travelMode + " "
                     + targetTime);
 
-            return MapsService.getItinerary(departurePlaceId, arrivalPlaceId, travelMode,
-                    targetTime);
+            return null;
+            // MapsService.getItinerary(departurePlaceId, arrivalPlaceId, travelMode, targetTime);
         } catch (Exception ex) {
             ex.printStackTrace();
             JsonObject errorObj = new JsonObject();
