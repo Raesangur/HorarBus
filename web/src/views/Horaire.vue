@@ -135,7 +135,7 @@
         </b-form-group>
 
         <!--Notification-->
-        <b-row>
+        <!-- <b-row>
           <b-col cols="12" class="sectionPref">
             Notifications
             <b-row style="margin: 0">
@@ -159,7 +159,7 @@
               Entrer le temps avant le départ pour recevoir une notification.
             </div>
           </b-col>
-        </b-row>
+        </b-row> -->
 
         <!--Temps d'avance minimum-->
         <b-row>
@@ -276,7 +276,7 @@
             @click="question1 = !question1"
             class="titreTexteFAQ"
           >
-            <strong>HorarBus &#x3a; qu’est-ce que c’est?</strong>
+            <a>HorarBus &#x3a; qu’est-ce que c’est?</a>
           </b-col>
           <br />
           <b-col cols="12" class="texteFAQ" v-if="question1">
@@ -300,8 +300,8 @@
             @click="question2 = !question2"
             class="titreTexteFAQ"
           >
-            <strong
-              >Sur quel type d’appareil peut-on utiliser l’application?</strong
+            <a
+              >Sur quel type d’appareil peut-on utiliser l’application?</a
             >
             <br />
           </b-col>
@@ -319,7 +319,7 @@
             @click="question3 = !question3"
             class="titreTexteFAQ"
           >
-            <strong>Quel calendrier apparait dans HorarBus?</strong> <br />
+            <a>Quel calendrier apparait dans HorarBus?</a> <br />
           </b-col>
           <br />
           <b-col cols="12" class="texteFAQ" v-if="question3">
@@ -337,7 +337,7 @@
             @click="question4 = !question4"
             class="titreTexteFAQ"
           >
-            <strong>Où trouver ma clé iCal?</strong> <br />
+            <a>Où trouver ma clé iCal?</a> <br />
           </b-col>
           <br />
           <b-col cols="12" class="texteFAQ" v-if="question4">
@@ -363,7 +363,7 @@
             @click="question5 = !question5"
             class="titreTexteFAQ"
           >
-            <strong>Puis-je modifier mes préférences?</strong> <br />
+            <a>Puis-je modifier mes préférences?</a> <br />
           </b-col>
           <br />
           <b-col cols="12" class="texteFAQ" v-if="question5">
@@ -603,6 +603,17 @@
                   ><img :src="require('../assets/car.png')"
                 /></b-form-radio>
               </b-form-group>
+              <b-row>
+                <b-col cols="12" class="sectionPref">
+                  Adresse Initiale
+                  <br />
+                  <input
+                    v-model="event.traject.adresseInitiale.address"
+                    placeholder="Adresse de départ"
+                    class="tempsSelectTrajet"
+                  />
+                </b-col>
+              </b-row>
 
               <!-- <b-row>
                 <b-col cols="12" class="sectionPref">
@@ -712,7 +723,7 @@ export default {
         transport: "r",
       },
     },
-    position: undefined,
+    position: null,
     today: new Date(),
     value: new Date(),
     type: "week",
@@ -957,18 +968,19 @@ export default {
     this.scrollToTime();
     this.updateTime();
     this.getToday();
-    if(this.positionState){
-      this.position = this.positionState;
-    }
+
     const successCallback = (position) => {
-      if(position.coords.accuracy >= 300 && !this.position){
-        let infoPosition = prompt("Entrer votre adresse", "");
-        this.position = infoPosition;
-      } 
-      else{
+      // if(position.coords.accuracy >= 300 && this.position !== null){
+      //   let infoPosition = prompt("Entrer votre adresse", "");
+      //   this.position = infoPosition;        
+      // } 
+      // else{
+      //   this.position = position;
+      // }
+      if(position.coords.accuracy < 300){
         this.position = position;
       }
-      console.log(this.position);
+      console.log(position);
       this.setGeo(position);
     };
     const errorCallback = (error) => {
@@ -1052,7 +1064,6 @@ export default {
       for (let i in this.trajetState) {
         let now = new Date();
         var offset = now.getTimezoneOffset() / 60;
-
         let start = new Date(this.trajetState[i].start);
         start.setHours(start.getHours() - offset);
         start = start.toISOString();
@@ -1068,10 +1079,9 @@ export default {
         this.events[i + nbrEvents] = this.trajetState[i];
         this.calendarOptions.events[i + nbrEvents] = this.trajetState[i];
       }
-      console.log(this.calendarOptions.events);
       for (let i = 0; i < this.trajetState.length; i++) {
-        if(this.position.coords){
-          this.events[i + nbrEvents].traject.adresseInitiale.address = this.position.coords.latitude + ","+this.position.coords.longitude;
+        if(this.position && this.position.coords){
+          this.events[i + nbrEvents].traject.adresseInitiale.address = this.position.coords.latitude + ","+ this.position.coords.longitude;
         }
         else{
           this.events[i + nbrEvents].traject.adresseInitiale.address = this.position;
@@ -1154,6 +1164,111 @@ export default {
         }
       }
     },
+    todayState(){
+      let now = new Date();
+      var offset = now.getTimezoneOffset() / 60;
+      for (let i in this.todayState) {
+        let start = new Date(this.todayState[i].start);
+        start.setHours(start.getHours() - offset);
+        start = start.toISOString();
+        this.trajetState[i].start = start;
+
+        let end = new Date(this.todayState[i].end);
+        end.setHours(end.getHours() - offset);
+        end = end.toISOString();
+        this.todayState[i].end = end;
+      }
+      
+      now.setHours(now.getHours() - offset);
+      now = now.toISOString().split("T")[0];
+      let todayEvents = this.events.filter(events => events.start.split("T")[0] === now );
+      
+      console.log(todayEvents);
+      // for (let i = 0; i < this.todayState.length; i++) {
+      //   if(this.position && this.position.coords){
+      //     this.events[i + nbrEvents].traject.adresseInitiale.address = this.position.coords.latitude + ","+ this.position.coords.longitude;
+      //   }
+      //   else{
+      //     this.events[i + nbrEvents].traject.adresseInitiale.address = this.position;
+      //   }
+        
+      //   if (this.calendarOptions.events[i + nbrEvents].traject.transport) {
+      //     switch (
+      //       this.calendarOptions.events[i + nbrEvents].traject.transport
+      //     ) {
+      //       case "TRANSIT":
+      //         this.calendarOptions.events[i + nbrEvents].traject.transport =
+      //           "r";
+      //         break;
+      //       case "WALKING":
+      //         this.calendarOptions.events[i + nbrEvents].traject.transport =
+      //           "w";
+      //         break;
+      //       case "BICYCLING":
+      //         this.calendarOptions.events[i + nbrEvents].traject.transport =
+      //           "b";
+      //         break;
+      //       case "DRIVING":
+      //         this.calendarOptions.events[i + nbrEvents].traject.transport =
+      //           "d";
+      //         break;
+      //       default:
+      //         break;
+      //     }
+      //   }
+      //   this.events[i + nbrEvents].start =
+      //     this.todayState[i].start.split("T")[0] +
+      //     " " +
+      //     this.todayState[i].start.split("T")[1].split(":")[0] +
+      //     ":" +
+      //     this.todayState[i].start.split("T")[1].split(":")[1];
+      //   this.events[i + nbrEvents].end =
+      //     this.todayState[i].end.split("T")[0] +
+      //     " " +
+      //     this.todayState[i].end.split("T")[1].split(":")[0] +
+      //     ":" +
+      //     this.todayState[i].end.split("T")[1].split(":")[1];
+
+      //   this.events[i + nbrEvents].heure =
+      //     this.events[i + nbrEvents].start.split(" ")[1] +
+      //     " - " +
+      //     this.events[i + nbrEvents].end.split(" ")[1];
+      //   this.events[i + nbrEvents].heureDepart = this.events[i + nbrEvents].heure.split("-")[0];
+      //   this.events[i + nbrEvents].heureArrive = this.events[i + nbrEvents].heure.split("-")[1];
+      //   this.events[i + nbrEvents].color = "rgb(255, 165, 0)";
+      //   this.events[i+nbrEvents].summary = "Transport";
+      //   if(this.events[i + nbrEvents].traject.steps[1].transit_details){
+      //     this.events[i+nbrEvents].description = this.events[i + nbrEvents].traject.steps[1].transit_details;
+      //   }
+      //   if(this.events[i+nbrEvents].description){
+      //     this.events[i+nbrEvents].description1 = this.events[i+nbrEvents].description.departure_stop.name.replaceAll("Ã©","é")+ " vers "+this.events[i+nbrEvents].description.arrival_stop.name.replaceAll("Ã©","é");
+      //   }
+      //   if(this.events[i+nbrEvents].description){
+      //     this.events[i+nbrEvents].description2 = "Autobus #"+this.events[i+nbrEvents].description.line.short_name;
+      //   }
+
+      //   this.events[i + nbrEvents].id = "eventFullWindow" + (i + nbrEvents);
+      //   this.calendarOptions.events[i + nbrEvents].start =
+      //     this.events[i + nbrEvents].start;
+      //   this.calendarOptions.events[i + nbrEvents].end =
+      //     this.events[i + nbrEvents].end;
+      //   this.calendarOptions.events[i + nbrEvents].heure =
+      //     this.calendarOptions.events[i + nbrEvents].start.split(" ")[1] +
+      //     " - " +
+      //     this.calendarOptions.events[i + nbrEvents].end.split(" ")[1];
+      //     this.calendarOptions.events[i + nbrEvents].color = "rgb(255, 165, 0)";
+      //     this.calendarOptions.events[i+ nbrEvents].title = "Départ "+ this.calendarOptions.events[i+nbrEvents].traject.adresseDestinataire.address.split(",")[0];
+      //   if(this.calendarOptions.events[i+nbrEvents].traject.steps[1].transit_details){
+      //     this.calendarOptions.events[i+nbrEvents].description = this.calendarOptions.events[i+nbrEvents].traject.steps[1].transit_details;
+      //   }
+      //   if(this.calendarOptions.events[i+nbrEvents].description){
+      //     this.calendarOptions.events[i+nbrEvents].description1 = this.calendarOptions.events[i+nbrEvents].description.departure_stop.name.replaceAll("Ã©","é")+ " vers "+this.calendarOptions.events[i+nbrEvents].description.arrival_stop.name.replaceAll("Ã©","é");
+      //   }
+      //   if(this.calendarOptions.events[i+nbrEvents].description){
+      //     this.calendarOptions.events[i+nbrEvents].description2 = "Autobus #"+this.calendarOptions.events[i+nbrEvents].description.line.short_name;
+      //   }
+      //}
+    },
     prefState() {
       this.pref.transport = this.prefState.transport;
       this.pref.temps_avance = this.prefState.preparation_time;
@@ -1161,7 +1276,16 @@ export default {
       this.pref.notification_enable = this.prefState.notification.enabled;
       this.pref.adresse_maison = this.prefState.local_address;
       this.darkMode = this.prefState.dark_mode;
+      if(this.position === null){
+        this.position = this.pref.adresse_maison;
+      }
     },
+    // position(){
+    //   this.postEvents({
+    //     "coords":"",
+    //     ...this.position,
+    //   })
+    // },
     value() {
       let calendarApi = this.$refs.fullCalendar.getApi();
       calendarApi.gotoDate(this.value);
@@ -1181,6 +1305,7 @@ export default {
       prefState: (state) => state.user.pref,
       eventsState: (state) => state.calendar.events,
       trajetState: (state) => state.calendar.trajects,
+      todayState: (state) => state.calendar.todayEvents,
       positionState: (state) => state.maps.position,
     }),
     cal() {
@@ -1191,7 +1316,7 @@ export default {
     },
   },
   methods: {
-    ...mapActions(["putUser", "getEvents", "setGeo", "getUser", "putEvents"]),
+    ...mapActions(["putUser", "getEvents", "setGeo", "getUser", "putEvents", "postEvents"]),
     sendPref() {
       let pref = {
         preparation_time: "",
@@ -1220,17 +1345,19 @@ export default {
       let map = {
         preparation_time: "",
         transport: "",
-        // notification: {
-        //   time: "",
-        //   enabled: "",
-        // },
+        address: "",
+        notification: {
+          time: "",
+          enabled: "",
+        },
       };
       map.preparation_time = event.traject.temps_avance;
       map.transport = event.traject.transport;
-      // map.notification = {
-      //   time: event.traject.temps_avance_notification,
-      //   enabled: event.traject.notification_enable,
-      // };
+      map.address = event.traject.addressInitiale;
+      map.notification = {
+        time: event.traject.temps_avance_notification,
+        enabled: event.traject.notification_enable,
+      };
       console.log(map);
       //this.putEvents(pref);
       this.hideMapsSetting();
@@ -1747,10 +1874,17 @@ export default {
   font-size: 15px;
   color: #ffffff;
   text-align: justify;
+
 }
+
 .titreTexteFAQ {
   font-size: 20px;
   color: #ffffff;
+  cursor: pointer;
+  font-weight: bold;
+}
+.titreTexteFAQ:hover {
+  text-decoration: underline;
 }
 .text-center {
   text-align: center;

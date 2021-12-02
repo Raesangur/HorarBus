@@ -8,7 +8,6 @@ export default {
             lat: "",
             lng: "",
         },
-        position: "",
     },
     actions: {
         async getMaps({ commit }) {
@@ -22,12 +21,7 @@ export default {
         },
 
         async setGeo({ commit }, payload) {
-            if (payload.coords) {
-                commit("setGeo", payload);
-            } else {
-                commit("setPosition", payload);
-            }
-
+            commit("setGeo", payload);
         },
 
     },
@@ -41,8 +35,5 @@ export default {
             state.geolocation.lng = payload.coords.longitude;
             state.geolocation.lat = payload.coords.latitude;
         },
-        setPosition(state, payload) {
-            state.position = payload;
-        }
     },
 };

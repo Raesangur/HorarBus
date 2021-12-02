@@ -5,6 +5,7 @@ export default {
     state: {
         events: {},
         trajects: {},
+        todayEvents: {},
     },
     actions: {
         getEvents({ commit }) {
@@ -27,10 +28,28 @@ export default {
                     console.log(err);
                 });
         },
+        TodayEvents({ commit }) {
+            CalendarService.getEvents()
+                .then((events) => {
+                    commit("getToday", events.data.trajects);
+                })
+                .catch((err) => {
+                    console.log(err);
+                });
+        },
         async putEvents({ dispatch }, payload) {
             CalendarService.putEvents(payload)
                 .then(() => {
                     dispatch("getEvents");
+                })
+                .catch((err) => {
+                    console.log(err.response);
+                });
+        },
+        async postEvents({ dispatch }, payload) {
+            CalendarService.postEvents(payload)
+                .then(() => {
+                    dispatch("TodayEvents");
                 })
                 .catch((err) => {
                     console.log(err.response);
@@ -44,6 +63,9 @@ export default {
         },
         getTrajet(state, payload) {
             state.trajects = payload;
+        },
+        getToday(state, payload) {
+            state.todayEvents = payload;
         },
     },
 };
