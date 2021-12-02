@@ -81,7 +81,7 @@ public class CalendarResource {
         JsonArray todayEvents = new JsonArray();
 
         long todayDate = new Date().getTime();
-        todayDate = todayDate - (todayDate % 3600);
+        todayDate = Utils.removeTimeFromEpoch(todayDate);
 
         for (int i = 0; i < events.size(); i++) {
             JsonObject event = events.getJsonObject(i);
@@ -89,11 +89,11 @@ public class CalendarResource {
                 continue;
 
             Long date = event.getLong("start");
-            if (date== null || date == 0) {
+            if (date == null || date == 0) {
                 continue;
             }
 
-            date = date - (date % 3600);
+            date = Utils.removeTimeFromEpoch(date);
             if (todayDate == date) {
                 todayEvents.add(event);
             }
