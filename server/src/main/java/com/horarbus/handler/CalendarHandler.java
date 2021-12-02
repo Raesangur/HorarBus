@@ -15,6 +15,7 @@ import java.util.Scanner;
 import java.util.Set;
 import java.util.regex.Pattern;
 import com.google.maps.model.TravelMode;
+import com.horarbus.Location;
 import com.horarbus.MissingTraject;
 import com.horarbus.Utils;
 import com.horarbus.service.CalendarService;
@@ -99,6 +100,7 @@ public class CalendarHandler {
                 if (itineraryJson != null) {
                     JsonObject data = new JsonObject();
                     data.put("transport", transport.toString());
+                    data.put("eventTime", Utils.timestampToMillis(arrivalTime));
                     data.put("itinerary", new JsonObject(itineraryJson));
                     trajects.add(data);
                 }
@@ -146,27 +148,18 @@ public class CalendarHandler {
                 values.add(new PostgresValue("ChIJywfUkEyzt0wRPYYdc8CzfbU"));
             } else {
                 // TODO: do we need to call this every time? can we just fetch the db to
-                // validate if
-                // we already have an associated place-id?
+                // validate if we already have an associated place-id?
                 try {
                     String placeData = MapsService.getPlaceDataFromAddress(location);
-                    JsonObject json = new JsonObject(placeData);
-                    JsonArray jsonArr = json.getJsonArray("results");
-                    if (jsonArr != null && jsonArr.size() > 0) {
-                        JsonObject result = jsonArr.getJsonObject(0);
-                        String address = result.getString("formatted_address");
-                        String placeId = result.getString("place_id");
-                        JsonObject locationObj =
-                                result.getJsonObject("geometry").getJsonObject("location");
-                        String coords =
-                                locationObj.getString("lat") + "," + locationObj.getString("lng");
+                    Location place = new Location(placeData);
 
+                    if (place.isValid()) {
                         columns.add("place_id");
                         columns.add("coords");
                         columns.add("address");
-                        values.add(new PostgresValue(placeId));
-                        values.add(new PostgresValue(coords));
-                        values.add(new PostgresValue(address));
+                        values.add(new PostgresValue(place.getPlaceId()));
+                        values.add(new PostgresValue(place.getCoords()));
+                        values.add(new PostgresValue(place.getAddress()));
                     }
                 } catch (Exception ex) {
                     ex.printStackTrace();
