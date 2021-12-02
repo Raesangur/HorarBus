@@ -994,7 +994,7 @@ export default {
     },
 
     eventsState() {
-      if (!this.eventsState) {
+      if (this.eventsState === "error") {
         this.showIcal();
       }
       for (let i in this.eventsState) {
@@ -1143,6 +1143,8 @@ export default {
         }
 
         this.events[i + nbrEvents].id = "eventFullWindow" + (i + nbrEvents);
+        if(parseInt(this.events[i + nbrEvents].heureArrive.split(":")[1])-parseInt(this.events[i + nbrEvents].heureDepart.split(":")[1]) < 20)
+        this.events[i + nbrEvents].temps = parseInt(this.events[i + nbrEvents].heureArrive.split(":")[1])-parseInt(this.events[i + nbrEvents].heureDepart.split(":")[1]);
         this.calendarOptions.events[i + nbrEvents].start =
           this.events[i + nbrEvents].start;
         this.calendarOptions.events[i + nbrEvents].end =
@@ -1162,6 +1164,7 @@ export default {
         if(this.calendarOptions.events[i+nbrEvents].description){
           this.calendarOptions.events[i+nbrEvents].description2 = "Autobus #"+this.calendarOptions.events[i+nbrEvents].description.line.short_name;
         }
+
       }
     },
     todayState(){
@@ -1564,6 +1567,11 @@ export default {
             document.getElementById(
               this.events[i].id
             ).parentElement.style.height;
+            if(this.events[i].temps){
+              let dif = parseInt(20 - this.events[i].temps);
+              document.getElementById(this.events[i].id).parentElement.style.top = (document.getElementById(this.events[i].id).parentElement.style.top.split("p")[0] -dif) +"px";
+              this.events[i].temps = undefined;
+            }
         }
       }
     },
