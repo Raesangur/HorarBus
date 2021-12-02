@@ -1,5 +1,9 @@
 package com.horarbus.handler;
 
+import com.horarbus.Location;
+import com.horarbus.Utils;
+import com.horarbus.service.MapsService;
+
 public class UserHandler {
     private static final String TABLE_NAME = "studentData";
 
@@ -122,39 +126,18 @@ public class UserHandler {
         update_column("notification_time", notif_time);
     }
 
-    private String sanitizeTransport(String transport) {
-        if (transport == null || transport.equals("")) {
-            System.out.println("Invalid transport method");
-            return null;
-        }
-
-        transport = transport.toUpperCase();
-
-        if (transport.equals("BUS")) {
-            transport = "TRANSIT";
-        }
-
-        if (transport.equals("DRIVING") || transport.equals("WALKING")
-                || transport.equals("TRANSIT") || transport.equals("BICYCLING")) {
-            return transport;
-        } else {
-            System.out.println("Invalid transport method: " + transport);
-            return null;
-        }
-    }
-
     public String get_transport() {
         String transport = select_column("transport_name");
         return transport != null ? transport : DEFAULT_TRANSPORT;
     }
 
     public void set_transport(String transport) {
-        transport = sanitizeTransport(transport);
+        transport = Utils.sanitizeTransport(transport);
         if (transport == null) {
             return;
         }
 
-        update_column("transport", transport);
+        update_column("transport_name", transport);
     }
 
     public boolean get_darkmode() {
@@ -180,11 +163,19 @@ public class UserHandler {
     }
 
     public String get_default_address() {
-        // TODO
-        return DEFAULT_ADDRESS;
+        LocationHandler handler = new LocationHandler(select_column("home_place_id"));
+        return handler.get_address() == null || handler.get_address().isEmpty() ? DEFAULT_ADDRESS
+                : handler.get_address();
     }
 
     public void set_default_address(String address) {
-        // TODO
+        try {
+            String placeData = MapsService.getPlaceDataFromAddress(address);
+            Location place = new Location(placeData);
+            new LocationHandler(place.getPlaceId(), place.getCoords(), place.getAddress());
+            update_column("home_place_id", place.getPlaceId());
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
     }
 }
