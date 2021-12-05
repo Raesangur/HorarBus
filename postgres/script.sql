@@ -271,7 +271,7 @@ from eventdata
 ) as a
 order by event_id, cip, arrival desc;
 
-DROP VIEW IF EXISTS routeDetails;s
+DROP VIEW IF EXISTS routeDetails;
 CREATE VIEW routeDetails AS
 select rr.cip, arrival, rr.event_id, requestedtransport,
 case when arrival = false then place_id else home_place_Id end as startPlace,
