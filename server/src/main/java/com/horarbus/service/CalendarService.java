@@ -43,9 +43,9 @@ public class CalendarService {
         traject.put("temps_avance", -1);
         traject.put("transport", transport);
         traject.put("adresseDestinataire", getLocationDetails(
-                waypoints.getJsonObject(0).getString("place_id"), knownPlaceInfo));
-        traject.put("adresseInitiale", getLocationDetails(
                 waypoints.getJsonObject(1).getString("place_id"), knownPlaceInfo));
+        traject.put("adresseInitiale", getLocationDetails(
+                waypoints.getJsonObject(0).getString("place_id"), knownPlaceInfo));
 
         if (status.equals("OK")) {
             long eventTime = itineraryData.getLong("eventTime");
