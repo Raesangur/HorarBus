@@ -36,8 +36,7 @@ public class MapsService {
                 "departure_time");
     }
 
-    private static String getItinerary(String startingPlaceId, String arrivalPlaceId,
-            TravelMode travelMode, long arrivalTime, String timeSpecification) throws Exception {
+    private static String getItinerary(String startingPlaceId, String arrivalPlaceId, TravelMode travelMode, long arrivalTime, String timeSpecification) throws Exception {
         String params = "origin=place_id:" + formatValue(startingPlaceId) + "&destination=place_id:"
                 + formatValue(arrivalPlaceId) + "&mode=" + travelMode.toUrlValue();
 

@@ -64,7 +64,7 @@ public class MissingTraject {
     public String getFilename() {
         String dateStr = definingTime.toLocalDateTime().toLocalTime().toString().replace(":", "_");
         return startPlaceId + endPlaceId + transport.toString()
-                + (definingTime != null ? dateStr : "");
+                + (transport == TravelMode.TRANSIT && definingTime != null ? dateStr : "");
     }
 
 

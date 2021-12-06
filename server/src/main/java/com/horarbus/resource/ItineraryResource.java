@@ -16,7 +16,7 @@ public class ItineraryResource {
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    //@Consumes(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)
     @Path("/")
     public String getUserData(JsonObject body) {
         String departureAddress = null, arrivalAddress = null, transportMode = null;
@@ -47,8 +47,8 @@ public class ItineraryResource {
             System.out.println(departurePlaceId + " " + arrivalPlaceData + " " + travelMode + " "
                     + targetTime);
 
-            return MapsService.getItinerary(departurePlaceId, arrivalPlaceId, travelMode,
-                    targetTime);
+            return null;
+            // MapsService.getItinerary(departurePlaceId, arrivalPlaceId, travelMode, targetTime);
         } catch (Exception ex) {
             ex.printStackTrace();
             JsonObject errorObj = new JsonObject();
@@ -59,7 +59,7 @@ public class ItineraryResource {
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    //@Consumes(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)
     @Path("/place")
     public String getPlaceInfo(JsonObject body) {
         String placeId = null;

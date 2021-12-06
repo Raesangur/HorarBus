@@ -20,6 +20,9 @@ export default {
         async putUser({ dispatch }, payload) {
             UserService.putUser(payload)
                 .then(() => {
+                    if (payload.Ical) {
+                        location.reload();
+                    }
                     dispatch("getUser");
                 })
                 .catch((err) => {
